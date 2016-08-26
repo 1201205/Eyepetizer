@@ -1,23 +1,22 @@
 package com.hyc.eyepetizer.beans;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SectionList implements java.io.Serializable {
     private static final long serialVersionUID = 316505256641919188L;
-    private Footer footer;
+    private ViewData footer;
     private int count;
-    private Header header;
-    private List<ItemList> itemList;
+    private ViewData header;
+    private List<ViewData> itemList;
     private int id;
     private String type;
     private Object adTrack;
 
 
-    public Footer getFooter() {return this.footer;}
+    public ViewData getFooter() {return this.footer;}
 
 
-    public void setFooter(Footer footer) {this.footer = footer;}
+    public void setFooter(ViewData footer) {this.footer = footer;}
 
 
     public int getCount() {return this.count;}
@@ -26,16 +25,16 @@ public class SectionList implements java.io.Serializable {
     public void setCount(int count) {this.count = count;}
 
 
-    public Header getHeader() {return this.header;}
+    public ViewData getHeader() {return this.header;}
 
 
-    public void setHeader(Header header) {this.header = header;}
+    public void setHeader(ViewData header) {this.header = header;}
 
 
-    public List<ItemList> getItemList() {return this.itemList;}
+    public List<ViewData> getItemList() {return this.itemList;}
 
 
-    public void setItemList(List<ItemList> itemList) {this.itemList = itemList;}
+    public void setItemList(List<ViewData> itemList) {this.itemList = itemList;}
 
 
     public int getId() {return this.id;}

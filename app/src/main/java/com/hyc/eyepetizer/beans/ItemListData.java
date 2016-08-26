@@ -29,6 +29,61 @@ public class ItemListData implements java.io.Serializable {
     private Object campaign;
     private String category;
     private int idx;
+    private String text;
+    private CoverHeader header;
+    private List<ViewData> itemList;
+    private int count;
+
+    public CoverHeader getHeader() {
+        return header;
+    }
+
+    public void setHeader(CoverHeader header) {
+        this.header = header;
+    }
+
+    public List<ViewData> getItemList() {
+        return itemList;
+    }
+
+    public void setItemList(List<ViewData> itemList) {
+        this.itemList = itemList;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public String getFont() {
+        return font;
+    }
+
+    public void setFont(String font) {
+        this.font = font;
+    }
+
+    public String getActionUrl() {
+        return actionUrl;
+    }
+
+    public void setActionUrl(String actionUrl) {
+        this.actionUrl = actionUrl;
+    }
+
+    private String font;
+    private String actionUrl;
     private Object promotion;
 
 

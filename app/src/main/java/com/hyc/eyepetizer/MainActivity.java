@@ -1,20 +1,17 @@
 package com.hyc.eyepetizer;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.hyc.eyepetizer.beans.Selection;
 import com.hyc.eyepetizer.beans.ViewData;
 import com.hyc.eyepetizer.net.Requests;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;

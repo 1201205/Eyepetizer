@@ -38,6 +38,8 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         switch (viewType){
             case WidgetHelper.ViewType.VEDIO:
                 return new VedioViewHolder(mLayoutInflater.inflate(R.layout.item_vedio,parent,false));
+            case WidgetHelper.ViewType.textHeader:
+                return new TextHeaderViewHolder(mLayoutInflater.inflate(R.layout.item_text,parent,false));
             case WidgetHelper.ViewType.forwardFooter:
                 return new ForwardViewHolder(mLayoutInflater.inflate(R.layout.item_vedio,parent,false));
             case WidgetHelper.ViewType.videoCollectionWithCover:
@@ -56,6 +58,8 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             bindView((CoverVedioViewHolder) holder,mDatas.get(position));
         } else if (holder instanceof BreifVedioViewHolder) {
             bindView((BreifVedioViewHolder) holder,mDatas.get(position));
+        } else if (holder instanceof TextHeaderViewHolder) {
+            bindView((TextHeaderViewHolder) holder,mDatas.get(position));
         }
     }
 
@@ -81,7 +85,9 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         holder.recyclerView.setLayoutManager(manager);
         holder.recyclerView.setAdapter(new HorizontalAdapter(data.getData().getItemList(),mLayoutInflater));
     }
-
+    private void bindView(TextHeaderViewHolder holder,ViewData data){
+        holder.head.setText(data.getData().getText());
+    }
 
     //设置ITEM类型，可以自由发挥，这里设置item position单数显示item1 偶数显示item2
     @Override
@@ -115,7 +121,15 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 //            mTextView=(TextView)itemView.findViewById(R.id.tv_item2_text);
         }
     }
-
+    public static class TextHeaderViewHolder extends RecyclerView.ViewHolder{
+        @BindView(R.id.tv_head)
+        TextView head;
+        public TextHeaderViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this,itemView);
+//            mTextView=(TextView)itemView.findViewById(R.id.tv_item2_text);
+        }
+    }
     public static class CoverVedioViewHolder extends RecyclerView.ViewHolder{
 
         SimpleDraweeView cover;

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="head" type="id"/>
+    <item name="tv_remain" type="id"/>
+    <item name="loading" type="id"/>
+    <item name="target" type="id"/>
+</resources>
+ 

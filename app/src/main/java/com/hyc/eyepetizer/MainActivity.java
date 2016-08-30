@@ -1,6 +1,8 @@
 package com.hyc.eyepetizer;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.*;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,29 +19,19 @@ import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
-    @BindView(R.id.test)
-    RecyclerView mRecyclerView;
+    @BindView(R.id.test1)
+    ViewPager mPager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_test_main);
         ButterKnife.bind(this);
-        final LinearLayoutManager manager=new LinearLayoutManager(this);
-        manager.setOrientation(LinearLayoutManager.VERTICAL);
-        Requests.getApi().getSelection().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Selection>() {
-            @Override
-            public void call(Selection selection) {
-                Log.e("selection",System.currentTimeMillis()+"");
-                List<ViewData> datas=new ArrayList<ViewData>();
-                int i=selection.getSectionList().size();
-                for (int j=0;j<i;j++) {
-                    datas.addAll(selection.getSectionList().get(j).getItemList());
-                }
-                mRecyclerView.setLayoutManager(manager);
-                mRecyclerView.setAdapter(new TestAdapter(MainActivity.this,datas));
-                Log.e("selection",System.currentTimeMillis()+"");
-            }
-        });
+        List<Fragment> fragments=new ArrayList<>();
+        fragments.add(new TestFragment());
+        fragments.add(new TestFragment());
+        fragments.add(new TestFragment());
+        FragmentAdapter adapter=new FragmentAdapter(getSupportFragmentManager(),fragments);
+        mPager.setAdapter(adapter);
     }
 
     @Override

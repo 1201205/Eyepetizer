@@ -1,8 +1,8 @@
 package com.hyc.eyepetizer.net;
 
 import com.hyc.eyepetizer.beans.Selection;
-
 import retrofit2.http.GET;
+import retrofit2.http.Query;
 import rx.Observable;
 
 /**
@@ -25,5 +25,8 @@ public interface Api {
      */
     @GET("api/v3/tabs/selected")
     Observable<Selection> getSelection();
+    //http://baobab.wandoujia.com/api/v3/tabs/selected?pagination=1&needFilter=true"
+    @GET("api/v3/tabs/selected") Observable<Selection> getMoreSelection(
+        @Query("pagination") int index, @Query("needFilter") boolean needFilter);
 
 }

@@ -6,28 +6,31 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PointF;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
-
 import com.hyc.eyepetizer.utils.AppUtil;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by ray on 16/8/28.
  */
 public class LoadingAnimView extends View {
+    private static final int MIN_HEIGHT = 115;
+    private static final int MIN_WIDTH = 110;
     private Paint mPaint;
-    private float arc;
+    private float mArc;
     private ValueAnimator mAnimator;
     private Path mPath;
-    private static final int MIN_HEIGHT=115;
-    private static final int MIN_WIDTH=110;
     private float mSpaceWidth;
     private float mMinHeight;
     private float mMinWidth;
     private float mHeight;
     private float mWidth;
+    private List<PointF> mPoints;
+    private boolean mIsLoading;
 
     public LoadingAnimView(Context context) {
         this(context, null);
@@ -47,7 +50,7 @@ public class LoadingAnimView extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        //super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
         float width=mWidth = MeasureSpec.getSize(widthMeasureSpec);
@@ -71,18 +74,45 @@ public class LoadingAnimView extends View {
             mWidth=mSpaceWidth*22;
         }
         setMeasuredDimension((int)mWidth, (int)mHeight);
-        Log.e("hyc--test",mWidth+"----"+mHeight+"---"+mSpaceWidth);
+        //Log.e("hyc--test"+toString(),mWidth+"----"+mHeight+"---"+mSpaceWidth);
     }
+
+
+    private void initPoints() {
+        if (mPoints != null) {
+            mPoints.clear();
+        } else {
+            mPoints = new ArrayList<>();
+        }
+        mPoints.add(new PointF(mSpaceWidth * 2, mSpaceWidth * 10));
+        mPoints.add(new PointF(mSpaceWidth * 11, 1 * mSpaceWidth));
+        mPoints.add(new PointF(mSpaceWidth * 20, mSpaceWidth * 10));
+        mPoints.add(new PointF(mSpaceWidth * 21.5f, mSpaceWidth * 11.5f));
+        mPoints.add(new PointF(mSpaceWidth * 20, mSpaceWidth * 13));
+        mPoints.add(new PointF(mSpaceWidth * 11, mSpaceWidth * 22));
+        mPoints.add(new PointF(mSpaceWidth * 2, mSpaceWidth * 13));
+        mPoints.add(new PointF(mSpaceWidth / 2, mSpaceWidth * 11.5f));
+    }
+
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        mWidth=w;
         mHeight=h;
+        mWidth = w;
+        initPoints();
+        //Log.e("hyc-test2"+toString(),mWidth+"_----"+mHeight);
     }
 
+
+    public void round(int round) {
+        mArc += round;
+        invalidate();
+    }
     @Override protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        mPaint.setStyle(Paint.Style.FILL);
+        mPaint.setColor(Color.BLACK);
         //canvas.drawPath();
 //        mPaint.setColor(Color.BLACK);
 //        mPaint.setStyle(Paint.Style.FILL);
@@ -101,20 +131,23 @@ public class LoadingAnimView extends View {
 //        mPaint.setStrokeWidth(10);
 //        mPaint.setStyle(Paint.Style.STROKE);
 //        canvas.drawCircle(110, 115, 30, mPaint);
-//        canvas.drawCircle((float) (110 + 20 * Math.sin(arc * Math.PI / 180)),
-//                (float) (110 + 20 * Math.cos(arc * Math.PI / 180)), 5, mPaint);
-        mPath.moveTo(mSpaceWidth*2, mSpaceWidth*5);
-        mPath.quadTo(mSpaceWidth*11,-4*mSpaceWidth, mSpaceWidth*20, mSpaceWidth*5);
-        mPath.quadTo(mSpaceWidth*21.5f,mSpaceWidth*6.5f,  mSpaceWidth*20, mSpaceWidth*8);
-        mPath.quadTo(mSpaceWidth*11,mSpaceWidth*17,  mSpaceWidth*2, mSpaceWidth*8);
-        mPath.quadTo(mSpaceWidth/2, mSpaceWidth*6.5f, mSpaceWidth*2, mSpaceWidth*5);
+        //        canvas.drawCircle((float) (110 + 20 * Math.sin(mArc * Math.PI / 180)),
+        //                (float) (110 + 20 * Math.cos(mArc * Math.PI / 180)), 5, mPaint);
+        mPath.moveTo(mPoints.get(0).x, mPoints.get(0).y);
+        mPath.quadTo(mPoints.get(1).x, mPoints.get(1).y, mPoints.get(2).x, mPoints.get(2).y);
+        mPath.quadTo(mPoints.get(3).x, mPoints.get(3).y, mPoints.get(4).x, mPoints.get(4).y);
+        mPath.quadTo(mPoints.get(5).x, mPoints.get(5).y, mPoints.get(6).x, mPoints.get(6).y);
+        mPath.quadTo(mPoints.get(7).x, mPoints.get(7).y, mPoints.get(0).x, mPoints.get(0).y);
         canvas.drawPath(mPath, mPaint);
         mPaint.setColor(Color.WHITE);
         mPaint.setStrokeWidth(mSpaceWidth);
         mPaint.setStyle(Paint.Style.STROKE);
-        canvas.drawCircle(mSpaceWidth*11, mSpaceWidth*6.5f, mSpaceWidth*3, mPaint);
-        canvas.drawCircle((float) (mSpaceWidth*11 + mSpaceWidth*2 * Math.sin(arc * Math.PI / 180)),
-            (float) (mSpaceWidth*6.15 + mSpaceWidth*2 * Math.cos(arc * Math.PI / 180)), mSpaceWidth, mPaint);
+        canvas.drawCircle(mSpaceWidth * 11, mSpaceWidth * 11.5f, mSpaceWidth * 3, mPaint);
+        mPaint.setStyle(Paint.Style.FILL);
+        canvas.drawCircle(
+            (float) (mSpaceWidth * 11 + mSpaceWidth * 2 * Math.sin(mArc * Math.PI / 180)),
+            (float) (mSpaceWidth * 11.15 + mSpaceWidth * 2 * Math.cos(mArc * Math.PI / 180)),
+            mSpaceWidth, mPaint);
         //canvas.drawArc(10,10,210,110,0f,180,true,mPaint);
         //canvas.drawArc(0,0,200,100,-180,180,true,mPaint);
         mPath.reset();
@@ -126,7 +159,7 @@ public class LoadingAnimView extends View {
             mAnimator = ValueAnimator.ofFloat(0, 1);
             mAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                    arc = -360 * valueAnimator.getAnimatedFraction();
+                    mArc = -360 * valueAnimator.getAnimatedFraction();
                     postInvalidate();
                 }
             });
@@ -136,6 +169,7 @@ public class LoadingAnimView extends View {
         }
         mAnimator.setInterpolator(new LinearInterpolator());
         mAnimator.start();
+        mIsLoading = true;
     }
 
 
@@ -143,11 +177,18 @@ public class LoadingAnimView extends View {
         if (mAnimator != null) {
             mAnimator.end();
         }
+        mIsLoading = false;
     }
 
 
+    public boolean isLoading() {
+        return mIsLoading;
+    }
+
     @Override protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        mAnimator.removeAllUpdateListeners();
+        if (mAnimator != null) {
+            mAnimator.removeAllUpdateListeners();
+        }
     }
 }

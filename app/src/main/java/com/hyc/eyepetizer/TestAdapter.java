@@ -7,15 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.hyc.eyepetizer.beans.ViewData;
 import com.hyc.eyepetizer.utils.WidgetHelper;
-
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by Administrator on 2016/8/26.
@@ -98,6 +95,13 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public int getItemCount() {
         return mDatas == null ? 0 : mDatas.size();
+    }
+
+
+    public void addData(List<ViewData> datas) {
+        int count = getItemCount();
+        mDatas.addAll(datas);
+        notifyItemRangeInserted(count, datas.size());
     }
 
     public static class VedioViewHolder extends RecyclerView.ViewHolder{

@@ -6,7 +6,7 @@ public class CoverHeader {
     private int id;
     private String title;
     private String font;
-    private String ico;
+    private String icon;
     private String subTitle;
     private String description;
     private Object adTrack;
@@ -39,41 +39,51 @@ public class CoverHeader {
         return this.title;
     }
 
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+
     public Object getAdTrack() {
         return adTrack;
     }
+
 
     public void setAdTrack(Object adTrack) {
         this.adTrack = adTrack;
     }
 
+
     public String getIco() {
-        return ico;
+        return icon;
     }
 
-    public void setIco(String ico) {
-        this.ico = ico;
+
+    public void setIco(String icon) {
+        this.icon = icon;
     }
+
 
     public String getSubTitle() {
         return subTitle;
     }
 
+
     public void setSubTitle(String subTitle) {
         this.subTitle = subTitle;
     }
+
 
     public String getDescription() {
         return description;
     }
 
+
     public void setDescription(String description) {
         this.description = description;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
 
     public String getFont() {
         return this.font;

@@ -2,22 +2,17 @@ package com.hyc.eyepetizer.view.adapter.holder;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
-import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.facebook.drawee.view.SimpleDraweeView;
-import com.hyc.eyepetizer.R;
-import com.hyc.eyepetizer.beans.ViewData;
-import com.hyc.eyepetizer.utils.TypefaceHelper;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.hyc.eyepetizer.R;
+import com.hyc.eyepetizer.utils.TypefaceHelper;
 
 /**
  * Created by Administrator on 2016/8/31.
@@ -49,6 +44,7 @@ public class VideoViewHolder extends RecyclerView.ViewHolder {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
 //                Log.e("hyc---test1", motionEvent.getAction() + "");
+                //                Log.e("hyc-TouchEvent","--flow--"+motionEvent.getAction());
                 switch (motionEvent.getAction()){
                     case MotionEvent.ACTION_DOWN:
                         mAnimator.start();
@@ -65,8 +61,10 @@ public class VideoViewHolder extends RecyclerView.ViewHolder {
                         return false;
                     case MotionEvent.ACTION_UP:
                         reset();
-                        mItemClickListener.onItemClicked();
-                        return true;
+                        if (mItemClickListener != null) {
+                            mItemClickListener.onItemClicked();
+                        }
+                        return false;
                     case MotionEvent.ACTION_CANCEL:
                         reset();
                         return false;
@@ -79,13 +77,15 @@ public class VideoViewHolder extends RecyclerView.ViewHolder {
     public void setOnItemClickListener(ItemClickListener listener){
         mItemClickListener=listener;
     }
-    public interface ItemClickListener{
-        void onItemClicked();
-    }
-    private void reset(){
+
+
+    private void reset() {
         if (mAnimator.isRunning()) {
             mAnimator.end();
         }
         flow.setAlpha(1);
+    }
+    public interface ItemClickListener{
+        void onItemClicked();
     }
 }

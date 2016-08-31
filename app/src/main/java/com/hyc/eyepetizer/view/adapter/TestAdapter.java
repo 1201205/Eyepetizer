@@ -3,16 +3,15 @@ package com.hyc.eyepetizer.view.adapter;
 import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import com.hyc.eyepetizer.MainApplication;
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.beans.ItemListData;
 import com.hyc.eyepetizer.beans.ViewData;
+import com.hyc.eyepetizer.utils.AppUtil;
 import com.hyc.eyepetizer.utils.DataHelper;
 import com.hyc.eyepetizer.utils.FrescoHelper;
 import com.hyc.eyepetizer.utils.TypefaceHelper;
@@ -24,7 +23,7 @@ import com.hyc.eyepetizer.view.adapter.holder.ForwardViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.TextHeaderViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.TitleVideoViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.VideoViewHolder;
-
+import com.hyc.eyepetizer.widget.HorizontalDecoration;
 import java.util.List;
 
 /**
@@ -34,11 +33,14 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private LayoutInflater mLayoutInflater;
     private Context context;
     private List<ViewData> mDatas;
+
+    private int mSpace;
     //建立枚举 2个item 类型
 
     public TestAdapter(Context context,List<ViewData> datas){
         mDatas=datas;
         mLayoutInflater = LayoutInflater.from(context);
+        mSpace = (int) AppUtil.dip2px(4);
     }
 
 
@@ -97,21 +99,25 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
     private void bindView(CoverVideoViewHolder holder, ViewData data){
         holder.cover.setImageURI(data.getData().getHeader().getCover());
-        LinearLayoutManager manager=new LinearLayoutManager(context);
-        manager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        holder.recyclerView.setLayoutManager(manager);
+        if (holder.recyclerView.getLayoutManager() == null) {
+            LinearLayoutManager manager = new LinearLayoutManager(context);
+            manager.setOrientation(LinearLayoutManager.HORIZONTAL);
+            holder.recyclerView.setLayoutManager(manager);
+            holder.recyclerView.addItemDecoration(new HorizontalDecoration(mSpace));
+        }
         holder.recyclerView.setAdapter(new HorizontalAdapter(data.getData().getItemList(),mLayoutInflater));
     }
     private void bindView(BriefVideoViewHolder holder, ViewData data){
-        if (!TextUtils.isEmpty(data.getData().getHeader().getCover())) {
-            holder.ico.setImageURI(data.getData().getHeader().getCover());
-        }
+        FrescoHelper.loadUrl(holder.ico, data.getData().getHeader().getIco());
         holder.count.setText(data.getData().getHeader().getSubTitle());
         holder.name.setText(data.getData().getHeader().getTitle());
         holder.des.setText(data.getData().getHeader().getDescription());
-        LinearLayoutManager manager=new LinearLayoutManager(context);
-        manager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        holder.recyclerView.setLayoutManager(manager);
+        if (holder.recyclerView.getLayoutManager() == null) {
+            LinearLayoutManager manager = new LinearLayoutManager(context);
+            manager.setOrientation(LinearLayoutManager.HORIZONTAL);
+            holder.recyclerView.setLayoutManager(manager);
+            holder.recyclerView.addItemDecoration(new HorizontalDecoration(mSpace));
+        }
         holder.recyclerView.setAdapter(new HorizontalAdapter(data.getData().getItemList(),mLayoutInflater));
     }
     private void bindView(TextHeaderViewHolder holder, ViewData data){
@@ -132,9 +138,12 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private void bindView(TitleVideoViewHolder holder, ViewData data){
         holder.title.setText(data.getData().getHeader().getTitle());
-        LinearLayoutManager manager=new LinearLayoutManager(context);
-        manager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        holder.recyclerView.setLayoutManager(manager);
+        if (holder.recyclerView.getLayoutManager() == null) {
+            LinearLayoutManager manager = new LinearLayoutManager(context);
+            manager.setOrientation(LinearLayoutManager.HORIZONTAL);
+            holder.recyclerView.setLayoutManager(manager);
+            holder.recyclerView.addItemDecoration(new HorizontalDecoration(mSpace));
+        }
         holder.recyclerView.setAdapter(new HorizontalAdapter(data.getData().getItemList(),mLayoutInflater));
     }
     //设置ITEM类型，可以自由发挥，这里设置item position单数显示item1 偶数显示item2

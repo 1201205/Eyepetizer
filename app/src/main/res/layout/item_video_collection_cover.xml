@@ -17,9 +17,9 @@
             fresco:viewAspectRatio="1.44"/>
 
         <ImageView
-            android:src="@drawable/ic_video_collection_with_picture_arrow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:src="@drawable/ic_video_collection_with_picture_arrow"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"/>
     </RelativeLayout>
@@ -28,4 +28,10 @@
         android:id="@+id/rv_collection"
         android:layout_width="wrap_content"
         android:layout_height="160dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginTop="6dp"
+        android:background="@color/space_line_bg"/>
 </LinearLayout>

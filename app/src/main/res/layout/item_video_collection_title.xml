@@ -8,6 +8,8 @@
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="46dp"
+        android:textColor="@color/title_black"
+        android:gravity="center_vertical"
         android:layout_marginLeft="10dp"
         android:drawableRight="@drawable/ic_action_next_grey"/>
 

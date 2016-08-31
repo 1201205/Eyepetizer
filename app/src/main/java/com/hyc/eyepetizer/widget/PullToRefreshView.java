@@ -5,8 +5,10 @@ import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.widget.FrameLayout;
 import android.widget.Scroller;
 import android.widget.TextView;
@@ -37,6 +39,9 @@ public class PullToRefreshView extends FrameLayout {
     private Animator mScrollAnimator;
     private Scroller mScroller;
     private int mTextHeight;
+    private int mTouchSlop;
+    private boolean mIsMoving;
+    private boolean mHasDown;
 
     public PullToRefreshView(Context context) {
         this(context, null);
@@ -49,6 +54,7 @@ public class PullToRefreshView extends FrameLayout {
     public PullToRefreshView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mScroller = new Scroller(getContext());
+        mTouchSlop = ViewConfiguration.getTouchSlop();
     }
 
     @Override
@@ -80,15 +86,16 @@ public class PullToRefreshView extends FrameLayout {
         //Log.e("----","mAnimHeight+++"+mAnimHeight+"++++mHeadHeight++++"+mHeadHeight);
 
     }
-
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         float y=ev.getRawY();
-
+        //Log.e("hyc-TouchEvent","--pull--"+ev.getAction());
         boolean resume=false;
         if (mManager==null) {
             mManager=(LinearLayoutManager) mTarget.getLayoutManager();
         }
+        //Log.e("hyc-TouchEvent","--findFirstCompletelyVisibleItemPosition--"+mManager.findFirstCompletelyVisibleItemPosition());
+
         if (mManager.findFirstCompletelyVisibleItemPosition() == 0 && !mLoadingView.isLoading()) {
             mCanScroll = true;
         } else {
@@ -99,11 +106,17 @@ public class PullToRefreshView extends FrameLayout {
                 if (!mScroller.isFinished()) {
                     mScroller.forceFinished(true);
                 }
+                mHasDown = true;
                 mCurrentY=y;
             case MotionEvent.ACTION_MOVE:
                 float deltaY = y - mCurrentY;
+                if (!mIsMoving) {
+                    if (Math.abs(deltaY) > mTouchSlop) {
+                        mIsMoving = true;
+                    }
+                }
                 //Log.e("----","y--"+y+"--deltaY--"+deltaY+"--getScrollY--"+getScrollY());
-                if (mCanScroll) {
+                if (mCanScroll && mIsMoving) {
                     int scroll = (int) -deltaY * 2 / 3;
                     if (deltaY>0) {
                         resume=true;
@@ -123,22 +136,42 @@ public class PullToRefreshView extends FrameLayout {
                 }
                 mCurrentY=y;
                 if (resume) {
+                    if (mHasDown) {
+                        MotionEvent event = MotionEvent.obtain(ev);
+                        ev.setAction(MotionEvent.ACTION_CANCEL);
+                        super.dispatchTouchEvent(event);
+                        mHasDown = false;
+                    }
+                    //后面还需要------
+                    //super.dispatchTouchEvent(ev);
                     return resume;
                 } else {
                     return super.dispatchTouchEvent(ev);
                 }
             case MotionEvent.ACTION_UP:
-                if (mCanScroll) {
+                //Log.e("hyc-TouchEvent","--mCanScroll--"+mCanScroll+"---mIsMoving---"+mIsMoving+"-getScrollY()"+(-getScrollY())+"++++"+(mHeadHeight - mAnimHeight));
+                mHasDown = false;
+                if (mCanScroll && mIsMoving) {
                     if (-getScrollY() > (mHeadHeight - mAnimHeight)) {
+                        //Log.e("hyc-TouchEvent","回退---开始");
                         startScroll(Math.abs(getScrollY()) - (mHeadHeight - mAnimHeight));
                         mLoadingView.startAnim();
+                        mIsMoving = false;
+                        return true;
                     } else if ((mHeadHeight - mAnimHeight) / 2 < -getScrollY()) {
+                        //Log.e("hyc-TouchEvent","向上---开始");
                         startScroll(-(mHeadHeight - mAnimHeight - Math.abs(getScrollY())));
                         mLoadingView.startAnim();
+                        mIsMoving = false;
+                        return true;
                     } else if ((mHeadHeight - mAnimHeight) / 2 > -getScrollY()) {
-                        startScroll((Math.abs(getScrollY())));
+                        //startScroll((Math.abs(getScrollY())));
+                        Log.e("hyc-TouchEvent", "回退---");
+                        mIsMoving = false;
+                        return true;
                     }
                 }
+                mIsMoving = false;
                 break;
         }
         return super.dispatchTouchEvent(ev);

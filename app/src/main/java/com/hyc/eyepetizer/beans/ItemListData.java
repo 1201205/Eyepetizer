@@ -34,6 +34,16 @@ public class ItemListData implements java.io.Serializable {
     private List<ViewData> itemList;
     private int count;
 
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    private int height;
+
     public CoverHeader getHeader() {
         return header;
     }

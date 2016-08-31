@@ -5,44 +5,45 @@ package com.hyc.eyepetizer.utils;
  */
 public class WidgetHelper {
     //VideoBeanForClient--首页视频
-    public static int getViewType(String type){
-        switch (type){
-            case Type.VEDIO:
-                return ViewType.VEDIO;
-            case Type.forwardFooter:
-                return ViewType.forwardFooter;
-            case Type.videoCollectionWithCover:
-                return ViewType.videoCollectionWithCover;
-            case Type.blankFooter:
-                return ViewType.blankFooter;
-            case Type.textHeader:
-                return ViewType.textHeader;
-            case Type.videoCollectionWithBrief:
-                return ViewType.videoCollectionWithBrief;
-            case Type.videoCollectionWithTitle:
-                return ViewType.videoCollectionWithTitle;
+    public static int getViewType(String type) {
+        switch (type) {
+            case Type.VIDEO:
+                return ViewType.VIDEO;
+            case Type.FORWARD_FOOTER:
+                return ViewType.FORWARD_FOOTER;
+            case Type.VIDEO_COLLECTION_WITH_COVER:
+                return ViewType.VIDEO_COLLECTION_WITH_COVER;
+            case Type.BLANK_FOOTER:
+                return ViewType.BLANK_FOOTER;
+            case Type.TEXT_HEADER:
+                return ViewType.TEXT_HEADER;
+            case Type.VIDEO_COLLECTION_WITH_BRIEF:
+                return ViewType.VIDEO_COLLECTION_WITH_BRIEF;
+            case Type.VIDEO_COLLECTION_WITH_TITLE:
+                return ViewType.VIDEO_COLLECTION_WITH_TITLE;
         }
         return ViewType.Error;
     }
+
     public interface Type {
-        //blankFooter
-        String VEDIO = "video";//首页单个精选视频
-        String forwardFooter = "forwardFooter";//到精选视频
-        String videoCollectionWithCover = "videoCollectionWithCover";//水平编辑视频
-        String blankFooter = "blankFooter";//空白分割  有对应高度
-        String authorSection = "authorSection";
-        String textHeader = "textHeader";//标题
-        String videoCollectionWithBrief = "videoCollectionWithBrief";//水平作者视频
-        String videoCollectionWithTitle="videoCollectionWithTitle";//有标题的水平视频
+        //BLANK_FOOTER
+        String VIDEO = "video";//首页单个精选视频
+        String FORWARD_FOOTER = "forwardFooter";//到精选视频
+        String VIDEO_COLLECTION_WITH_COVER = "videoCollectionWithCover";//水平编辑视频
+        String BLANK_FOOTER = "blankFooter";//空白分割  有对应高度
+        String TEXT_HEADER = "textHeader";//标题
+        String VIDEO_COLLECTION_WITH_BRIEF = "videoCollectionWithBrief";//水平作者视频
+        String VIDEO_COLLECTION_WITH_TITLE = "videoCollectionWithTitle";//有标题的水平视频
     }
-    public interface ViewType{
-        int Error=-1;
-        int VEDIO=1;
-        int forwardFooter=2;
-        int videoCollectionWithCover=3;
-        int blankFooter=4;
-        int textHeader=5;
-        int videoCollectionWithBrief=6;
-        int videoCollectionWithTitle=7;
+
+    public interface ViewType {
+        int Error = -1;
+        int VIDEO = 1;
+        int FORWARD_FOOTER = 2;
+        int VIDEO_COLLECTION_WITH_COVER = 3;
+        int BLANK_FOOTER = 4;
+        int TEXT_HEADER = 5;
+        int VIDEO_COLLECTION_WITH_BRIEF = 6;
+        int VIDEO_COLLECTION_WITH_TITLE = 7;
     }
 }

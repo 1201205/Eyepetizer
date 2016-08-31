@@ -11,7 +11,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import com.hyc.eyepetizer.R;
-import com.hyc.eyepetizer.TestAdapter;
+import com.hyc.eyepetizer.view.adapter.TestAdapter;
 import com.hyc.eyepetizer.base.BaseFragment;
 import com.hyc.eyepetizer.beans.ViewData;
 import com.hyc.eyepetizer.contract.SelectionContract;

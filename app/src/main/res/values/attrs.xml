@@ -2,4 +2,11 @@
 <resources>
     <declare-styleable name="PullToRefreshView">
     </declare-styleable>
+
+    <!--<declare-styleable name="LetterSpacingTextView">-->
+        <!--<attr name="textSpacing" format="dimension"/>-->
+        <!--<attr name="text" format="string"/>-->
+        <!--<attr name="color" format="color"/>-->
+        <!--<attr name="textSize" format="dimension"/>-->
+    <!--</declare-styleable>-->
 </resources>

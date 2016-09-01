@@ -10,4 +10,12 @@
     <color name="space_line_bg">#ADADAD</color>
     <color name="title_black">#444444</color>
     <color name="white">#ffffff</color>
+
+    <color name="colorBlack">#000000</color>
+    <color name="colorToolbar">#99262A3B</color>
+    <color name="colorTopBar">#262A3B</color>
+    <color name="colorWhite">#ffffff</color>
+    <color name="colorGrayWhite">#cccccc</color>
+    <color name="colorGray">#84000000</color>
+    <color name="colorGrayWhitedeep">#c1c1c1</color>
 </resources>

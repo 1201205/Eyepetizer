@@ -9,7 +9,8 @@
 <com.hyc.eyepetizer.widget.AnimateTextView
     android:id="@+id/t1"
     android:layout_width="match_parent"
-    android:layout_height="100dp"/>
+    android:layout_height="100dp"
+    android:textColor="@color/colorAccent"/>
     <Button
         android:id="@+id/b1"
         android:layout_width="100dp"
@@ -17,7 +18,8 @@
     <com.hyc.eyepetizer.widget.AnimateTextView
         android:id="@+id/t2"
         android:layout_width="match_parent"
-        android:layout_height="100dp"/>
+        android:layout_height="100dp"
+        android:textColor="@color/colorAccent"/>
     <Button
         android:id="@+id/b2"
         android:layout_width="100dp"
@@ -25,7 +27,8 @@
     <com.hyc.eyepetizer.widget.AnimateTextView
         android:id="@+id/t3"
         android:layout_width="match_parent"
-        android:layout_height="100dp"/>
+        android:layout_height="100dp"
+        android:textColor="@color/colorAccent"/>
     <Button
         android:id="@+id/b3"
         android:layout_width="100dp"

@@ -1,16 +1,13 @@
 package com.hyc.eyepetizer;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.os.PersistableBundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
-
-import com.hyc.eyepetizer.widget.AnimateTextView;
-
 import butterknife.BindView;
+import butterknife.ButterKnife;
+import com.hyc.eyepetizer.widget.AnimateTextView;
 
 /**
  * Created by Administrator on 2016/9/1.
@@ -32,14 +29,30 @@ public class TestActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
+        ButterKnife.bind(this);
     }
+
+
+    @Override protected void onPostResume() {
+        super.onPostResume();
+    }
+
+
+    @Override protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        t1.setAnimText("111");
+        t2.setAnimText("12345678900123456789");
+        t3.setAnimText("1234567");
+        t1.animateChar();
+        t2.animateChar();
+        t3.animateChar();
+    }
+
 
     @Override
     protected void onResume() {
         super.onResume();
-        t1.setAnimText("111");
-        t2.setAnimText("12345678900123456789");
-        t3.setAnimText("1234567");
+
         b1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

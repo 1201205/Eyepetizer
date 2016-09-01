@@ -1,11 +1,11 @@
 package com.hyc.eyepetizer.widget;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.TextView;
 
 /**
@@ -46,7 +46,7 @@ public class AnimateTextView extends TextView{
         super(context, attrs, defStyleAttr);
     }
     public void animateChar(){
-        int length=getText().length();
+        int length = mCharSequence.length();
         if (length==0) {
             return;
         }
@@ -65,18 +65,8 @@ public class AnimateTextView extends TextView{
             return;
         } else {
             if (text.length()>COUNT) {
+                Log.e("hyc-test", text.subSequence(0, text.length() - COUNT) + "_--");
                 setText(text.subSequence(0,text.length()-COUNT));
-            }
-        }
-    }
-    @Override
-    public void setText(CharSequence text, BufferType type) {
-        mCharSequence=text;
-        if (TextUtils.isEmpty(text)) {
-            return;
-        } else {
-            if (text.length()>COUNT) {
-                super.setText(text.subSequence(0,text.length()-COUNT), type);
             }
         }
     }

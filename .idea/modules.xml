@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/Eyepetizer.iml" filepath="$PROJECT_DIR$/Eyepetizer.iml" />
       <module fileurl="file://$PROJECT_DIR$/Eyepetizer2.iml" filepath="$PROJECT_DIR$/Eyepetizer2.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ijkplayer/ijkplayer.iml" filepath="$PROJECT_DIR$/ijkplayer/ijkplayer.iml" />
     </modules>
   </component>
 </project>

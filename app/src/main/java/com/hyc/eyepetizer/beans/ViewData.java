@@ -5,6 +5,10 @@ public class ViewData implements java.io.Serializable {
     private ItemListData data;
     private String type;
 
+    public ViewData(ItemListData data, String type) {
+        this.data = data;
+        this.type = type;
+    }
 
     public ItemListData getData() {return this.data;}
 

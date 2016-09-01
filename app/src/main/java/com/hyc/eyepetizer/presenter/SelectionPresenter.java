@@ -7,6 +7,8 @@ import com.hyc.eyepetizer.beans.Selection;
 import com.hyc.eyepetizer.beans.ViewData;
 import com.hyc.eyepetizer.contract.SelectionContract;
 import com.hyc.eyepetizer.net.Requests;
+import com.hyc.eyepetizer.utils.WidgetHelper;
+
 import java.util.ArrayList;
 import java.util.List;
 import rx.android.schedulers.AndroidSchedulers;
@@ -23,6 +25,7 @@ public class SelectionPresenter extends BasePresenter<SelectionContract.View>
     private int mPageCount;
     private Func1<Selection, List<ViewData>> mConvert = new Func1<Selection, List<ViewData>>() {
         @Override public List<ViewData> call(Selection selection) {
+            mView.setNextPushTime(selection.getNextPublishTime());
             List<ViewData> datas = new ArrayList<ViewData>();
             int i = selection.getSectionList().size();
             for (int j = 0; j < i; j++) {
@@ -39,6 +42,8 @@ public class SelectionPresenter extends BasePresenter<SelectionContract.View>
                 mPageCount++;
             } else {
                 mPageCount = NO_MORE;
+                datas.add(new ViewData(null,WidgetHelper.Type.NO_MORE));
+                mView.noMore();
             }
             return datas;
         }
@@ -68,6 +73,7 @@ public class SelectionPresenter extends BasePresenter<SelectionContract.View>
 
 
     @Override public void getAndShowSelection() {
+        mPageCount=0;
         Requests.getApi()
             .getSelection()
             .subscribeOn(Schedulers.io())

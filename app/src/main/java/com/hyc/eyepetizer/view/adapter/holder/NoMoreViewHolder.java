@@ -14,11 +14,12 @@ import butterknife.ButterKnife;
 /**
  * Created by Administrator on 2016/8/31.
  */
-public class ForwardViewHolder extends RecyclerView.ViewHolder{
-    @BindView(R.id.tv_text)
-    public CustomTextView textView;
-    public ForwardViewHolder(View itemView) {
+public class NoMoreViewHolder extends RecyclerView.ViewHolder{
+    @BindView(R.id.tv_head)
+    public CustomTextView head;
+    public NoMoreViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this,itemView);
+        head.setTypeface(TypefaceHelper.getTypeface(TypefaceHelper.TEMP));
     }
 }

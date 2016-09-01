@@ -13,15 +13,16 @@ import butterknife.ButterKnife;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.utils.TypefaceHelper;
+import com.hyc.eyepetizer.widget.CustomTextView;
 
 /**
  * Created by Administrator on 2016/8/31.
  */
 public class VideoViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.tv_category)
-    public TextView category;
+    public CustomTextView category;
     @BindView(R.id.tv_title)
-    public TextView title;
+    public CustomTextView title;
     @BindView(R.id.sdv_img)
     public SimpleDraweeView img;
     @BindView(R.id.ll_flow)
@@ -35,7 +36,6 @@ public class VideoViewHolder extends RecyclerView.ViewHolder {
     public VideoViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
-        category.setTypeface(TypefaceHelper.getTypeface(TypefaceHelper.NORMAL));
         title.setTypeface(TypefaceHelper.getTypeface(TypefaceHelper.BOLD));
         mMask = ViewConfiguration.getTouchSlop();
         mAnimator = ObjectAnimator.ofFloat(flow, "alpha", 0);

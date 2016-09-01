@@ -33,6 +33,15 @@ public class ItemListData implements java.io.Serializable {
     private CoverHeader header;
     private List<ViewData> itemList;
     private int count;
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    private String image;
 
     public int getHeight() {
         return height;

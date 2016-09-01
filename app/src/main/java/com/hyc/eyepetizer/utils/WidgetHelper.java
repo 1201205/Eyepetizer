@@ -21,6 +21,10 @@ public class WidgetHelper {
                 return ViewType.VIDEO_COLLECTION_WITH_BRIEF;
             case Type.VIDEO_COLLECTION_WITH_TITLE:
                 return ViewType.VIDEO_COLLECTION_WITH_TITLE;
+            case Type.NO_MORE:
+                return ViewType.NO_MORE;
+            case Type.CAMPAIGN:
+                return ViewType.CAMPAIGN;
         }
         return ViewType.Error;
     }
@@ -34,6 +38,9 @@ public class WidgetHelper {
         String TEXT_HEADER = "textHeader";//标题
         String VIDEO_COLLECTION_WITH_BRIEF = "videoCollectionWithBrief";//水平作者视频
         String VIDEO_COLLECTION_WITH_TITLE = "videoCollectionWithTitle";//有标题的水平视频
+        String CAMPAIGN = "campaign";//有标题的水平视频
+        String NO_MORE = "noMore";
+
     }
 
     public interface ViewType {
@@ -45,5 +52,7 @@ public class WidgetHelper {
         int TEXT_HEADER = 5;
         int VIDEO_COLLECTION_WITH_BRIEF = 6;
         int VIDEO_COLLECTION_WITH_TITLE = 7;
+        int NO_MORE = 8;
+        int CAMPAIGN=9;
     }
 }

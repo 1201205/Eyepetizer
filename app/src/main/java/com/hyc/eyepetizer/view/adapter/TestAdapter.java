@@ -18,8 +18,10 @@ import com.hyc.eyepetizer.utils.TypefaceHelper;
 import com.hyc.eyepetizer.utils.WidgetHelper;
 import com.hyc.eyepetizer.view.adapter.holder.BlankViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.BriefVideoViewHolder;
+import com.hyc.eyepetizer.view.adapter.holder.CampaignViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.CoverVideoViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.ForwardViewHolder;
+import com.hyc.eyepetizer.view.adapter.holder.NoMoreViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.TextHeaderViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.TitleVideoViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.VideoViewHolder;
@@ -62,6 +64,10 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 return new BlankViewHolder(mLayoutInflater.inflate(R.layout.item_blank,parent,false));
             case WidgetHelper.ViewType.VIDEO_COLLECTION_WITH_TITLE:
                 return new TitleVideoViewHolder(mLayoutInflater.inflate(R.layout.item_video_collection_title,parent,false));
+            case WidgetHelper.ViewType.NO_MORE:
+                return new NoMoreViewHolder(mLayoutInflater.inflate(R.layout.item_text,parent,false));
+            case WidgetHelper.ViewType.CAMPAIGN:
+                return new CampaignViewHolder(mLayoutInflater.inflate(R.layout.item_campaign,parent,false));
         }
         return null;
     }
@@ -82,6 +88,10 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             bindView((BlankViewHolder) holder,mDatas.get(position));
         } else if (holder instanceof TitleVideoViewHolder) {
             bindView((TitleVideoViewHolder) holder,mDatas.get(position));
+        } else if (holder instanceof NoMoreViewHolder) {
+            bindView((NoMoreViewHolder) holder,mDatas.get(position));
+        } else if (holder instanceof CampaignViewHolder) {
+            bindView((CampaignViewHolder) holder,mDatas.get(position));
         }
     }
 
@@ -128,7 +138,12 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         holder.textView.setTypeface(TypefaceHelper.getTypeface(data.getData().getFont()));
         holder.textView.setText(data.getData().getText());
     }
-
+    private void bindView(NoMoreViewHolder holder, ViewData data){
+       holder. head.setText("- The End -");
+    }
+    private void bindView(CampaignViewHolder holder, ViewData data){
+        FrescoHelper.loadUrl(holder. campaign,data.getData().getImage());
+    }
     private void bindView(BlankViewHolder holder, ViewData data){
         Log.e("Hyc--",data.getData().getHeight()+"---"+holder.space.getLayoutParams());
         RecyclerView.LayoutParams params= (RecyclerView.LayoutParams) holder.space.getLayoutParams();

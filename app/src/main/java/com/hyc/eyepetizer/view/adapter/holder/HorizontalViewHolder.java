@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.hyc.eyepetizer.R;
+import com.hyc.eyepetizer.widget.CustomTextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -16,9 +17,9 @@ import butterknife.ButterKnife;
  */
 public class HorizontalViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.tv_category)
-    public TextView category;
+    public CustomTextView category;
     @BindView(R.id.tv_title)
-    public TextView title;
+    public CustomTextView title;
     @BindView(R.id.sdv_img)
     public SimpleDraweeView img;
     @BindView(R.id.ll_flow)

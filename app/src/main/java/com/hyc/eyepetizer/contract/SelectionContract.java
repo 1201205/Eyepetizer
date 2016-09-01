@@ -11,6 +11,9 @@ public interface SelectionContract {
     interface View extends BaseView {
         void showSelection(List<ViewData> datas);
         void showMoreSelection(List<ViewData> datas);
+        void noMore();
+        void onRefresh();
+        void setNextPushTime(long time);
     }
 
 

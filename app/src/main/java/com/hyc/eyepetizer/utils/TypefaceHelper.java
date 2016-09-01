@@ -13,6 +13,7 @@ import java.util.HashMap;
 public class TypefaceHelper {
     public static final String NORMAL="normal";
     public static final String BOLD="bold";
+    public static final String TEMP="temp";
     private static final HashMap<String,Typeface> sTypefaceMap=new HashMap<>();
 
     public static Typeface getTypeface(String type){
@@ -32,7 +33,9 @@ public class TypefaceHelper {
                 return Typeface.createFromAsset(manager, "fonts/FZLanTingHeiS-DB1-GB-Regular.TTF");//根据路径得到Typeface
             case NORMAL:
                 return Typeface.createFromAsset(manager, "fonts/FZLanTingHeiS-L-GB-Regular.TTF");//根据路径得到Typeface
+            case TEMP:
+                return Typeface.createFromAsset(manager, "fonts/Lobster-1.4.otf");//根据路径得到Typeface
         }
-        return null;
+        return Typeface.DEFAULT;
     }
 }

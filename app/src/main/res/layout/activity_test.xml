@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+              android:orientation="vertical"
+    android:background="@color/white"
+    tools:context="com.hyc.eyepetizer.MainActivity">
+<com.hyc.eyepetizer.widget.AnimateTextView
+    android:id="@+id/t1"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"/>
+    <Button
+        android:id="@+id/b1"
+        android:layout_width="100dp"
+        android:layout_height="100dp"/>
+    <com.hyc.eyepetizer.widget.AnimateTextView
+        android:id="@+id/t2"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"/>
+    <Button
+        android:id="@+id/b2"
+        android:layout_width="100dp"
+        android:layout_height="100dp"/>
+    <com.hyc.eyepetizer.widget.AnimateTextView
+        android:id="@+id/t3"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"/>
+    <Button
+        android:id="@+id/b3"
+        android:layout_width="100dp"
+        android:layout_height="100dp"/>
+</LinearLayout>

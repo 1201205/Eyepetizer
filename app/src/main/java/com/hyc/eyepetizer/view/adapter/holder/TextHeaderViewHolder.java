@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.hyc.eyepetizer.R;
+import com.hyc.eyepetizer.widget.CustomTextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -14,7 +15,7 @@ import butterknife.ButterKnife;
  */
 public class TextHeaderViewHolder extends RecyclerView.ViewHolder{
     @BindView(R.id.tv_head)
-    public TextView head;
+    public CustomTextView head;
     public TextHeaderViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this,itemView);

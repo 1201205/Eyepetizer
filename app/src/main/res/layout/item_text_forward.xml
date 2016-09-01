@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="58dp">
 
-        <TextView
+        <com.hyc.eyepetizer.widget.CustomTextView
             android:id="@+id/tv_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@id/tv_text"
-            android:src="@drawable/ic_action_next_grey"/>
+            android:src="@drawable/ic_action_more_arrow_dark"/>
     </RelativeLayout>
 
     <View

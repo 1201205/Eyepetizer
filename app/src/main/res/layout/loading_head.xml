@@ -3,11 +3,11 @@
     android:layout_width="match_parent"
     android:layout_height="200dp">
 
-    <TextView
+    <com.hyc.eyepetizer.widget.CustomTextView
+        android:textColor="@color/title_black"
         android:id="@+id/tv_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="eee"
         android:layout_centerInParent="true"/>
 
     <com.hyc.eyepetizer.widget.LoadingAnimView

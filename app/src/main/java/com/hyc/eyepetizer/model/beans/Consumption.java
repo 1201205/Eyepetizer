@@ -1,4 +1,4 @@
-package com.hyc.eyepetizer.beans;
+package com.hyc.eyepetizer.model.beans;
 
 public class Consumption implements java.io.Serializable {
     private static final long serialVersionUID = 8936998725039799638L;

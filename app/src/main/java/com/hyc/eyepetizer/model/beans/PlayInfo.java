@@ -1,4 +1,4 @@
-package com.hyc.eyepetizer.beans;
+package com.hyc.eyepetizer.model.beans;
 
 public class PlayInfo implements java.io.Serializable {
     private static final long serialVersionUID = -1953592613213925881L;

@@ -1,4 +1,4 @@
-package com.hyc.eyepetizer.beans;
+package com.hyc.eyepetizer.model.beans;
 
 public class Cover implements java.io.Serializable {
     private static final long serialVersionUID = 1161523434911032334L;

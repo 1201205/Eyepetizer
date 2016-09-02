@@ -4,23 +4,23 @@
     android:layout_height="match_parent">
 
     <RelativeLayout
-        android:id="@+id/rl_allview"
+        android:id="@+id/rl_all"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="match_parent"
         android:background="@color/colorBlack">
 
         <tv.danmaku.ijk.media.IjkVideoView
-            android:id="@+id/videoview"
+            android:id="@+id/ijk_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_centerInParent="true"></tv.danmaku.ijk.media.IjkVideoView>
+            android:layout_centerInParent="true"/>
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <RelativeLayout
-                android:id="@+id/load_view"
+                android:id="@+id/rl_loading"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -34,7 +34,7 @@
                     android:indeterminateDrawable="@drawable/video_loading"
                     android:padding="5dp"/>
 
-                <TextView
+                <com.hyc.eyepetizer.widget.CustomTextView
                     android:id="@+id/tv_tip"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -58,7 +58,7 @@
                     android:layout_marginTop="60dp"
                     android:padding="5dp"/>
 
-                <TextView
+                <com.hyc.eyepetizer.widget.CustomTextView
                     android:id="@+id/tv_voice_light"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -74,13 +74,14 @@
             android:id="@+id/tv_forward"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/ly_floor"
+            android:layout_above="@+id/ll_floor"
             android:gravity="center"
             android:textColor="@color/colorWhite"
             android:textSize="22sp"/>
 
         <LinearLayout
-            android:id="@+id/ly_floor"
+            android:background="@color/colorBlack"
+            android:id="@+id/ll_floor"
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:layout_alignParentBottom="true"
@@ -90,12 +91,11 @@
                 android:id="@+id/iv_start_pause"
                 android:layout_width="55dp"
                 android:layout_height="55dp"
-                android:layout_alignParentRight="true"
                 android:scaleType="centerInside"
-                android:src="@drawable/ic_play_arrow_white_24dp"/>
+                android:src="@drawable/ic_play"/>
 
             <TextView
-                android:id="@+id/tv_curtime"
+                android:id="@+id/tv_current_time"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
@@ -119,31 +119,11 @@
                 android:textColor="@color/colorWhite"
                 android:textSize="15sp"/>
 
-            <ImageView
-                android:id="@+id/iv_fullscreen"
-                android:layout_width="55dp"
-                android:layout_height="55dp"
-                android:scaleType="centerInside"
-                android:src="@drawable/icon_live_fullscreen_normal"/>
         </LinearLayout>
-
-    </RelativeLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:id="@+id/ly_system_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone"/>
-
         <RelativeLayout
-            android:id="@+id/rl_tt"
-            android:layout_width="match_parent"
+            android:background="@color/colorBlack"
+            android:id="@+id/rl_title"
+            android:layout_width="wrap_content"
             android:layout_height="?attr/actionBarSize">
 
             <ImageView
@@ -151,33 +131,18 @@
                 android:layout_width="?attr/actionBarSize"
                 android:layout_height="match_parent"
                 android:scaleType="centerInside"
-                android:src="@drawable/back_icon"/>
+                android:src="@drawable/ic_player_close_white"/>
 
-            <TextView
+            <com.hyc.eyepetizer.widget.CustomTextView
                 android:id="@+id/tv_title"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_toLeftOf="@+id/iv_menu"
                 android:layout_toRightOf="@+id/iv_back"
                 android:gravity="left|center_vertical"
-                android:textColor="@color/colorWhite"
-                android:textSize="18sp"/>
-
-            <ImageView
-                android:id="@+id/iv_menu"
-                android:layout_width="55dp"
-                android:layout_height="55dp"
-                android:layout_alignParentRight="true"
-                android:scaleType="centerInside"
-                android:src="@drawable/icon_menu_more"/>
-
+                android:textColor="@color/space_bg"
+                android:textSize="14sp"/>
         </RelativeLayout>
-    </LinearLayout>
+    </RelativeLayout>
 
-    <!--<Button
-        android:id="@+id/Liv"
-        android:layout_gravity="bottom"
-        android:layout_width="match_parent"
-        android:layout_height="60dp" />-->
 
 </FrameLayout>

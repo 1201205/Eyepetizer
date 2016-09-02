@@ -1,4 +1,4 @@
-package com.hyc.eyepetizer;
+package com.hyc.eyepetizer.view;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,6 +9,9 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import com.hyc.eyepetizer.view.adapter.FragmentAdapter;
+import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.utils.TypefaceHelper;
 import com.hyc.eyepetizer.view.fragment.TestFragment;
 import com.hyc.eyepetizer.widget.CustomTextView;

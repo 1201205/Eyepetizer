@@ -1,4 +1,4 @@
-package com.hyc.eyepetizer.beans;
+package com.hyc.eyepetizer.model.beans;
 
 public class Provider implements java.io.Serializable {
     private static final long serialVersionUID = 9209016264480301096L;

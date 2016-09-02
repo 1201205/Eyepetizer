@@ -1,4 +1,4 @@
-package com.hyc.eyepetizer.beans;
+package com.hyc.eyepetizer.model.beans;
 
 public class WebUrl implements java.io.Serializable {
     private static final long serialVersionUID = 4784658320416812659L;

@@ -1,7 +1,7 @@
-package com.hyc.eyepetizer.beans;
+package com.hyc.eyepetizer.model.beans;
 
-public class Header implements java.io.Serializable {
-    private static final long serialVersionUID = 8067679167771620994L;
+public class Footer implements java.io.Serializable {
+    private static final long serialVersionUID = 1945866281730010540L;
     private FooterData data;
     private String type;
 

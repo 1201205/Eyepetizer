@@ -1,7 +1,7 @@
 package com.hyc.eyepetizer.contract;
 
 import com.hyc.eyepetizer.base.BaseView;
-import com.hyc.eyepetizer.beans.ViewData;
+import com.hyc.eyepetizer.model.beans.ViewData;
 import java.util.List;
 
 /**

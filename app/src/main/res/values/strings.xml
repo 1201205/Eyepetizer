@@ -5,4 +5,6 @@
     <string name="category">发现</string>
     <string name="pgc">作者</string>
     <string name="mine">我的</string>
+    <string name="video_loading">视频加载中</string>
+    <string name="video_loading_error">视频加载出错。。</string>
 </resources>

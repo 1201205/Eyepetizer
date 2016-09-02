@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.base.BaseFragment;
-import com.hyc.eyepetizer.beans.ViewData;
+import com.hyc.eyepetizer.model.beans.ViewData;
 import com.hyc.eyepetizer.contract.SelectionContract;
 import com.hyc.eyepetizer.presenter.SelectionPresenter;
 import com.hyc.eyepetizer.view.adapter.TestAdapter;

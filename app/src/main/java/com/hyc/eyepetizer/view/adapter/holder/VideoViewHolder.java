@@ -13,6 +13,7 @@ import butterknife.ButterKnife;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.utils.TypefaceHelper;
+import com.hyc.eyepetizer.widget.CustomDraweeView;
 import com.hyc.eyepetizer.widget.CustomTextView;
 
 /**
@@ -24,7 +25,7 @@ public class VideoViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.tv_title)
     public CustomTextView title;
     @BindView(R.id.sdv_img)
-    public SimpleDraweeView img;
+    public CustomDraweeView img;
     @BindView(R.id.ll_flow)
     public LinearLayout flow;
 

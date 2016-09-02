@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
               android:orientation="vertical"
     android:background="@color/white"
-    tools:context="com.hyc.eyepetizer.MainActivity">
+    tools:context=".view.MainActivity">
 <com.hyc.eyepetizer.widget.AnimateTextView
     android:id="@+id/t1"
     android:layout_width="match_parent"

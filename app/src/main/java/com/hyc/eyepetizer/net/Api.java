@@ -1,6 +1,6 @@
 package com.hyc.eyepetizer.net;
 
-import com.hyc.eyepetizer.beans.Selection;
+import com.hyc.eyepetizer.model.beans.Selection;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 import rx.Observable;

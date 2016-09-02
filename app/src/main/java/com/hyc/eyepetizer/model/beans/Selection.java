@@ -1,6 +1,5 @@
-package com.hyc.eyepetizer.beans;
+package com.hyc.eyepetizer.model.beans;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Selection implements java.io.Serializable {

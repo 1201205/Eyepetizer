@@ -1,16 +1,19 @@
 package com.hyc.eyepetizer.presenter;
 
 import android.text.TextUtils;
+
 import com.hyc.eyepetizer.base.BasePresenter;
-import com.hyc.eyepetizer.beans.SectionList;
-import com.hyc.eyepetizer.beans.Selection;
-import com.hyc.eyepetizer.beans.ViewData;
 import com.hyc.eyepetizer.contract.SelectionContract;
+import com.hyc.eyepetizer.model.FeedModel;
+import com.hyc.eyepetizer.model.beans.SectionList;
+import com.hyc.eyepetizer.model.beans.Selection;
+import com.hyc.eyepetizer.model.beans.ViewData;
 import com.hyc.eyepetizer.net.Requests;
 import com.hyc.eyepetizer.utils.WidgetHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
@@ -20,11 +23,13 @@ import rx.schedulers.Schedulers;
  * Created by ray on 16/8/30.
  */
 public class SelectionPresenter extends BasePresenter<SelectionContract.View>
-    implements SelectionContract.Presenter {
+        implements SelectionContract.Presenter {
     private static final int NO_MORE = -1;
     private int mPageCount;
+    private FeedModel mModel;
     private Func1<Selection, List<ViewData>> mConvert = new Func1<Selection, List<ViewData>>() {
-        @Override public List<ViewData> call(Selection selection) {
+        @Override
+        public List<ViewData> call(Selection selection) {
             mView.setNextPushTime(selection.getNextPublishTime());
             List<ViewData> datas = new ArrayList<ViewData>();
             int i = selection.getSectionList().size();
@@ -33,16 +38,22 @@ public class SelectionPresenter extends BasePresenter<SelectionContract.View>
                 if (bean.getHeader() != null) {
                     datas.add(bean.getHeader());
                 }
+                int count = bean.getItemList().size();
+                for (int c = 0; c < count; c++) {
+                    bean.getItemList().get(c).setParentIndex(bean.getId());
+                    bean.getItemList().get(c).setIndex(c);
+                }
                 datas.addAll(bean.getItemList());
                 if (bean.getFooter() != null) {
                     datas.add(bean.getFooter());
                 }
             }
+            mModel.addSection(selection.getSectionList());
             if (!TextUtils.isEmpty(selection.getNextPageUrl())) {
                 mPageCount++;
             } else {
                 mPageCount = NO_MORE;
-                datas.add(new ViewData(null,WidgetHelper.Type.NO_MORE));
+                datas.add(new ViewData(null, WidgetHelper.Type.NO_MORE));
                 mView.noMore();
             }
             return datas;
@@ -52,38 +63,43 @@ public class SelectionPresenter extends BasePresenter<SelectionContract.View>
 
     public SelectionPresenter(SelectionContract.View view) {
         super(view);
+        mModel = FeedModel.getInstance();
     }
 
 
-    @Override public void getNextPage() {
+    @Override
+    public void getNextPage() {
         if (mPageCount != NO_MORE) {
             Requests.getApi()
-                .getMoreSelection(mPageCount, true)
-                .map(mConvert)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    new Action1<List<ViewData>>() {
-                        @Override public void call(List<ViewData> datas) {
-                            mView.showMoreSelection(datas);
-                        }
-                    });
+                    .getMoreSelection(mPageCount, true)
+                    .map(mConvert)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            new Action1<List<ViewData>>() {
+                                @Override
+                                public void call(List<ViewData> datas) {
+                                    mView.showMoreSelection(datas);
+                                }
+                            });
         }
     }
 
 
-    @Override public void getAndShowSelection() {
-        mPageCount=0;
+    @Override
+    public void getAndShowSelection() {
+        mPageCount = 0;
+        mModel.clear();
         Requests.getApi()
-            .getSelection()
-            .subscribeOn(Schedulers.io())
-            .map(mConvert)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Action1<List<ViewData>>() {
-                @Override
-                public void call(List<ViewData> selections) {
-                    mView.showSelection(selections);
-                }
-            });
+                .getSelection()
+                .subscribeOn(Schedulers.io())
+                .map(mConvert)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<List<ViewData>>() {
+                    @Override
+                    public void call(List<ViewData> selections) {
+                        mView.showSelection(selections);
+                    }
+                });
     }
 }

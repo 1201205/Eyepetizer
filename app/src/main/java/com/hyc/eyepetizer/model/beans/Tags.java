@@ -1,4 +1,4 @@
-package com.hyc.eyepetizer.beans;
+package com.hyc.eyepetizer.model.beans;
 
 public class Tags implements java.io.Serializable {
     private static final long serialVersionUID = -946103001068900264L;

@@ -1,4 +1,4 @@
-package com.hyc.eyepetizer;
+package com.hyc.eyepetizer.view;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.Button;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.widget.AnimateTextView;
 
 /**

@@ -1,4 +1,4 @@
-package com.hyc.eyepetizer.beans;
+package com.hyc.eyepetizer.model.beans;
 
 public class Author implements java.io.Serializable {
     private static final long serialVersionUID = -493082693763474811L;

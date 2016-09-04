@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.hyc.eyepetizer.widget.PullToRefreshView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ptrf_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/ptrf_main"
     android:background="@color/white"
     tools:context=".view.MainActivity">
 
@@ -16,9 +16,9 @@
         android:layout_marginTop="-120dp">
         <com.hyc.eyepetizer.widget.CustomTextView
             android:id="@id/tv_remain"
-            android:textColor="@color/title_black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/title_black"
             android:layout_marginTop="30dp"
             android:text="123"
             android:layout_centerInParent="true"/>
@@ -28,7 +28,8 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"/>
     </LinearLayout>
-<android.support.v7.widget.RecyclerView
+
+    <com.hyc.eyepetizer.widget.VideoRecyclerView
     android:id="@id/target"
     android:layout_width="match_parent"
     android:layout_height="match_parent"/>

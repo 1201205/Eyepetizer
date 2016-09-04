@@ -2,9 +2,7 @@ package com.hyc.eyepetizer.utils;
 
 import android.content.res.AssetManager;
 import android.graphics.Typeface;
-
 import com.hyc.eyepetizer.MainApplication;
-
 import java.util.HashMap;
 
 /**
@@ -13,7 +11,7 @@ import java.util.HashMap;
 public class TypefaceHelper {
     public static final String NORMAL="normal";
     public static final String BOLD="bold";
-    public static final String TEMP="temp";
+    public static final String LOBSTER = "lobster";
     private static final HashMap<String,Typeface> sTypefaceMap=new HashMap<>();
 
     public static Typeface getTypeface(String type){
@@ -33,7 +31,7 @@ public class TypefaceHelper {
                 return Typeface.createFromAsset(manager, "fonts/FZLanTingHeiS-DB1-GB-Regular.TTF");//根据路径得到Typeface
             case NORMAL:
                 return Typeface.createFromAsset(manager, "fonts/FZLanTingHeiS-L-GB-Regular.TTF");//根据路径得到Typeface
-            case TEMP:
+            case LOBSTER:
                 return Typeface.createFromAsset(manager, "fonts/Lobster-1.4.otf");//根据路径得到Typeface
         }
         return Typeface.DEFAULT;

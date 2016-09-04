@@ -4,33 +4,34 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-    <com.hyc.eyepetizer.widget.CustomDraweeView
+    <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/sdv_img"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:transitionName="transition_name"
         fresco:viewAspectRatio="1.44"/>
 
     <LinearLayout
         android:id="@+id/ll_flow"
-        android:orientation="vertical"
-        android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
         android:background="@color/alpha_black">
 
         <com.hyc.eyepetizer.widget.CustomTextView
-            android:textSize="16sp"
-            android:textColor="@color/white"
             android:id="@+id/tv_title"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textColor="@color/white"/>
 
         <com.hyc.eyepetizer.widget.CustomTextView
-            android:textSize="12sp"
-            android:layout_marginTop="4dp"
-            android:textColor="@color/white"
             android:id="@+id/tv_category"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/white"/>
     </LinearLayout>
 </FrameLayout>

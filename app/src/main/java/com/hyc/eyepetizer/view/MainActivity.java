@@ -9,10 +9,9 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
-import com.hyc.eyepetizer.view.adapter.FragmentAdapter;
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.utils.TypefaceHelper;
+import com.hyc.eyepetizer.view.adapter.FragmentAdapter;
 import com.hyc.eyepetizer.view.fragment.TestFragment;
 import com.hyc.eyepetizer.widget.CustomTextView;
 import java.util.ArrayList;
@@ -30,13 +29,22 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_main);
         ButterKnife.bind(this);
-
-        mTitle.setTypeface(TypefaceHelper.getTypeface(TypefaceHelper.TEMP));
+        //TransitionSet transitionSet = new TransitionSet();
+        //transitionSet.addTransition(new ChangeBounds());
+        //transitionSet.addTransition(new DraweeTransition(ScalingUtils.ScaleType.CENTER_CROP, ScalingUtils.ScaleType.FIT_CENTER));
+        //getWindow().setSharedElementEnterTransition(transitionSet);
+        //
+        //getWindow().setSharedElementReturnTransition(transitionSet);
+        //getWindow().setSharedElementEnterTransition(DraweeTransition.createTransitionSet(ScalingUtils.ScaleType.CENTER_CROP,
+        //    ScalingUtils.ScaleType.CENTER_CROP));
+        //getWindow().setSharedElementReturnTransition(DraweeTransition.createTransitionSet(ScalingUtils.ScaleType.CENTER_CROP,
+        //    ScalingUtils.ScaleType.CENTER_CROP));
+        mTitle.setTypeface(TypefaceHelper.getTypeface(TypefaceHelper.LOBSTER));
         mTitle.setText(R.string.app_name);
         List<Fragment> fragments=new ArrayList<>();
         fragments.add(new TestFragment());
-        fragments.add(new TestFragment());
-        fragments.add(new TestFragment());
+        //fragments.add(new TestFragment());
+        //fragments.add(new TestFragment());
         FragmentAdapter adapter=new FragmentAdapter(getSupportFragmentManager(),fragments);
         mPager.setAdapter(adapter);
         for (int i=0;i<mTab.getChildCount();i++) {

@@ -3,7 +3,6 @@ package com.hyc.eyepetizer.model;
 import com.hyc.eyepetizer.model.beans.SectionList;
 import com.hyc.eyepetizer.model.beans.ViewData;
 import com.hyc.eyepetizer.utils.WidgetHelper;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +16,13 @@ import java.util.List;
 public class FeedModel {
 
     private static FeedModel sModel;
-    private static Object sObject = new Object();
+    private List<SectionList> mSectionLists;
+
+
+    private FeedModel() {
+        mSectionLists = new ArrayList<>();
+    }
+
 
     public static FeedModel getInstance() {
 
@@ -31,11 +36,6 @@ public class FeedModel {
         return sModel;
     }
 
-    private List<SectionList> mSectionLists;
-
-    private FeedModel() {
-        mSectionLists = new ArrayList<>();
-    }
 
     public void addSection(List<SectionList> datas) {
         mSectionLists.addAll(datas);

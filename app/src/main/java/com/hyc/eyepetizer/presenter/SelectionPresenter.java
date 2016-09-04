@@ -1,7 +1,7 @@
 package com.hyc.eyepetizer.presenter;
 
 import android.text.TextUtils;
-
+import android.util.Log;
 import com.hyc.eyepetizer.base.BasePresenter;
 import com.hyc.eyepetizer.contract.SelectionContract;
 import com.hyc.eyepetizer.model.FeedModel;
@@ -10,10 +10,8 @@ import com.hyc.eyepetizer.model.beans.Selection;
 import com.hyc.eyepetizer.model.beans.ViewData;
 import com.hyc.eyepetizer.net.Requests;
 import com.hyc.eyepetizer.utils.WidgetHelper;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
@@ -35,13 +33,19 @@ public class SelectionPresenter extends BasePresenter<SelectionContract.View>
             int i = selection.getSectionList().size();
             for (int j = 0; j < i; j++) {
                 SectionList bean = selection.getSectionList().get(j);
+                Log.e("Jjjj", bean.getId() + "---");
                 if (bean.getHeader() != null) {
                     datas.add(bean.getHeader());
                 }
                 int count = bean.getItemList().size();
+                int temp = 0;
                 for (int c = 0; c < count; c++) {
+                    ViewData data = bean.getItemList().get(c);
+                    if (WidgetHelper.Type.VIDEO.equals(data.getType())) {
+                        bean.getItemList().get(c).setIndex(temp);
+                        temp++;
+                    }
                     bean.getItemList().get(c).setParentIndex(bean.getId());
-                    bean.getItemList().get(c).setIndex(c);
                 }
                 datas.addAll(bean.getItemList());
                 if (bean.getFooter() != null) {

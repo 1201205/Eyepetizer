@@ -10,7 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.model.beans.ItemListData;
 import com.hyc.eyepetizer.model.beans.ViewData;
@@ -19,7 +18,7 @@ import com.hyc.eyepetizer.utils.DataHelper;
 import com.hyc.eyepetizer.utils.FrescoHelper;
 import com.hyc.eyepetizer.utils.TypefaceHelper;
 import com.hyc.eyepetizer.utils.WidgetHelper;
-import com.hyc.eyepetizer.view.VideoDetailActivity;
+import com.hyc.eyepetizer.view.VideoDetailActivity2;
 import com.hyc.eyepetizer.view.adapter.holder.BlankViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.BriefVideoViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.CampaignViewHolder;
@@ -30,7 +29,6 @@ import com.hyc.eyepetizer.view.adapter.holder.TextHeaderViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.TitleVideoViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.VideoViewHolder;
 import com.hyc.eyepetizer.widget.HorizontalDecoration;
-
 import java.util.List;
 
 /**
@@ -81,7 +79,7 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof VideoViewHolder) {
-            bindView((VideoViewHolder) holder, mDatas.get(position));
+            bindView((VideoViewHolder) holder, mDatas.get(position), position);
         } else if (holder instanceof CoverVideoViewHolder) {
             bindView((CoverVideoViewHolder) holder, mDatas.get(position));
         } else if (holder instanceof BriefVideoViewHolder) {
@@ -101,14 +99,19 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
-    private void bindView(final VideoViewHolder holder, final ViewData data) {
+
+    private void bindView(final VideoViewHolder holder, final ViewData data, final int position) {
         final ItemListData itemData = data.getData();
         FrescoHelper.loadUrl(holder.img, itemData.getCover().getDetail());
         holder.setOnItemClickListener(new VideoViewHolder.ItemClickListener() {
             @Override
             public void onItemClicked() {
-                ActivityOptionsCompat compat = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, holder.img, VideoDetailActivity.SHARE_PICTURE);
-                Intent intent = VideoDetailActivity.newIntent(context, data.getIndex(), data.getParentIndex());
+                // TODO: 16/9/4 先暂时使用当前的shareElement方式  有时间改为正常的方式
+
+                ActivityOptionsCompat compat = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                    (Activity) context, holder.img, "transition_name");
+                Intent intent = VideoDetailActivity2.newIntent(context, data.getIndex(),
+                    data.getParentIndex());
                 ActivityCompat.startActivity((Activity) context, intent, compat.toBundle());
             }
         });
@@ -144,6 +147,7 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private void bindView(TextHeaderViewHolder holder, ViewData data) {
         holder.head.setTypeface(TypefaceHelper.getTypeface(data.getData().getFont()));
         holder.head.setText(data.getData().getText());
+        holder.head.setTypeface(TypefaceHelper.getTypeface(data.getData().getFont()));
     }
 
     private void bindView(ForwardViewHolder holder, ViewData data) {

@@ -7,13 +7,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.utils.TypefaceHelper;
-import com.hyc.eyepetizer.widget.CustomDraweeView;
 import com.hyc.eyepetizer.widget.CustomTextView;
 
 /**
@@ -25,7 +23,7 @@ public class VideoViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.tv_title)
     public CustomTextView title;
     @BindView(R.id.sdv_img)
-    public CustomDraweeView img;
+    public SimpleDraweeView img;
     @BindView(R.id.ll_flow)
     public LinearLayout flow;
 
@@ -63,6 +61,13 @@ public class VideoViewHolder extends RecyclerView.ViewHolder {
                     case MotionEvent.ACTION_UP:
                         reset();
                         if (mItemClickListener != null) {
+                            //int[] location=new int[4];
+                            //location[0]=img.getHeight();
+                            //location[1]=img.getWidth();
+                            //int[] lo=new int[2];
+                            //img.getLocationInWindow(lo);
+                            //location[2]=lo[0];
+                            //location[3]=lo[1];
                             mItemClickListener.onItemClicked();
                         }
                         return false;

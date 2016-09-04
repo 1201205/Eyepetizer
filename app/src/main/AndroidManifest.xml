@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
     <application
+        android:largeHeap="true"
         android:name=".MainApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -24,6 +25,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".view.VideoActivity"/>
+        <activity
+            android:name=".view.VideoDetailActivity2"
+            android:theme="@style/AppTheme.TransparentActivity"/>
+
         <activity android:name=".view.VideoDetailActivity" android:theme="@style/AppTheme.TransparentActivity"/>
     </application>
 

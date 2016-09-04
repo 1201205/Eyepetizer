@@ -7,20 +7,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.hyc.eyepetizer.R;
-import com.hyc.eyepetizer.base.BaseFragment;
-import com.hyc.eyepetizer.model.beans.ViewData;
-import com.hyc.eyepetizer.contract.SelectionContract;
-import com.hyc.eyepetizer.presenter.SelectionPresenter;
-import com.hyc.eyepetizer.view.adapter.TestAdapter;
-import com.hyc.eyepetizer.widget.PullToRefreshView;
-
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import com.hyc.eyepetizer.R;
+import com.hyc.eyepetizer.base.BaseFragment;
+import com.hyc.eyepetizer.contract.SelectionContract;
+import com.hyc.eyepetizer.model.beans.ViewData;
+import com.hyc.eyepetizer.presenter.SelectionPresenter;
+import com.hyc.eyepetizer.view.adapter.TestAdapter;
+import com.hyc.eyepetizer.widget.PullToRefreshView;
+import java.util.List;
 
 /**
  * Created by Administrator on 2016/8/30.

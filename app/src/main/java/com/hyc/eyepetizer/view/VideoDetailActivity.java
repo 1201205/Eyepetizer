@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import butterknife.BindView;
@@ -64,8 +63,6 @@ public class VideoDetailActivity extends BaseActivity {
     protected void handleIntent() {
         mParentIndex = getIntent().getIntExtra(PARENT_INDEX, -1);
         mIndex = getIntent().getIntExtra(INDEX, -1);
-
-        Log.e("hyc-test123", "new---" + "---mIndex--" + mIndex + "-mParentIndex--" + mParentIndex);
     }
 
 
@@ -104,6 +101,6 @@ public class VideoDetailActivity extends BaseActivity {
 
     @Override
     protected int getLayoutID() {
-        return R.layout.activity_video_detail;
+        return R.layout.item_video_detail;
     }
 }

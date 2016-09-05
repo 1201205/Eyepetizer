@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.util.Log;
 
 /**
  * Created by ray on 16/9/4.
@@ -39,7 +38,6 @@ public class VideoRecyclerView extends RecyclerView {
 
     @Override
     protected int getChildDrawingOrder(int childCount, int i) {
-        Log.e("hyc666", i + "----");
         int position = mCurrentAnimPosition -
             ((LinearLayoutManager) getLayoutManager()).findFirstVisibleItemPosition();
         if (position < 0 || position > childCount) {

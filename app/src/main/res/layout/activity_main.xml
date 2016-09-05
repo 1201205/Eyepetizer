@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.hyc.eyepetizer.widget.PullToRefreshView xmlns:android="http://schemas.android.com/apk/res/android"
-                                             xmlns:fresco="http://schemas.android.com/apk/res-auto"
-                                             xmlns:tools="http://schemas.android.com/tools"
-                                             android:id="@+id/ptrf_main"
-                                             android:layout_width="match_parent"
-                                             android:layout_height="match_parent"
-                                             android:background="@color/white"
-                                             tools:context=".view.MainActivity">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ptrf_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".view.MainActivity">
 
     <LinearLayout
         android:id="@id/head"
@@ -31,7 +30,7 @@
             android:layout_centerHorizontal="true"/>
     </LinearLayout>
 
-    <com.hyc.eyepetizer.widget.VideoRecyclerView
+    <android.support.v7.widget.RecyclerView
         android:id="@id/target"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

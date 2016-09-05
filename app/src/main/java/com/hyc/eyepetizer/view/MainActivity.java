@@ -6,34 +6,32 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.hyc.eyepetizer.R;
-import com.hyc.eyepetizer.event.StartVideoEvent;
-import com.hyc.eyepetizer.event.VideoSelectEvent;
+import com.hyc.eyepetizer.event.StartVideoDetailEvent;
+import com.hyc.eyepetizer.event.VideoDetailBackEvent;
 import com.hyc.eyepetizer.utils.AppUtil;
 import com.hyc.eyepetizer.utils.FrescoHelper;
 import com.hyc.eyepetizer.utils.TypefaceHelper;
 import com.hyc.eyepetizer.view.adapter.FragmentAdapter;
 import com.hyc.eyepetizer.view.fragment.TestFragment;
 import com.hyc.eyepetizer.widget.CustomTextView;
-
+import com.hyc.eyepetizer.widget.MyAnimatorListener;
+import java.util.ArrayList;
+import java.util.List;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class MainActivity extends AppCompatActivity {
+    private static final long ANIMTION_DURATION = 350;
     @BindView(R.id.test1)
     ViewPager mPager;
     @BindView(R.id.tv_title)
@@ -45,40 +43,52 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.rl_title)
     RelativeLayout rlTitle;
     private TestFragment mTestFragment;
+    //recyclerView中video高度
+    private float mItemHeight;
+    private float mTitleHeight;
+    private float mRatio;
+    private int lastY;
+    private AccelerateDecelerateInterpolator mInterpolator = new AccelerateDecelerateInterpolator();
+    private int mStatusBarHeight;
+    private MyAnimatorListener mListener = new MyAnimatorListener() {
+        @Override public void onAnimationEnd(Animator animator) {
+            sdvAnim.setVisibility(View.GONE);
+        }
+    };
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_main);
         EventBus.getDefault().register(this);
         ButterKnife.bind(this);
-        //TransitionSet transitionSet = new TransitionSet();
-        //transitionSet.addTransition(new ChangeBounds());
-        //transitionSet.addTransition(new DraweeTransition(ScalingUtils.ScaleType.CENTER_CROP, ScalingUtils.ScaleType.FIT_CENTER));
-        //getWindow().setSharedElementEnterTransition(transitionSet);
-        //
-        //getWindow().setSharedElementReturnTransition(transitionSet);
+        mItemHeight = AppUtil.dip2px(250);
+        mTitleHeight = AppUtil.dip2px(45);
+        mRatio = AppUtil.dip2px(353) / mItemHeight;
+
         //getWindow().setSharedElementEnterTransition(DraweeTransition.createTransitionSet(ScalingUtils.ScaleType.CENTER_CROP,
         //    ScalingUtils.ScaleType.CENTER_CROP));
         //getWindow().setSharedElementReturnTransition(DraweeTransition.createTransitionSet(ScalingUtils.ScaleType.CENTER_CROP,
         //    ScalingUtils.ScaleType.CENTER_CROP));
         mTitle.setTypeface(TypefaceHelper.getTypeface(TypefaceHelper.LOBSTER));
         mTitle.setText(R.string.app_name);
-        List<Fragment> fragments=new ArrayList<>();
-        mTestFragment=new TestFragment();
+        List<Fragment> fragments = new ArrayList<>();
+        mTestFragment = new TestFragment();
         fragments.add(mTestFragment);
         //fragments.add(new TestFragment());
         //fragments.add(new TestFragment());
-        FragmentAdapter adapter=new FragmentAdapter(getSupportFragmentManager(),fragments);
+        FragmentAdapter adapter = new FragmentAdapter(getSupportFragmentManager(), fragments);
         mPager.setAdapter(adapter);
-        for (int i=0;i<mTab.getChildCount();i++) {
-            RadioButton button=(RadioButton)mTab.getChildAt(i);
+        for (int i = 0; i < mTab.getChildCount(); i++) {
+            RadioButton button = (RadioButton) mTab.getChildAt(i);
             button.setTypeface(TypefaceHelper.getTypeface(TypefaceHelper.NORMAL));
             final int finalI = i;
             button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     if (b) {
-                        mPager.setCurrentItem(finalI,true);
+                        mPager.setCurrentItem(finalI, true);
                     }
                 }
             });
@@ -89,10 +99,12 @@ public class MainActivity extends AppCompatActivity {
 
             }
 
+
             @Override
             public void onPageSelected(int position) {
                 ((RadioButton) mTab.getChildAt(position)).setChecked(true);
             }
+
 
             @Override
             public void onPageScrollStateChanged(int state) {
@@ -101,185 +113,77 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-    private int lastY;
-    private int startPosition;
-    private int mRecyclerBottom=-1;
+
+
     @Subscribe
-    public void handleStartActivity(final StartVideoEvent event){
-        startPosition=event.position-event.index;
+    public void handleStartActivity(final StartVideoDetailEvent event) {
+        if (mTestFragment.isLoading()) {
+            return;
+        }
         sdvAnim.setVisibility(View.VISIBLE);
-        sdvAnim.setY(event.location[3]);
-        FrescoHelper.loadUrl(sdvAnim,event.url);
-        lastY=event.location[3];
-        mTestFragment.setStartPosition(event.position-event.index);
-        sdvAnim.animate().scaleX(1058/750f).scaleY(1058/750f).y((float) (750f*(1058/750f-1)/2)).setDuration(350).setListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animator) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animator) {
-                Intent intent = VideoDetailActivity2.newIntent(MainActivity.this, event.index,
-                       event.parentIndex);
-                startActivity(intent);
-                overridePendingTransition(0,0);
-                int[] l=new int[2];
-                sdvAnim.getLocationInWindow(l);
-                Log.e("test-1",sdvAnim.getWidth()+"-----"+sdvAnim.getHeight()+"-----"+l[0]+"----"+l[1]);
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animator) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animator) {
-
-            }
-        }).start();
+        sdvAnim.setY(event.locationY - getStatusBarHeight());
+        FrescoHelper.loadUrl(sdvAnim, event.url);
+        lastY = event.locationY;
+        mTestFragment.setStartPosition(event.position - event.index);
+        sdvAnim.animate()
+            .scaleX(mRatio)
+            .scaleY(mRatio)
+            .y((mItemHeight * (mRatio - 1) / 2))
+            .setDuration(ANIMTION_DURATION)
+            .setListener(new MyAnimatorListener() {
+                @Override public void onAnimationEnd(Animator animator) {
+                    Intent intent = VideoDetailActivity2.newIntent(MainActivity.this, event.index,
+                        event.parentIndex);
+                    startActivity(intent);
+                    overridePendingTransition(0, 0);
+                }
+            })
+            .setInterpolator(mInterpolator)
+            .start();
     }
 
 
     @Subscribe
-    public void handleResumeAnim(VideoSelectEvent event){
-        FrescoHelper.loadUrl(sdvAnim,event.url);
+    public void handleResumeAnim(VideoDetailBackEvent event) {
+        FrescoHelper.loadUrl(sdvAnim, event.url);
         if (event.hasScrolled) {
             int[] l = new int[2];
             sdvAnim.getLocationInWindow(l);
-            sdvAnim.animate().scaleX(1).scaleY(1).y(AppUtil.dip2px(45) - l[1]).setListener(new Animator.AnimatorListener() {
-                @Override
-                public void onAnimationStart(Animator animator) {
-
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animator) {
-                    sdvAnim.setVisibility(View.GONE);
-                }
-
-                @Override
-                public void onAnimationCancel(Animator animator) {
-
-                }
-
-                @Override
-                public void onAnimationRepeat(Animator animator) {
-
-                }
-            }).setDuration(350).start();
+            sdvAnim.animate()
+                .scaleX(1)
+                .setInterpolator(mInterpolator)
+                .scaleY(1)
+                .y(mTitleHeight)
+                .setListener(mListener)
+                .setDuration(ANIMTION_DURATION)
+                .start();
         } else {
-            int[] l=new int[2];
+            int[] l = new int[2];
             sdvAnim.getLocationInWindow(l);
-            sdvAnim.animate().scaleX(1).scaleY(1).y(lastY-l[1]).setListener(new Animator.AnimatorListener() {
-                @Override
-                public void onAnimationStart(Animator animator) {
-
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animator) {
-                    sdvAnim.setVisibility(View.GONE);
-                }
-
-                @Override
-                public void onAnimationCancel(Animator animator) {
-
-                }
-
-                @Override
-                public void onAnimationRepeat(Animator animator) {
-
-                }
-            }).setDuration(350).start();
+            sdvAnim.animate()
+                .scaleX(1)
+                .scaleY(1)
+                .y(lastY - l[1])
+                .setListener(mListener)
+                .setDuration(ANIMTION_DURATION)
+                .setInterpolator(mInterpolator)
+                .start();
         }
-//        if (event.position+startPosition > mTestFragment.getLastVisiblePosition()) {
-//            mTestFragment.scrollToPosition(event.position+startPosition);
-//            if (mRecyclerBottom==-1) {
-//                mRecyclerBottom=mTestFragment.getBottom();
-//            }
-//            int[] l=new int[2];
-//            sdvAnim.getLocationInWindow(l);
-//            sdvAnim.animate().scaleY(1).scaleX(1).y(mRecyclerBottom-750-l[1]).setDuration(350).setListener(new Animator.AnimatorListener() {
-//                @Override
-//                public void onAnimationStart(Animator animator) {
-//
-//                }
-//
-//                @Override
-//                public void onAnimationEnd(Animator animator) {
-//                    sdvAnim.setVisibility(View.GONE);
-//                }
-//
-//                @Override
-//                public void onAnimationCancel(Animator animator) {
-//
-//                }
-//
-//                @Override
-//                public void onAnimationRepeat(Animator animator) {
-//
-//                }
-//            }).start();
-//        }else
-//        if (startPosition+event.position<mTestFragment.getFirstVisiblePosition()) {
-//            mTestFragment.scrollToPosition(event.position+startPosition);
-//            sdvAnim.animate().scaleY(1).scaleX(1).setDuration(350).setListener(new Animator.AnimatorListener() {
-//                @Override
-//                public void onAnimationStart(Animator animator) {
-//
-//                }
-//
-//                @Override
-//                public void onAnimationEnd(Animator animator) {
-//                    sdvAnim.setVisibility(View.GONE);
-//                }
-//
-//                @Override
-//                public void onAnimationCancel(Animator animator) {
-//
-//                }
-//
-//                @Override
-//                public void onAnimationRepeat(Animator animator) {
-//
-//                }
-//            }).start();
-//        } else {
-//            int[] l=new int[2];
-//            sdvAnim.getLocationInWindow(l);
-//            sdvAnim.animate().scaleX(1).scaleY(1).y(lastY-l[1]).setListener(new Animator.AnimatorListener() {
-//                @Override
-//                public void onAnimationStart(Animator animator) {
-//
-//                }
-//
-//                @Override
-//                public void onAnimationEnd(Animator animator) {
-//                    sdvAnim.setVisibility(View.GONE);
-//                }
-//
-//                @Override
-//                public void onAnimationCancel(Animator animator) {
-//
-//                }
-//
-//                @Override
-//                public void onAnimationRepeat(Animator animator) {
-//
-//                }
-//            }).setDuration(350).start();
-//        }
 
     }
+
+
     @Override
     protected void onDestroy() {
         EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 
-    public int getTitleHeight(){
-        return rlTitle.getHeight();
+
+    private int getStatusBarHeight() {
+        if (mStatusBarHeight == 0) {
+            mStatusBarHeight = AppUtil.getStatusBarHeight(this);
+        }
+        return mStatusBarHeight;
     }
 }

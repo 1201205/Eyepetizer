@@ -6,12 +6,9 @@ package com.hyc.eyepetizer.event;
 public class VideoSelectEvent {
 
     public int position;
-    public String url;
-    public boolean hasScrolled;
 
-    public VideoSelectEvent(int position,String url,boolean hasScrolled) {
+
+    public VideoSelectEvent(int position) {
         this.position = position;
-        this.url=url;
-        this.hasScrolled=hasScrolled;
     }
 }

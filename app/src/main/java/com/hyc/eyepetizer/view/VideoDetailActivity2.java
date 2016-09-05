@@ -3,27 +3,23 @@ package com.hyc.eyepetizer.view;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.SharedElementCallback;
 import android.support.v4.view.ViewPager;
-import android.view.View;
+import android.util.Log;
+import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.base.BaseActivity;
+import com.hyc.eyepetizer.event.VideoDetailBackEvent;
 import com.hyc.eyepetizer.event.VideoSelectEvent;
-import com.hyc.eyepetizer.event.VideoSelectEvent2;
 import com.hyc.eyepetizer.model.FeedModel;
 import com.hyc.eyepetizer.model.beans.ItemListData;
 import com.hyc.eyepetizer.model.beans.ViewData;
-import com.hyc.eyepetizer.utils.FrescoHelper;
 import com.hyc.eyepetizer.view.adapter.VideoDetailAdapter;
 import com.hyc.eyepetizer.widget.CustomTextView;
-
-import org.greenrobot.eventbus.EventBus;
-
 import java.util.List;
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * Created by ray on 16/9/4.
@@ -31,7 +27,6 @@ import java.util.List;
 public class VideoDetailActivity2 extends BaseActivity {
     private static final String PARENT_INDEX = "parent_index";
     private static final String INDEX = "index";
-    @BindView(R.id.sdv_img) SimpleDraweeView sdvImg;
     @BindView(R.id.vp_video) ViewPager vpVideo;
     @BindView(R.id.tv_part) CustomTextView tvPart;
     @BindView(R.id.ll_part) LinearLayout llPart;
@@ -39,6 +34,7 @@ public class VideoDetailActivity2 extends BaseActivity {
     private int mIndex;
     private List<ViewData> mViewDatas;
     private boolean hasScrolled;
+    private VideoDetailAdapter mAdapter;
 
     public static Intent newIntent(Context context, int index, int parentIndex) {
         Intent intent = new Intent(context, VideoDetailActivity2.class);
@@ -55,7 +51,7 @@ public class VideoDetailActivity2 extends BaseActivity {
 
 
     @Override protected int getLayoutID() {
-        return R.layout.activity_video_d;
+        return R.layout.activity_video_detail;
     }
 
 
@@ -65,8 +61,9 @@ public class VideoDetailActivity2 extends BaseActivity {
         setShareElementTransition();
         vpVideo.setOffscreenPageLimit(2);
         mViewDatas = FeedModel.getInstance().getVideoListByIndex(mParentIndex);
-        vpVideo.setAdapter(new VideoDetailAdapter(VideoDetailActivity2.this,
-                mViewDatas));
+        mAdapter = new VideoDetailAdapter(VideoDetailActivity2.this,
+            mViewDatas);
+        vpVideo.setAdapter(mAdapter);
         vpVideo.setCurrentItem(mIndex);
         ItemListData data = mViewDatas.get(mIndex).getData();
         vpVideo.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -80,7 +77,8 @@ public class VideoDetailActivity2 extends BaseActivity {
                 if (position!=mIndex) {
                     hasScrolled=true;
                 }
-                EventBus.getDefault().post(new VideoSelectEvent2(position));
+                Log.e("hyc-", position + "");
+                EventBus.getDefault().post(new VideoSelectEvent(position));
             }
 
             @Override
@@ -88,6 +86,14 @@ public class VideoDetailActivity2 extends BaseActivity {
 
             }
         });
+        vpVideo.getViewTreeObserver().addOnPreDrawListener(
+            new ViewTreeObserver.OnPreDrawListener() {
+                @Override public boolean onPreDraw() {
+                    vpVideo.getViewTreeObserver().removeOnPreDrawListener(this);
+                    mAdapter.handleSelectEvent(new VideoSelectEvent(mIndex));
+                    return true;
+                }
+            });
 //        FrescoHelper.loadUrl(sdvImg, data.getCover().getDetail());
 //        setEnterSharedElementCallback(new SharedElementCallback() {
 //            @Override
@@ -111,9 +117,20 @@ public class VideoDetailActivity2 extends BaseActivity {
 
 
     @Override public void onBackPressed() {
-        EventBus.getDefault().post(new VideoSelectEvent(vpVideo.getCurrentItem(),mViewDatas.get(vpVideo.getCurrentItem()).getData().getCover().getDetail(),hasScrolled));
+        EventBus.getDefault()
+            .post(new VideoDetailBackEvent(vpVideo.getCurrentItem(),
+                mViewDatas.get(vpVideo.getCurrentItem()).getData().getCover().getDetail(),
+                hasScrolled));
         super.onBackPressed();
     }
+
+
+    @Override protected void onDestroy() {
+        super.onDestroy();
+        mAdapter.unRegister();
+    }
+
+
     @Override
     public void finish() {
         super.finish();

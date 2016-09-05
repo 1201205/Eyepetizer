@@ -61,14 +61,9 @@ public class VideoViewHolder extends RecyclerView.ViewHolder {
                     case MotionEvent.ACTION_UP:
                         reset();
                         if (mItemClickListener != null) {
-                            int[] location=new int[4];
-                            location[0]=img.getHeight();
-                            location[1]=img.getWidth();
                             int[] lo=new int[2];
                             img.getLocationInWindow(lo);
-                            location[2]=lo[0];
-                            location[3]=lo[1];
-                            mItemClickListener.onItemClicked(location);
+                            mItemClickListener.onItemClicked(lo[1]);
                         }
                         return false;
                     case MotionEvent.ACTION_CANCEL:
@@ -92,6 +87,6 @@ public class VideoViewHolder extends RecyclerView.ViewHolder {
         flow.setAlpha(1);
     }
     public interface ItemClickListener{
-        void onItemClicked(int[] location);
+        void onItemClicked(int locationY);
     }
 }

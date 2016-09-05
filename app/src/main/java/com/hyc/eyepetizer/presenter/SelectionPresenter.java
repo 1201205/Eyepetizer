@@ -1,7 +1,6 @@
 package com.hyc.eyepetizer.presenter;
 
 import android.text.TextUtils;
-import android.util.Log;
 import com.hyc.eyepetizer.base.BasePresenter;
 import com.hyc.eyepetizer.contract.SelectionContract;
 import com.hyc.eyepetizer.model.FeedModel;
@@ -33,7 +32,6 @@ public class SelectionPresenter extends BasePresenter<SelectionContract.View>
             int i = selection.getSectionList().size();
             for (int j = 0; j < i; j++) {
                 SectionList bean = selection.getSectionList().get(j);
-                Log.e("Jjjj", bean.getId() + "---");
                 if (bean.getHeader() != null) {
                     datas.add(bean.getHeader());
                 }

@@ -5,29 +5,31 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 
 /**
  * Created by Administrator on 2016/9/1.
  */
 public class AnimateTextView extends CustomTextView {
 
-    private static final int COUNT = 15;
-    private static final int DELAY = 25;
+    private static final int COUNT = 10;
+    private static final int DELAY = 16;
+    private static final int TIME = 600;
     private static final int START_ANIM = 2;
-    private int mCurrentIndex;
+    private float mCurrentIndex;
     private CharSequence mCharSequence;
-    private StringBuilder mBuilder;
+    private long delayTime;
+    private float addtionCount;
 
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == START_ANIM) {
                 if (mCurrentIndex < mCharSequence.length()) {
-                    setText(mBuilder.append(mCharSequence.charAt(mCurrentIndex)).toString());
-                    mCurrentIndex++;
-                    mHandler.sendEmptyMessageDelayed(START_ANIM, DELAY);
+                    setText(mCharSequence.subSequence(0, (int) mCurrentIndex));
+                    mCurrentIndex += addtionCount;
+                    mHandler.sendEmptyMessageDelayed(START_ANIM, delayTime);
                 } else {
+                    setText(mCharSequence);
                     mHandler.removeCallbacksAndMessages(null);
                 }
             }
@@ -47,33 +49,22 @@ public class AnimateTextView extends CustomTextView {
 
     public AnimateTextView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        mBuilder = new StringBuilder();
     }
 
 
     public void animateChar(long delay) {
-        int builderLength = mBuilder.length();
-        if (builderLength > 0) {
-            mBuilder.delete(0, builderLength);
-        }
         int length = mCharSequence.length();
         if (length == 0) {
             return;
         }
-        if (length <= COUNT) {
             mCurrentIndex = 0;
-            mHandler.sendEmptyMessageDelayed(START_ANIM, (COUNT - length) * DELAY + delay);
-        } else {
-            mCurrentIndex = length - COUNT - 1;
-            mBuilder.append(mCharSequence.subSequence(0, mCurrentIndex));
             mHandler.sendEmptyMessageDelayed(START_ANIM, delay);
-        }
     }
 
 
     @Override protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        animateChar(200);
+        //animateChar(200);
     }
 
 
@@ -87,9 +78,13 @@ public class AnimateTextView extends CustomTextView {
         if (TextUtils.isEmpty(text)) {
             return;
         } else {
-            if (text.length() > COUNT) {
-                Log.e("hyc-test", text.subSequence(0, text.length() - COUNT) + "_--");
-                setText(text.subSequence(0, text.length() - COUNT));
+            int length = text.length();
+            if (TIME / length < 16) {
+                addtionCount = length / (TIME * 1f / 16);
+                delayTime = 16;
+            } else {
+                delayTime = TIME / length;
+                addtionCount = 1;
             }
         }
     }

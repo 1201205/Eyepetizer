@@ -11,5 +11,13 @@
     <style name="AppTheme.TransparentActivity">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowIsTranslucent">true</item>
+        <!-- 新Activity 进入 -->
+        <item name="android:activityOpenEnterAnimation">@null</item>
+        <!-- 旧Activity退出 -->
+        <item name="android:activityOpenExitAnimation">@null</item>
+        <!-- 新Activity退出 -->
+        <item name="android:activityCloseExitAnimation">@null</item>
+        <!-- 旧Activity进入 -->
+        <item name="android:activityCloseEnterAnimation">@null</item>
     </style>
 </resources>

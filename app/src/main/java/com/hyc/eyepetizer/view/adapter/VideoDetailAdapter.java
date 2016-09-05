@@ -2,6 +2,7 @@ package com.hyc.eyepetizer.view.adapter;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,6 +74,12 @@ public class VideoDetailAdapter extends PagerAdapter {
 
     private void initView(ItemListData data) {
         FrescoHelper.loadUrl(sdvImg, data.getCover().getDetail());
+        sdvImg.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.e("test-1",sdvImg.getWidth()+"-----"+sdvImg.getHeight());
+            }
+        },2000);
         FrescoHelper.loadUrl(sdvBlur, data.getCover().getBlurred());
         tvTitle.setAnimText(data.getTitle());
         tvCategory.setAnimText(

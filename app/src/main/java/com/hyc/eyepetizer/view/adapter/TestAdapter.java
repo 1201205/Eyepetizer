@@ -1,5 +1,6 @@
 package com.hyc.eyepetizer.view.adapter;
 
+import android.animation.Animator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -9,8 +10,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.hyc.eyepetizer.R;
+import com.hyc.eyepetizer.event.StartVideoEvent;
+import com.hyc.eyepetizer.event.VideoClickedEvent;
+import com.hyc.eyepetizer.event.VideoSelectEvent;
 import com.hyc.eyepetizer.model.beans.ItemListData;
 import com.hyc.eyepetizer.model.beans.ViewData;
 import com.hyc.eyepetizer.utils.AppUtil;
@@ -29,6 +36,9 @@ import com.hyc.eyepetizer.view.adapter.holder.TextHeaderViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.TitleVideoViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.VideoViewHolder;
 import com.hyc.eyepetizer.widget.HorizontalDecoration;
+
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.List;
 
 /**
@@ -105,14 +115,15 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         FrescoHelper.loadUrl(holder.img, itemData.getCover().getDetail());
         holder.setOnItemClickListener(new VideoViewHolder.ItemClickListener() {
             @Override
-            public void onItemClicked() {
+            public void onItemClicked(int[] location) {
+                EventBus.getDefault().post(new StartVideoEvent(location,data.getParentIndex(),data.getIndex(),itemData.getCover().getDetail(),position));
                 // TODO: 16/9/4 先暂时使用当前的shareElement方式  有时间改为正常的方式
 
-                ActivityOptionsCompat compat = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                    (Activity) context, holder.img, "transition_name");
-                Intent intent = VideoDetailActivity2.newIntent(context, data.getIndex(),
-                    data.getParentIndex());
-                ActivityCompat.startActivity((Activity) context, intent, compat.toBundle());
+//                ActivityOptionsCompat compat = ActivityOptionsCompat.makeSceneTransitionAnimation(
+//                    (Activity) context, holder.img, "transition_name");
+//                Intent intent = VideoDetailActivity2.newIntent(context, data.getIndex(),
+//                    data.getParentIndex());
+//                ActivityCompat.startActivity((Activity) context, intent, compat.toBundle());
             }
         });
         holder.title.setText(itemData.getTitle());

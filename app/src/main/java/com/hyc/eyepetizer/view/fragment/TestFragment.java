@@ -4,19 +4,29 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.base.BaseFragment;
 import com.hyc.eyepetizer.contract.SelectionContract;
+import com.hyc.eyepetizer.event.VideoClickedEvent;
+import com.hyc.eyepetizer.event.VideoSelectEvent;
+import com.hyc.eyepetizer.event.VideoSelectEvent2;
 import com.hyc.eyepetizer.model.beans.ViewData;
 import com.hyc.eyepetizer.presenter.SelectionPresenter;
 import com.hyc.eyepetizer.view.adapter.TestAdapter;
 import com.hyc.eyepetizer.widget.PullToRefreshView;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import java.util.List;
 
 /**
@@ -34,6 +44,7 @@ public class TestFragment extends BaseFragment<SelectionPresenter>
     private LinearLayoutManager mManager;
     private boolean mIsRequesting;
     private boolean mHasMore = true;
+    private int mTitleHeight;
 
     @Nullable
     @Override
@@ -66,7 +77,34 @@ public class TestFragment extends BaseFragment<SelectionPresenter>
         mRecyclerView.addOnScrollListener(mOnScrollListener);
         return root;
     }
+    @Subscribe
+    public void handleClickEvent(VideoSelectEvent2 event){
+        final int p=event.position+mStartPosition;
+        mManager.scrollToPosition(p);
+        mRecyclerView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                View v=mRecyclerView.getChildAt(p-mManager.findFirstVisibleItemPosition());
+                final int[] l=new int[2];
+                v.getLocationInWindow(l);
+                mRecyclerView.scrollBy(0,l[1]-getTitleHeight());
+            }
+        },10);
 
+    }
+    private int getTitleHeight(){
+        if (mTitleHeight==0) {
+            int[] l=new int[2];
+            mRecyclerView.getLocationInWindow(l);
+            mTitleHeight=l[0];
+        }
+        return mTitleHeight;
+    }
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
+    }
 
     public void initPresenter() {
         mPresenter = new SelectionPresenter(this);
@@ -83,6 +121,7 @@ public class TestFragment extends BaseFragment<SelectionPresenter>
 
     @Override
     public void onDestroy() {
+        EventBus.getDefault().unregister(this);
         super.onDestroy();
         mRecyclerView.removeOnScrollListener(mOnScrollListener);
         mUnbinder.unbind();
@@ -119,4 +158,29 @@ public class TestFragment extends BaseFragment<SelectionPresenter>
     public void setNextPushTime(long time) {
         mRefreshView.setNextPushTime(time);
     }
+
+    public int getLastVisiblePosition(){
+        return mManager.findLastVisibleItemPosition();
+    }
+    public int getFirstVisiblePosition(){
+        return mManager.findFirstVisibleItemPosition();
+    }
+    public void scrollToPosition(int position){
+        mManager.scrollToPosition(position);
+//        Log.e("scrollto",position+"--");
+//        View v=mManager.getChildAt(position);
+//        int[] l=new int[2];
+//        v.getLocationInWindow(l);
+//        mRefreshView.scrollBy(0,-l[1]);
+    }
+    public int getBottom(){
+        int[] l=new int[2];
+        mRecyclerView.getLocationInWindow(l);
+        Log.e("-----",mRecyclerView.getBottom()+"-----"+(l[1]+mRefreshView.getHeight()));
+        return l[1]+mRefreshView.getHeight();
+    }
+    public void setStartPosition(int p){
+        mStartPosition=p;
+    }
+    private int mStartPosition;
 }

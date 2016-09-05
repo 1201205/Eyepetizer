@@ -12,12 +12,17 @@ import butterknife.ButterKnife;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.base.BaseActivity;
+import com.hyc.eyepetizer.event.VideoSelectEvent;
+import com.hyc.eyepetizer.event.VideoSelectEvent2;
 import com.hyc.eyepetizer.model.FeedModel;
 import com.hyc.eyepetizer.model.beans.ItemListData;
 import com.hyc.eyepetizer.model.beans.ViewData;
 import com.hyc.eyepetizer.utils.FrescoHelper;
 import com.hyc.eyepetizer.view.adapter.VideoDetailAdapter;
 import com.hyc.eyepetizer.widget.CustomTextView;
+
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.List;
 
 /**
@@ -33,7 +38,7 @@ public class VideoDetailActivity2 extends BaseActivity {
     private int mParentIndex;
     private int mIndex;
     private List<ViewData> mViewDatas;
-
+    private boolean hasScrolled;
 
     public static Intent newIntent(Context context, int index, int parentIndex) {
         Intent intent = new Intent(context, VideoDetailActivity2.class);
@@ -59,24 +64,43 @@ public class VideoDetailActivity2 extends BaseActivity {
         ButterKnife.bind(this);
         setShareElementTransition();
         vpVideo.setOffscreenPageLimit(2);
-        final List<ViewData> datas = FeedModel.getInstance().getVideoListByIndex(mParentIndex);
-
-        ItemListData data = datas.get(mIndex).getData();
-        FrescoHelper.loadUrl(sdvImg, data.getCover().getDetail());
-        setEnterSharedElementCallback(new SharedElementCallback() {
+        mViewDatas = FeedModel.getInstance().getVideoListByIndex(mParentIndex);
+        vpVideo.setAdapter(new VideoDetailAdapter(VideoDetailActivity2.this,
+                mViewDatas));
+        vpVideo.setCurrentItem(mIndex);
+        ItemListData data = mViewDatas.get(mIndex).getData();
+        vpVideo.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
-            public void onSharedElementEnd(List<String> sharedElementNames, List<View> sharedElements, List<View> sharedElementSnapshots) {
-                vpVideo.setAdapter(new VideoDetailAdapter(VideoDetailActivity2.this,
-                    datas));
-                vpVideo.setCurrentItem(mIndex);
-                sdvImg.postDelayed(new Runnable() {
-                    @Override public void run() {
-                        sdvImg.setVisibility(View.INVISIBLE);
-                    }
-                }, 400)
-                ;
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (position!=mIndex) {
+                    hasScrolled=true;
+                }
+                EventBus.getDefault().post(new VideoSelectEvent2(position));
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
             }
         });
+//        FrescoHelper.loadUrl(sdvImg, data.getCover().getDetail());
+//        setEnterSharedElementCallback(new SharedElementCallback() {
+//            @Override
+//            public void onSharedElementEnd(List<String> sharedElementNames, List<View> sharedElements, List<View> sharedElementSnapshots) {
+//
+//                sdvImg.postDelayed(new Runnable() {
+//                    @Override public void run() {
+//                        sdvImg.setVisibility(View.INVISIBLE);
+//                    }
+//                }, 400)
+//                ;
+//            }
+//        });
 
     }
 
@@ -87,7 +111,12 @@ public class VideoDetailActivity2 extends BaseActivity {
 
 
     @Override public void onBackPressed() {
-        sdvImg.setVisibility(View.VISIBLE);
+        EventBus.getDefault().post(new VideoSelectEvent(vpVideo.getCurrentItem(),mViewDatas.get(vpVideo.getCurrentItem()).getData().getCover().getDetail(),hasScrolled));
         super.onBackPressed();
+    }
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0,0);
     }
 }

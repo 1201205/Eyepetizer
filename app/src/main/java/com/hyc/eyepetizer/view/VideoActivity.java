@@ -13,9 +13,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -26,7 +24,9 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.base.BaseActivity;
 import com.hyc.eyepetizer.model.FeedModel;
@@ -34,12 +34,7 @@ import com.hyc.eyepetizer.model.beans.ItemListData;
 import com.hyc.eyepetizer.model.beans.ViewData;
 import com.hyc.eyepetizer.utils.AppUtil;
 import com.hyc.eyepetizer.utils.DateUtil;
-
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import tv.danmaku.ijk.media.IjkVideoView;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
@@ -54,16 +49,22 @@ public class VideoActivity extends BaseActivity implements
 
     private static final String PARENT_INDEX = "parent_index";
     private static final String INDEX = "index";
-
+    private static final String URL = "url";
+    private static final String TITLE = "title";
     private static int SIZE_DEFAULT = 0;
     private static int SIZE_4_3 = 1;
     private static int SIZE_16_9 = 2;
+
+
+    static {
+        IjkMediaPlayer.loadLibrariesOnce(null);
+        IjkMediaPlayer.native_profileBegin("libijkplayer.so");
+    }
+
+
     private final String TAG = VideoActivity.class.getSimpleName();
-    private static final String URL = "url";
-    private static final String TITLE = "title";
     //重连次数
     private final int CONNECTION_TIMES = 5;
-    private GestureDetector gestureDetector;
     @BindView(R.id.rl_title)
     RelativeLayout mTitleRL;
     @BindView(R.id.rl_all)
@@ -94,6 +95,7 @@ public class VideoActivity extends BaseActivity implements
     ImageView mPlayButton;
     @BindView(R.id.sb_time)
     SeekBar mSeekBar;
+    private GestureDetector gestureDetector;
     private AudioManager mAudioManager;
     private int mMaxVolume;
     private int mVolume = -1;
@@ -111,7 +113,6 @@ public class VideoActivity extends BaseActivity implements
     private int count = 0;
     private int mParentIndex;
     private int mIndex;
-
     @SuppressWarnings("HandlerLeak")
     private Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -147,6 +148,10 @@ public class VideoActivity extends BaseActivity implements
             }
         }
     };
+    private String mUrl;
+    private String mTitle;
+    private List<ViewData> mViewDatas;
+    private ItemListData mCurrentData;
 
 
     public static void startList(Context context, int index, int parentIndex) {
@@ -156,6 +161,7 @@ public class VideoActivity extends BaseActivity implements
         context.startActivity(intent);
     }
 
+
     public static void startSingle(Context context, String url, String title) {
         Intent intent = new Intent(context, VideoActivity.class);
         intent.putExtra(URL, url);
@@ -163,25 +169,18 @@ public class VideoActivity extends BaseActivity implements
         context.startActivity(intent);
     }
 
-    static {
-        IjkMediaPlayer.loadLibrariesOnce(null);
-        IjkMediaPlayer.native_profileBegin("libijkplayer.so");
-    }
-
-    private String mUrl;
-    private String mTitle;
-    private List<ViewData> mViewDatas;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_video);
         ButterKnife.bind(this);
         mViewDatas = FeedModel.getInstance().getVideoListByIndex(mParentIndex);
         mCurrentData=mViewDatas.get(mIndex).getData();
         initView();
     }
-    private ItemListData mCurrentData;
+
+
     private void initView(){
 
         mTitleText.setText(mCurrentData.getTitle());
@@ -277,8 +276,8 @@ public class VideoActivity extends BaseActivity implements
                 mVideoView.stopPlayback();
                 mVideoView.release(true);
                 mIndex++;
+                mTimeText.setText(mViewDatas.get(mIndex).getData().getTitle());
                 mUrl=mViewDatas.get(mIndex).getData().getPlayUrl();
-                // TODO: 2016/9/2  播放下一个  如果下一个不存在  退出
                 mVideoView.setVideoURI(Uri.parse(mUrl));
             }
         });

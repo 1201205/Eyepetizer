@@ -6,6 +6,7 @@ import android.graphics.Rect;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.widget.Toast;
 import com.hyc.eyepetizer.MainApplication;
 import java.lang.reflect.Field;
 import java.util.UUID;
@@ -91,5 +92,20 @@ public class AppUtil {
             result = context.getResources().getDimensionPixelSize(resourceId);
         }
         return result;
+    }
+
+
+    public static void showToast(String s) {
+        Toast.makeText(MainApplication.getApplication(), s, Toast.LENGTH_LONG).show();
+    }
+
+
+    public static void showToast(int id) {
+        Toast.makeText(MainApplication.getApplication(), id, Toast.LENGTH_LONG).show();
+    }
+
+
+    public static int getColor(int id) {
+        return MainApplication.getApplication().getResources().getColor(id);
     }
 }

@@ -1,7 +1,6 @@
 package com.hyc.eyepetizer.model;
 
 import android.util.SparseArray;
-
 import com.hyc.eyepetizer.model.beans.SectionList;
 import com.hyc.eyepetizer.model.beans.ViewData;
 import com.hyc.eyepetizer.utils.WidgetHelper;
@@ -15,16 +14,17 @@ import java.util.List;
  * Activity之间跳转传递引用，而不是序列化的对象
  * Created by Administrator on 2016/9/2.
  */
-public class FeedModel {
+public class FeedModel implements VideoListInterface {
 
     private static FeedModel sModel;
     private List<SectionList> mSectionLists;
     private SparseArray<List<ViewData>> mViewDatas;
-
+    private SparseArray<SparseArray<List<ViewData>>> mRelate;
 
     private FeedModel() {
         mSectionLists = new ArrayList<>();
         mViewDatas=new SparseArray<>();
+        mRelate = new SparseArray<>();
     }
 
 
@@ -74,11 +74,35 @@ public class FeedModel {
         mViewDatas.put(index,datas);
         return datas;
     }
+
+
+    @Override
     public List<ViewData> getVideoListByIndex(int index){
         if (mViewDatas.get(index)==null) {
             return getVideoListByIndex(index,new SparseArray<Integer>());
         }
         return mViewDatas.get(index);
+    }
+
+
+    public void addRelate(int id, SparseArray<List<ViewData>> data) {
+        mRelate.put(id, data);
+    }
+
+
+    public List<ViewData> getRelate(int id, int index) {
+        if (mRelate.get(id) != null) {
+            return mRelate.get(id).get(index);
+        }
+        return null;
+    }
+
+
+    public void clearRelateByID(int id) {
+        if (mRelate.get(id) != null) {
+            mRelate.get(id).clear();
+            mRelate.delete(id);
+        }
     }
 
 }

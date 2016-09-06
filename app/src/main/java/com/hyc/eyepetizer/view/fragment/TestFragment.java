@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +43,7 @@ public class TestFragment extends BaseFragment<SelectionPresenter>
     private boolean mHasMore = true;
     private int mTitleHeight;
     private int mStartPosition;
+    private int mLastIndex;
 
 
     @Nullable
@@ -75,7 +77,7 @@ public class TestFragment extends BaseFragment<SelectionPresenter>
         mRecyclerView.addOnScrollListener(mOnScrollListener);
         return root;
     }
-    private int mLastIndex;
+
 
     @Subscribe
     public void handleSelectEvent(VideoSelectEvent event) {
@@ -140,7 +142,13 @@ public class TestFragment extends BaseFragment<SelectionPresenter>
 
     @Override
     public void showSelection(List<ViewData> datas) {
-        mAdapter = new TestAdapter(getContext(), datas);
+        mAdapter = new TestAdapter.Builder(getContext(), datas).horizontalItemCilckListener(
+            new TestAdapter.HorizontalItemCilckListener() {
+                @Override
+                public void onItemClicked(int parentPosition, int myPosition, int position) {
+                    Log.e("------", parentPosition + "----" + myPosition);
+                }
+            }).build();
         mRecyclerView.setAdapter(mAdapter);
         mRefreshView.endAnim();
     }

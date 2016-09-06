@@ -18,14 +18,23 @@ public class HorizontalAdapter extends RecyclerView.Adapter<VideoViewHolder> {
     private List<ViewData> mDatas;
     private Context mContext;
     private LayoutInflater mLayoutInflater;
+    private ItemClickListener listener;
     public HorizontalAdapter(List<ViewData> datas,LayoutInflater context){
         mDatas=datas;
         mLayoutInflater=context;
     }
     @Override
     public VideoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new VideoViewHolder(
+        VideoViewHolder holder = new VideoViewHolder(
             mLayoutInflater.inflate(R.layout.item_video_horizontal, parent, false));
+        if (listener != null) {
+            holder.setOnItemClickListener(new VideoViewHolder.ItemClickListener() {
+                @Override public void onItemClicked(int locationY, int p) {
+                    listener.onItemClicked(p);
+                }
+            });
+        }
+        return holder;
     }
 
     @Override
@@ -42,5 +51,14 @@ public class HorizontalAdapter extends RecyclerView.Adapter<VideoViewHolder> {
         return mDatas==null?0:mDatas.size();
     }
 
+
+    public void setOnItemClickListener(ItemClickListener listener) {
+        this.listener = listener;
+    }
+
+
+    public interface ItemClickListener {
+        void onItemClicked(int myIndex);
+    }
 
 }

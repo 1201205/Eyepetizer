@@ -12,4 +12,12 @@
     <string name="type_bold">bold</string>
     <string name="type_lobster">lobster</string>
 
+    <string name="net_error">网络错误，请检查网络连接情况</string>
+    <string name="no_more">客官，没有更多啦啦啦</string>
+    <string name="parse_error">解析出错了哦。。。。</string>
+    <string name="none_point_error">嗨！我是空指针异常</string>
+    <string name="do_not_get_id">未获取到ID</string>
+    <string name="nothing_get">没有获取到数据哦。。。</string>
+    <string name="time_out">网络超时。。。</string>
+
 </resources>

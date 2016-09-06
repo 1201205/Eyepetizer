@@ -21,7 +21,9 @@ public class BasePresenter<T extends BaseView> {
 
 
     public void detachView() {
-        mCompositeSubscription.unsubscribe();
+        if (mCompositeSubscription!=null) {
+            mCompositeSubscription.unsubscribe();
+        }
         mCompositeSubscription = null;
         mView = null;
     }

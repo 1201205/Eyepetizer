@@ -3,7 +3,6 @@ package com.hyc.eyepetizer.view.adapter;
 import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import com.hyc.eyepetizer.R;
@@ -37,9 +36,12 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<ViewData> mDatas;
 
     private int mSpace;
-    //建立枚举 2个item 类型
+    private HorizontalItemCilckListener horizontalItemCilckListener;
+    //视频相关  白色
+    private int mTitleColor = AppUtil.getColor(R.color.title_black);
 
-    public TestAdapter(Context context, List<ViewData> datas) {
+
+    private TestAdapter(Context context, List<ViewData> datas) {
         this.context = context;
         mDatas = datas;
         mLayoutInflater = LayoutInflater.from(context);
@@ -73,6 +75,7 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return null;
     }
 
+
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof VideoViewHolder) {
@@ -88,7 +91,7 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         } else if (holder instanceof BlankViewHolder) {
             bindView((BlankViewHolder) holder, mDatas.get(position));
         } else if (holder instanceof TitleVideoViewHolder) {
-            bindView((TitleVideoViewHolder) holder, mDatas.get(position));
+            bindView((TitleVideoViewHolder) holder, mDatas.get(position), position);
         } else if (holder instanceof NoMoreViewHolder) {
             bindView((NoMoreViewHolder) holder, mDatas.get(position));
         } else if (holder instanceof CampaignViewHolder) {
@@ -102,7 +105,7 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         FrescoHelper.loadUrl(holder.img, itemData.getCover().getDetail());
         holder.setOnItemClickListener(new VideoViewHolder.ItemClickListener() {
             @Override
-            public void onItemClicked(int locationY) {
+            public void onItemClicked(int locationY, int p) {
                 EventBus.getDefault()
                     .post(
                         new StartVideoDetailEvent(locationY, data.getParentIndex(), data.getIndex(),
@@ -120,6 +123,7 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         holder.category.setText(DataHelper.getCategoryAndDuration(itemData.getCategory(), itemData.getDuration()));
     }
 
+
     private void bindView(CoverVideoViewHolder holder, ViewData data) {
         holder.cover.setImageURI(data.getData().getHeader().getCover());
         if (holder.recyclerView.getLayoutManager() == null) {
@@ -130,6 +134,7 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
         holder.recyclerView.setAdapter(new HorizontalAdapter(data.getData().getItemList(), mLayoutInflater));
     }
+
 
     private void bindView(BriefVideoViewHolder holder, ViewData data) {
         FrescoHelper.loadUrl(holder.ico, data.getData().getHeader().getIco());
@@ -145,33 +150,40 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         holder.recyclerView.setAdapter(new HorizontalAdapter(data.getData().getItemList(), mLayoutInflater));
     }
 
+
     private void bindView(TextHeaderViewHolder holder, ViewData data) {
         holder.head.setTypeface(TypefaceHelper.getTypeface(data.getData().getFont()));
         holder.head.setText(data.getData().getText());
         holder.head.setTypeface(TypefaceHelper.getTypeface(data.getData().getFont()));
     }
 
+
     private void bindView(ForwardViewHolder holder, ViewData data) {
         holder.textView.setTypeface(TypefaceHelper.getTypeface(data.getData().getFont()));
         holder.textView.setText(data.getData().getText());
     }
 
+
     private void bindView(NoMoreViewHolder holder, ViewData data) {
         holder.head.setText("- The End -");
+        holder.head.setTextColor(mTitleColor);
     }
+
 
     private void bindView(CampaignViewHolder holder, ViewData data) {
         FrescoHelper.loadUrl(holder.campaign, data.getData().getImage());
     }
 
+
     private void bindView(BlankViewHolder holder, ViewData data) {
-        Log.e("Hyc--", data.getData().getHeight() + "---" + holder.space.getLayoutParams());
         RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) holder.space.getLayoutParams();
         params.height = data.getData().getHeight();
         holder.space.setLayoutParams(params);
     }
 
-    private void bindView(TitleVideoViewHolder holder, ViewData data) {
+
+    private void bindView(TitleVideoViewHolder holder, final ViewData data, final int position) {
+        holder.title.setTextColor(mTitleColor);
         holder.title.setText(data.getData().getHeader().getTitle());
         if (holder.recyclerView.getLayoutManager() == null) {
             LinearLayoutManager manager = new LinearLayoutManager(context);
@@ -179,8 +191,20 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             holder.recyclerView.setLayoutManager(manager);
             holder.recyclerView.addItemDecoration(new HorizontalDecoration(mSpace));
         }
-        holder.recyclerView.setAdapter(new HorizontalAdapter(data.getData().getItemList(), mLayoutInflater));
+
+        HorizontalAdapter adapter = new HorizontalAdapter(data.getData().getItemList(),
+            mLayoutInflater);
+        if (horizontalItemCilckListener != null) {
+            adapter.setOnItemClickListener(new HorizontalAdapter.ItemClickListener() {
+                @Override public void onItemClicked(int myIndex) {
+                    horizontalItemCilckListener.onItemClicked(data.getParentIndex(), myIndex,
+                        position);
+                }
+            });
+        }
+        holder.recyclerView.setAdapter(adapter);
     }
+
 
     //设置ITEM类型，可以自由发挥，这里设置item position单数显示item1 偶数显示item2
     @Override
@@ -200,4 +224,41 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         notifyItemRangeInserted(count, datas.size());
     }
 
+
+    public interface HorizontalItemCilckListener {
+        //首页需要用到  前面两个参数，其余的需要用到后面两个
+        /**
+         * @param parentID 对于数据的id
+         * @param myPosition 点击位置
+         * @param position 点击view（对于父RecyclerView）的位置
+         */
+        void onItemClicked(int parentID, int myPosition, int position);
+    }
+
+
+    public static class Builder {
+        private TestAdapter adapter;
+
+
+        public Builder(Context context, List<ViewData> datas) {
+            adapter = new TestAdapter(context, datas);
+        }
+
+
+        public Builder setTitleTextColor(int color) {
+            adapter.mTitleColor = color;
+            return this;
+        }
+
+
+        public Builder horizontalItemCilckListener(HorizontalItemCilckListener listener) {
+            adapter.horizontalItemCilckListener = listener;
+            return this;
+        }
+
+
+        public TestAdapter build() {
+            return adapter;
+        }
+    }
 }

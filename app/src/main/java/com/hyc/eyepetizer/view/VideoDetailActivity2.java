@@ -4,14 +4,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.base.BaseActivity;
@@ -28,15 +29,9 @@ import com.hyc.eyepetizer.view.adapter.VideoDetailAdapter;
 import com.hyc.eyepetizer.widget.AnimateTextView;
 import com.hyc.eyepetizer.widget.CustomTextView;
 import com.hyc.eyepetizer.widget.DepthPageTransformer;
-
-import org.greenrobot.eventbus.EventBus;
-
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+import org.greenrobot.eventbus.EventBus;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -49,6 +44,8 @@ import rx.schedulers.Schedulers;
 public class VideoDetailActivity2 extends BaseActivity {
     private static final String PARENT_INDEX = "parent_index";
     private static final String INDEX = "index";
+    private static final String FORM_RELATE = "form_relate";
+    private static final String VIDEO_ID = "video_id";
     @BindView(R.id.vp_video)
     ViewPager vpVideo;
     @BindView(R.id.tv_part)
@@ -101,6 +98,18 @@ public class VideoDetailActivity2 extends BaseActivity {
     private boolean dragging;
     private Subscription mEventSubscription;
     private int mIndicatorScroll;
+    private int mVideoID;
+    private boolean fromRelate;
+    private Runnable mEvent = new Runnable() {
+        @Override
+        public void run() {
+            EventBus.getDefault()
+                .post(new VideoSelectEvent(
+                    mIndexMap.get(vpVideo.getCurrentItem()) - (mIndexMap.get(mIndex) - mIndex)));
+        }
+    };
+    private int lastValue;
+
 
     public static Intent newIntent(Context context, int index, int parentIndex) {
         Intent intent = new Intent(context, VideoDetailActivity2.class);
@@ -108,17 +117,22 @@ public class VideoDetailActivity2 extends BaseActivity {
         intent.putExtra(PARENT_INDEX, parentIndex);
         return intent;
     }
-    private Runnable mEvent=new Runnable() {
-        @Override
-        public void run() {
-            EventBus.getDefault().post(new VideoSelectEvent(mIndexMap.get(vpVideo.getCurrentItem())-(mIndexMap.get(mIndex)-mIndex)));
-        }
-    };
+
+
+    public static Intent newIntent(Context context, int index, int parentIndex, boolean formRelate, int videoID) {
+        Intent intent = newIntent(context, index, parentIndex);
+        intent.putExtra(FORM_RELATE, formRelate);
+        intent.putExtra(VIDEO_ID, videoID);
+        return intent;
+    }
+
 
     @Override
     protected void handleIntent() {
         mParentIndex = getIntent().getIntExtra(PARENT_INDEX, -1);
         mIndex = getIntent().getIntExtra(INDEX, -1);
+        fromRelate = getIntent().getBooleanExtra(FORM_RELATE, false);
+        mVideoID = getIntent().getIntExtra(VIDEO_ID, -1);
     }
 
 
@@ -127,14 +141,18 @@ public class VideoDetailActivity2 extends BaseActivity {
         return R.layout.activity_video_detail;
     }
 
-    private int lastValue;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
         mIndexMap=new SparseArray<>();
         vpVideo.setOffscreenPageLimit(2);
-        mViewDatas = FeedModel.getInstance().getVideoListByIndex(mParentIndex,mIndexMap);
+        if (fromRelate) {
+            mViewDatas = FeedModel.getInstance().getRelate(mVideoID, mParentIndex);
+        } else {
+            mViewDatas = FeedModel.getInstance().getVideoListByIndex(mParentIndex, mIndexMap);
+        }
         launchData(mIndex);
         mAdapter = new VideoDetailAdapter(VideoDetailActivity2.this,
                 mViewDatas);
@@ -172,10 +190,13 @@ public class VideoDetailActivity2 extends BaseActivity {
                 //修复快速滑动引起的卡顿
                 //如果马上执行会影响vp的速度 会有一点卡
                 //修正位置：因为之前已经传入了开始位置，已经加入了本节非Video的item个数，所以现在应该减掉
-                if (mEventSubscription!=null) {
-                    mEventSubscription.unsubscribe();
+                if (!fromRelate) {
+                    if (mEventSubscription != null) {
+                        mEventSubscription.unsubscribe();
+                    }
+                    postEvent(position);
                 }
-                postEvent(position);
+
             }
 
             @Override
@@ -229,6 +250,14 @@ public class VideoDetailActivity2 extends BaseActivity {
     public void play(){
         VideoActivity.startList(this,vpVideo.getCurrentItem(),mParentIndex);
     }
+
+
+    @OnClick(R.id.iv_more)
+    public void goToRelate() {
+        ItemListData data = mViewDatas.get(vpVideo.getCurrentItem()).getData();
+        VideoRelateActivity.start(this, data.getId(), data.getTitle(),
+            data.getCover().getBlurred());
+    }
     private void animateText() {
         mTvTitle.postDelayed(new Runnable() {
             @Override
@@ -276,13 +305,17 @@ public class VideoDetailActivity2 extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (hasScrolled) {
-            EventBus.getDefault().post(new VideoSelectEvent(mIndexMap.get(vpVideo.getCurrentItem())-(mIndexMap.get(mIndex)-mIndex)));
-        }
-        EventBus.getDefault()
+        if (!fromRelate) {
+            if (hasScrolled) {
+                EventBus.getDefault()
+                    .post(new VideoSelectEvent(mIndexMap.get(vpVideo.getCurrentItem()) -
+                        (mIndexMap.get(mIndex) - mIndex)));
+            }
+            EventBus.getDefault()
                 .post(new VideoDetailBackEvent(vpVideo.getCurrentItem(),
-                        mViewDatas.get(vpVideo.getCurrentItem()).getData().getCover().getDetail(),
-                        hasScrolled));
+                    mViewDatas.get(vpVideo.getCurrentItem()).getData().getCover().getDetail(),
+                    hasScrolled));
+        }
         super.onBackPressed();
     }
 
@@ -300,6 +333,8 @@ public class VideoDetailActivity2 extends BaseActivity {
     @Override
     public void finish() {
         super.finish();
-        overridePendingTransition(0, 0);
+        if (!fromRelate) {
+            overridePendingTransition(0, 0);
+        }
     }
 }

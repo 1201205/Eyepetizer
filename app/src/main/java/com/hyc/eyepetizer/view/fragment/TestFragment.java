@@ -75,10 +75,14 @@ public class TestFragment extends BaseFragment<SelectionPresenter>
         mRecyclerView.addOnScrollListener(mOnScrollListener);
         return root;
     }
-
+    private int mLastIndex;
 
     @Subscribe
     public void handleSelectEvent(VideoSelectEvent event) {
+        if (mLastIndex==event.position) {
+            return;
+        }
+        mLastIndex=event.position;
         final int p=event.position+mStartPosition;
         mManager.scrollToPosition(p);
         mRecyclerView.postDelayed(new Runnable() {

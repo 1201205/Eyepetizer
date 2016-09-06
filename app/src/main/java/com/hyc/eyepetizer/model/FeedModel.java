@@ -1,5 +1,7 @@
 package com.hyc.eyepetizer.model;
 
+import android.util.SparseArray;
+
 import com.hyc.eyepetizer.model.beans.SectionList;
 import com.hyc.eyepetizer.model.beans.ViewData;
 import com.hyc.eyepetizer.utils.WidgetHelper;
@@ -17,10 +19,12 @@ public class FeedModel {
 
     private static FeedModel sModel;
     private List<SectionList> mSectionLists;
+    private SparseArray<List<ViewData>> mViewDatas;
 
 
     private FeedModel() {
         mSectionLists = new ArrayList<>();
+        mViewDatas=new SparseArray<>();
     }
 
 
@@ -49,16 +53,32 @@ public class FeedModel {
         mSectionLists.clear();
     }
 
-    public List<ViewData> getVideoListByIndex(int index) {
+    public List<ViewData> getVideoListByIndex(int index, SparseArray<Integer> array) {
         if (mSectionLists.size() < index) {
             return null;
         }
         List<ViewData> datas = new ArrayList<>();
-        for (ViewData data : mSectionLists.get(index-1).getItemList()) {
+        int count=mSectionLists.get(index-1).getItemList().size();
+        int j=0;
+        for (int i=0;i<count;i++) {
+            ViewData data=mSectionLists.get(index-1).getItemList().get(i);
             if (WidgetHelper.Type.VIDEO.equals(data.getType())) {
                 datas.add(data);
+                array.put(j,i);
+                j++;
             }
         }
+        if (mViewDatas.get(index)!=null) {
+            mViewDatas.get(index).clear();
+        }
+        mViewDatas.put(index,datas);
         return datas;
     }
+    public List<ViewData> getVideoListByIndex(int index){
+        if (mViewDatas.get(index)==null) {
+            return getVideoListByIndex(index,new SparseArray<Integer>());
+        }
+        return mViewDatas.get(index);
+    }
+
 }

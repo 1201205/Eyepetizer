@@ -15,6 +15,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -27,8 +28,14 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.hyc.eyepetizer.R;
+import com.hyc.eyepetizer.base.BaseActivity;
+import com.hyc.eyepetizer.model.FeedModel;
+import com.hyc.eyepetizer.model.beans.ItemListData;
+import com.hyc.eyepetizer.model.beans.ViewData;
 import com.hyc.eyepetizer.utils.AppUtil;
 import com.hyc.eyepetizer.utils.DateUtil;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -37,13 +44,17 @@ import tv.danmaku.ijk.media.IjkVideoView;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
-public class VideoActivity extends AppCompatActivity implements
+public class VideoActivity extends BaseActivity implements
         SeekBar.OnSeekBarChangeListener {
 
     private static final int MESSAGE_SHOW_PROGRESS = 1;
     private static final int MESSAGE_FADE_OUT = 2;
     private static final int MESSAGE_SEEK_NEW_POSITION = 3;
     private static final int MESSAGE_HIDE_CENTER_BOX = 4;
+
+    private static final String PARENT_INDEX = "parent_index";
+    private static final String INDEX = "index";
+
     private static int SIZE_DEFAULT = 0;
     private static int SIZE_4_3 = 1;
     private static int SIZE_16_9 = 2;
@@ -98,6 +109,9 @@ public class VideoActivity extends AppCompatActivity implements
     private int mScreenHeight = 0;
     private long mDuration;
     private int count = 0;
+    private int mParentIndex;
+    private int mIndex;
+
     @SuppressWarnings("HandlerLeak")
     private Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -135,7 +149,14 @@ public class VideoActivity extends AppCompatActivity implements
     };
 
 
-    public static void start(Context context, String url, String title) {
+    public static void startList(Context context, int index, int parentIndex) {
+        Intent intent = new Intent(context, VideoActivity.class);
+        intent.putExtra(INDEX, index);
+        intent.putExtra(PARENT_INDEX, parentIndex);
+        context.startActivity(intent);
+    }
+
+    public static void startSingle(Context context, String url, String title) {
         Intent intent = new Intent(context, VideoActivity.class);
         intent.putExtra(URL, url);
         intent.putExtra(TITLE, title);
@@ -149,16 +170,22 @@ public class VideoActivity extends AppCompatActivity implements
 
     private String mUrl;
     private String mTitle;
+    private List<ViewData> mViewDatas;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setContentView(R.layout.activity_video);
         ButterKnife.bind(this);
-        mUrl = getIntent().getStringExtra(URL);
-        mTitle = getIntent().getStringExtra(TITLE);
-        mTitleText.setText(mTitle);
+        mViewDatas = FeedModel.getInstance().getVideoListByIndex(mParentIndex);
+        mCurrentData=mViewDatas.get(mIndex).getData();
+        initView();
+    }
+    private ItemListData mCurrentData;
+    private void initView(){
+
+        mTitleText.setText(mCurrentData.getTitle());
+        mUrl=mCurrentData.getPlayUrl();
         mSeekBar.setMax(1000);
         mSeekBar.setOnSeekBarChangeListener(this);
 
@@ -184,6 +211,16 @@ public class VideoActivity extends AppCompatActivity implements
             }
         });
         initVideo(mUrl);
+    }
+    @Override
+    protected void handleIntent() {
+        mParentIndex = getIntent().getIntExtra(PARENT_INDEX, -1);
+        mIndex = getIntent().getIntExtra(INDEX, -1);
+    }
+
+    @Override
+    protected int getLayoutID() {
+        return R.layout.activity_video;
     }
 
 
@@ -239,8 +276,10 @@ public class VideoActivity extends AppCompatActivity implements
                 updatePausePlay();
                 mVideoView.stopPlayback();
                 mVideoView.release(true);
+                mIndex++;
+                mUrl=mViewDatas.get(mIndex).getData().getPlayUrl();
                 // TODO: 2016/9/2  播放下一个  如果下一个不存在  退出
-                mVideoView.setVideoURI(Uri.parse(path));
+                mVideoView.setVideoURI(Uri.parse(mUrl));
             }
         });
 

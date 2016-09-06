@@ -31,31 +31,13 @@ import org.greenrobot.eventbus.Subscribe;
  */
 public class VideoDetailAdapter extends PagerAdapter {
     @BindView(R.id.sdv_img) SimpleDraweeView sdvImg;
-    @BindView(R.id.iv_back) ImageView ivBack;
-    @BindView(R.id.iv_play) ImageView ivPlay;
     @BindView(R.id.sdv_blur) SimpleDraweeView sdvBlur;
-    @BindView(R.id.tv_title) AnimateTextView tvTitle;
-    @BindView(R.id.tv_category) AnimateTextView tvCategory;
-    @BindView(R.id.iv_more) ImageView ivMore;
-    @BindView(R.id.sdv_icon) SimpleDraweeView sdvIcon;
-    @BindView(R.id.tv_author_name) CustomTextView tvAuthorName;
-    @BindView(R.id.tv_count) CustomTextView tvCount;
-    @BindView(R.id.tv_author_des) CustomTextView tvAuthorDes;
-    @BindView(R.id.divider) View divider;
-    @BindView(R.id.tv_des) AnimateTextView tvDes;
-    @BindView(R.id.tv_like_count) CustomTextView tvLikeCount;
-    @BindView(R.id.tv_share_count) CustomTextView tvShareCount;
-    @BindView(R.id.tv_reply_count) CustomTextView tvReplyCount;
-    @BindView(R.id.rl_author) RelativeLayout rlAuthor;
     private List<ViewData> mViewDatas;
     private Context mContext;
-    private SparseArray<List<AnimateTextView>> mViews;
 
     public VideoDetailAdapter(Context context, List<ViewData> datas) {
         mContext = context;
         mViewDatas = datas;
-        mViews = new SparseArray<>();
-        EventBus.getDefault().register(this);
     }
 
 
@@ -80,73 +62,12 @@ public class VideoDetailAdapter extends PagerAdapter {
 
 
     private void initView(int position) {
-        Log.e("hyc-t1", position + "--");
-        List<AnimateTextView> list = null;
-        if (mViews.get(position) != null) {
-            list = mViews.get(position);
-            list.clear();
-        } else {
-            list = new ArrayList<>();
-            mViews.put(position, list);
-        }
         ItemListData data = mViewDatas.get(position).getData();
         FrescoHelper.loadUrl(sdvImg, data.getCover().getDetail());
         FrescoHelper.loadUrl(sdvBlur, data.getCover().getBlurred());
-        tvTitle.setAnimText(data.getTitle());
-        tvCategory.setAnimText(
-            DataHelper.getCategoryAndDuration(data.getCategory(), data.getDuration()));
-        tvDes.setAnimText(data.getDescription());
-        Author author = data.getAuthor();
-        if (author != null) {
-            FrescoHelper.loadUrl(sdvIcon, author.getIcon());
-            tvAuthorName.setText(author.getName());
-            tvAuthorDes.setText(author.getDescription());
-            tvCount.setText(author.getVideoNum() + "个视频");
-        } else {
-            rlAuthor.setVisibility(View.GONE);
-        }
-        tvLikeCount.setText(String.valueOf(data.getConsumption().getCollectionCount()));
-        tvReplyCount.setText(String.valueOf(data.getConsumption().getReplyCount()));
-        tvShareCount.setText(String.valueOf(data.getConsumption().getShareCount()));
-        list.add(tvTitle);
-        list.add(tvCategory);
-        list.add(tvDes);
-        //mViews.add(position,list);
-        //tvDes.getViewTreeObserver().addOnPreDrawListener(
-        //    new ViewTreeObserver.OnPreDrawListener() {
-        //        @Override public boolean onPreDraw() {
-        //            tvDes.getViewTreeObserver().removeOnPreDrawListener(this);
-        //            tvTitle.animateChar(100);
-        //            tvCategory.animateChar(100);
-        //            tvDes.animateChar(100);
-        //            return true;
-        //        }
-        //    });
-    }
-
-
-    @Subscribe
-    public void handleSelectEvent(VideoSelectEvent event) {
-        if (mViews == null || mViews.get(event.position) == null) {
-            return;
-        }
-        List<AnimateTextView> list = mViews.get(event.position);
-        for (AnimateTextView view : list) {
-            view.animateChar();
-        }
-    }
-
-
-    public void unRegister() {
-        EventBus.getDefault().unregister(this);
-        mViews.clear();
     }
 
     @Override public void destroyItem(ViewGroup container, int position, Object object) {
         container.removeView((View) object);
-        if (mViews.size() <= position) {
-            return;
-        }
-        mViews.get(position).clear();
     }
 }

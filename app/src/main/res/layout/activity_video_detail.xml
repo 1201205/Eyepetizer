@@ -1,29 +1,208 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
 
-    android:layout_height="match_parent">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
     <android.support.v4.view.ViewPager
         android:id="@+id/vp_video"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
+    <RelativeLayout
+        android:id="@+id/rl_button"
+        android:layout_width="match_parent"
+        android:layout_height="353dp">
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_action_detail_back"/>
+
+        <ImageView
+            android:clickable="true"
+            android:id="@+id/iv_play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:src="@drawable/ic_action_play"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="353dp">
+
+        <com.hyc.eyepetizer.widget.AnimateTextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="14dp"
+            android:layout_marginTop="14dp"
+            android:textColor="@color/colorWhite"
+            android:textSize="15sp"
+            app:typeface="@string/type_bold"/>
+
+        <com.hyc.eyepetizer.widget.AnimateTextView
+            android:id="@+id/tv_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_title"
+            android:layout_marginLeft="14dp"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/colorWhite"
+            android:textSize="12sp"/>
+
+        <ImageView
+            android:id="@+id/iv_more"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="19dp"
+            android:src="@drawable/ic_action_open_detail_more"/>
+
+        <RelativeLayout
+            android:id="@+id/rl_author"
+            android:layout_width="match_parent"
+            android:layout_height="62dp"
+            android:layout_below="@id/tv_category"
+            android:layout_marginLeft="14dp">
+
+            <com.facebook.drawee.view.SimpleDraweeView xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                       android:id="@+id/sdv_icon"
+                                                       android:layout_width="40dp"
+                                                       android:layout_height="40dp"
+                                                       android:layout_centerVertical="true"
+                                                       app:fadeDuration="0"
+                                                       app:roundAsCircle="true"/>
+
+            <com.hyc.eyepetizer.widget.CustomTextView
+                android:id="@+id/tv_author_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="16dp"
+                android:layout_toRightOf="@id/sdv_icon"
+                android:textColor="@color/colorWhite"
+                android:textSize="13sp"
+                app:typeface="@string/type_bold"/>
+
+            <com.hyc.eyepetizer.widget.CustomTextView
+                android:id="@+id/tv_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="19dp"
+                android:layout_toRightOf="@+id/tv_author_name"
+                android:textColor="@color/colorWhite"
+                android:textSize="10sp"/>
+
+            <com.hyc.eyepetizer.widget.CustomTextView
+                android:id="@+id/tv_author_des"
+                android:layout_width="266dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_author_name"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="6dp"
+                android:layout_toRightOf="@id/sdv_icon"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textColor="@color/colorWhite"
+                android:textSize="10sp"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="8dp"
+                android:src="@drawable/ic_action_more_arrow_dark"/>
+        </RelativeLayout>
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="0.25px"
+            android:layout_below="@id/rl_author"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="14dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/colorWhite"/>
+
+        <com.hyc.eyepetizer.widget.AnimateTextView
+            android:id="@+id/tv_des"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/divider"
+            android:layout_marginLeft="14dp"
+            android:layout_marginRight="14dp"
+            android:lineSpacingMultiplier="1.5"
+            android:textSize="11sp"/>
+
+        <LinearLayout
+            android:id="@+id/ll_floor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="30dp"
+            android:layout_marginLeft="14dp"
+            android:orientation="horizontal">
+
+            <com.hyc.eyepetizer.widget.CustomTextView
+                android:id="@+id/tv_like_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_action_favorites_without_padding"
+                android:drawablePadding="9dp"
+                android:textColor="@color/colorWhite"
+                android:textSize="12sp"/>
+
+            <com.hyc.eyepetizer.widget.CustomTextView
+                android:id="@+id/tv_share_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:drawableLeft="@drawable/ic_action_share_without_padding"
+                android:drawablePadding="9dp"
+                android:textColor="@color/colorWhite"
+                android:textSize="12sp"/>
+
+            <com.hyc.eyepetizer.widget.CustomTextView
+                android:id="@+id/tv_reply_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:drawableLeft="@drawable/ic_action_reply_nopadding"
+                android:drawablePadding="9dp"
+                android:textColor="@color/colorWhite"
+                android:textSize="12sp"/>
+        </LinearLayout>
+    </RelativeLayout>
+
     <LinearLayout
+        android:layout_gravity="center"
+        android:gravity="center"
         android:id="@+id/ll_part"
-        android:layout_width="wrap_content"
+        android:layout_width="80dp"
         android:layout_height="20dp"
-        android:orientation="vertical"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical">
 
         <com.hyc.eyepetizer.widget.CustomTextView
+            app:typeface="@string/type_lobster"
             android:id="@+id/tv_part"
+            android:textSize="10sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
         <View
+            android:background="@color/white"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="1dp"
             android:layout_alignParentBottom="true"/>
     </LinearLayout>
 </RelativeLayout>

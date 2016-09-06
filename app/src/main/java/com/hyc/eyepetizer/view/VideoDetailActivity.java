@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.SparseArray;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import butterknife.BindView;
@@ -49,6 +50,7 @@ public class VideoDetailActivity extends BaseActivity {
     private int mIndex;
     private List<ViewData> mViewDatas;
     private ItemListData mdata;
+    private SparseArray<Integer> mIndexMap;
 
 
     public static Intent newIntent(Context context, int index, int parentIndex) {
@@ -69,14 +71,14 @@ public class VideoDetailActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        mIndexMap=new SparseArray<>();
         getWindow().setSharedElementEnterTransition(
             DraweeTransition.createTransitionSet(ScalingUtils.ScaleType.CENTER_CROP,
                 ScalingUtils.ScaleType.CENTER_CROP));
         getWindow().setSharedElementReturnTransition(
             DraweeTransition.createTransitionSet(ScalingUtils.ScaleType.CENTER_CROP,
                 ScalingUtils.ScaleType.CENTER_CROP));
-        mViewDatas = FeedModel.getInstance().getVideoListByIndex(mParentIndex);
+        mViewDatas = FeedModel.getInstance().getVideoListByIndex(mParentIndex,mIndexMap);
         mdata = mViewDatas.get(mIndex).getData();
         FrescoHelper.loadUrl(mImg, mdata.getCover().getDetail());
         FrescoHelper.loadUrl(sdvBlur, mdata.getCover().getBlurred());

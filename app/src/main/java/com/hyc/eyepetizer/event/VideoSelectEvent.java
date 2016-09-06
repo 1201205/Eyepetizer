@@ -8,6 +8,7 @@ public class VideoSelectEvent {
     public int position;
 
 
+
     public VideoSelectEvent(int position) {
         this.position = position;
     }

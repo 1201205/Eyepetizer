@@ -108,4 +108,8 @@ public class AppUtil {
     public static int getColor(int id) {
         return MainApplication.getApplication().getResources().getColor(id);
     }
+
+    public static String getString(int id) {
+        return MainApplication.getApplication().getResources().getString(id);
+    }
 }

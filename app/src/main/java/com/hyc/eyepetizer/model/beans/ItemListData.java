@@ -13,6 +13,23 @@ public class ItemListData implements java.io.Serializable {
     private Object favoriteAdTrack;
     private Object waterMarks;
     private String playUrl;
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
+
+    public String getSubTitle() {
+        return subTitle;
+    }
+
+    public void setSubTitle(String subTitle) {
+        this.subTitle = subTitle;
+    }
+
     private Cover cover;
     private int duration;
     private Provider provider;
@@ -33,6 +50,8 @@ public class ItemListData implements java.io.Serializable {
     private CoverHeader header;
     private List<ViewData> itemList;
     private int count;
+    private String icon;
+    private String subTitle;
     public String getImage() {
         return image;
     }

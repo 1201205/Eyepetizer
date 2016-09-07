@@ -51,6 +51,8 @@ public class VideoActivity extends BaseActivity implements
     private static final String INDEX = "index";
     private static final String URL = "url";
     private static final String TITLE = "title";
+    private static final String FORM_RELATE = "form_relate";
+    private static final String VIDEO_ID = "video_id";
     private static int SIZE_DEFAULT = 0;
     private static int SIZE_4_3 = 1;
     private static int SIZE_16_9 = 2;
@@ -152,7 +154,8 @@ public class VideoActivity extends BaseActivity implements
     private String mTitle;
     private List<ViewData> mViewDatas;
     private ItemListData mCurrentData;
-
+    private boolean formRelate;
+    private int mVideoID;
 
     public static void startList(Context context, int index, int parentIndex) {
         Intent intent = new Intent(context, VideoActivity.class);
@@ -160,7 +163,14 @@ public class VideoActivity extends BaseActivity implements
         intent.putExtra(PARENT_INDEX, parentIndex);
         context.startActivity(intent);
     }
-
+    public static void startList(Context context, int index, int parentIndex,boolean formRelate,int videoID) {
+        Intent intent = new Intent(context, VideoActivity.class);
+        intent.putExtra(INDEX, index);
+        intent.putExtra(PARENT_INDEX, parentIndex);
+        intent.putExtra(FORM_RELATE, formRelate);
+        intent.putExtra(VIDEO_ID,videoID);
+        context.startActivity(intent);
+    }
 
     public static void startSingle(Context context, String url, String title) {
         Intent intent = new Intent(context, VideoActivity.class);
@@ -175,7 +185,11 @@ public class VideoActivity extends BaseActivity implements
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
-        mViewDatas = FeedModel.getInstance().getVideoListByIndex(mParentIndex);
+        if (formRelate) {
+            mViewDatas=FeedModel.getInstance().getRelate(mVideoID,mParentIndex);
+        } else {
+            mViewDatas = FeedModel.getInstance().getVideoListByIndex(mParentIndex);
+        }
         mCurrentData=mViewDatas.get(mIndex).getData();
         initView();
     }
@@ -213,8 +227,11 @@ public class VideoActivity extends BaseActivity implements
     }
     @Override
     protected void handleIntent() {
-        mParentIndex = getIntent().getIntExtra(PARENT_INDEX, -1);
-        mIndex = getIntent().getIntExtra(INDEX, -1);
+        Intent intent=getIntent();
+        mParentIndex = intent.getIntExtra(PARENT_INDEX, -1);
+        mIndex = intent.getIntExtra(INDEX, -1);
+        formRelate=intent.getBooleanExtra(FORM_RELATE,false);
+        mVideoID=intent.getIntExtra(VIDEO_ID,-1);
     }
 
     @Override

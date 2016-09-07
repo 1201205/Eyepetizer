@@ -89,7 +89,12 @@ public class FeedModel implements VideoListInterface {
         mRelate.put(id, data);
     }
 
-
+    /**
+     * 获取一个ViewData中有很多个ItemList的情况
+     * @param id  对应的video id  或者是通过什么id来获取到的
+     * @param index  第几行
+     * @return
+     */
     public List<ViewData> getRelate(int id, int index) {
         if (mRelate.get(id) != null) {
             return mRelate.get(id).get(index);

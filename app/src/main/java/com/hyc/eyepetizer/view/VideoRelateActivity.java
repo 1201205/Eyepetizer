@@ -71,7 +71,7 @@ public class VideoRelateActivity extends BaseActivity<VideoRelatePresenter>
                     public void onItemClicked(int parentPosition, int myPosition, int position) {
                         Intent intent =
                             VideoDetailActivity2.newIntent(VideoRelateActivity.this, myPosition,
-                                position, true, mID);
+                                position, mID);
                         startActivity(intent);
                     }
                 })

@@ -25,6 +25,8 @@ public class WidgetHelper {
                 return ViewType.NO_MORE;
             case Type.CAMPAIGN:
                 return ViewType.CAMPAIGN;
+            case Type.BRIEF_CARD:
+                return ViewType.BRIEF_CARD;
         }
         return ViewType.Error;
     }
@@ -40,6 +42,7 @@ public class WidgetHelper {
         String VIDEO_COLLECTION_WITH_TITLE = "videoCollectionWithTitle";//有标题的水平视频
         String CAMPAIGN = "campaign";//有标题的水平视频
         String NO_MORE = "noMore";
+        String BRIEF_CARD ="briefCard";
 
     }
 
@@ -54,5 +57,6 @@ public class WidgetHelper {
         int VIDEO_COLLECTION_WITH_TITLE = 7;
         int NO_MORE = 8;
         int CAMPAIGN=9;
+        int BRIEF_CARD =10;
     }
 }

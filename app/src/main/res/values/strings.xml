@@ -5,7 +5,6 @@
     <string name="category">发现</string>
     <string name="pgc">作者</string>
     <string name="mine">我的</string>
-    lobster
     <string name="video_loading">视频加载中</string>
     <string name="video_loading_error">视频加载出错。。</string>
     <string name="type_normal">normal</string>
@@ -19,5 +18,10 @@
     <string name="do_not_get_id">未获取到ID</string>
     <string name="nothing_get">没有获取到数据哦。。。</string>
     <string name="time_out">网络超时。。。</string>
-
+    <string name="hot">- hot -</string>
+    <string name="input_yours">写下你的评论</string>
+    <string name="net_error_retry">网络错误\n点击屏幕重试</string>
+    <string name="no_comment">暂无评论\n快去评论吧</string>
+    <string name="the_end">- The End -</string>
+    <string name="comment_count">- %1$s条评论 -</string>
 </resources>

@@ -10,9 +10,7 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.base.BaseActivity;
@@ -29,9 +27,15 @@ import com.hyc.eyepetizer.view.adapter.VideoDetailAdapter;
 import com.hyc.eyepetizer.widget.AnimateTextView;
 import com.hyc.eyepetizer.widget.CustomTextView;
 import com.hyc.eyepetizer.widget.DepthPageTransformer;
+
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import org.greenrobot.eventbus.EventBus;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -95,20 +99,10 @@ public class VideoDetailActivity2 extends BaseActivity {
     private VideoDetailAdapter mAdapter;
     private int preIndex;
     private SparseArray<Integer> mIndexMap;
-    private boolean dragging;
     private Subscription mEventSubscription;
     private int mIndicatorScroll;
     private int mVideoID;
     private boolean fromRelate;
-    private Runnable mEvent = new Runnable() {
-        @Override
-        public void run() {
-            EventBus.getDefault()
-                .post(new VideoSelectEvent(
-                    mIndexMap.get(vpVideo.getCurrentItem()) - (mIndexMap.get(mIndex) - mIndex)));
-        }
-    };
-    private int lastValue;
 
 
     public static Intent newIntent(Context context, int index, int parentIndex) {
@@ -119,9 +113,9 @@ public class VideoDetailActivity2 extends BaseActivity {
     }
 
 
-    public static Intent newIntent(Context context, int index, int parentIndex, boolean formRelate, int videoID) {
+    public static Intent newIntent(Context context, int index, int parentIndex, int videoID) {
         Intent intent = newIntent(context, index, parentIndex);
-        intent.putExtra(FORM_RELATE, formRelate);
+        intent.putExtra(FORM_RELATE, true);
         intent.putExtra(VIDEO_ID, videoID);
         return intent;
     }
@@ -129,10 +123,13 @@ public class VideoDetailActivity2 extends BaseActivity {
 
     @Override
     protected void handleIntent() {
-        mParentIndex = getIntent().getIntExtra(PARENT_INDEX, -1);
-        mIndex = getIntent().getIntExtra(INDEX, -1);
-        fromRelate = getIntent().getBooleanExtra(FORM_RELATE, false);
-        mVideoID = getIntent().getIntExtra(VIDEO_ID, -1);
+        Intent intent = getIntent();
+        mParentIndex = intent.getIntExtra(PARENT_INDEX, -1);
+        mIndex = intent.getIntExtra(INDEX, -1);
+        fromRelate = intent.getBooleanExtra(FORM_RELATE, false);
+        if (fromRelate) {
+            mVideoID = intent.getIntExtra(VIDEO_ID, -1);
+        }
     }
 
 
@@ -146,41 +143,36 @@ public class VideoDetailActivity2 extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
-        mIndexMap=new SparseArray<>();
-        vpVideo.setOffscreenPageLimit(2);
-        if (fromRelate) {
-            mViewDatas = FeedModel.getInstance().getRelate(mVideoID, mParentIndex);
-        } else {
-            mViewDatas = FeedModel.getInstance().getVideoListByIndex(mParentIndex, mIndexMap);
-        }
+        initData();
         launchData(mIndex);
+        initViewPager();
+    }
+
+    private void initViewPager() {
+        vpVideo.setOffscreenPageLimit(2);
         mAdapter = new VideoDetailAdapter(VideoDetailActivity2.this,
                 mViewDatas);
         vpVideo.setAdapter(mAdapter);
         vpVideo.setCurrentItem(mIndex);
-        ItemListData data = mViewDatas.get(mIndex).getData();
         vpVideo.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                if (positionOffset==0) {
+                if (positionOffset == 0) {
                     return;
                 }
-                    if (preIndex > position) {
-                        changeTextAlpha(positionOffset);
-                        changeImageButtonAlpha(Math.abs(positionOffset - 0.5f) * 2);
-                        llPart.setX(((positionOffset - 1) * mIndicatorScroll) + mIndicatorScroll * preIndex);
-                    } else if (preIndex <= position) {
-                        changeTextAlpha(1 - positionOffset);
-                        changeImageButtonAlpha(Math.abs(0.5f - positionOffset) * 2);
-                        llPart.setX(positionOffset * mIndicatorScroll + mIndicatorScroll * preIndex);
-                    }
-
-                lastValue=positionOffsetPixels;
+                if (preIndex > position) {
+                    changeTextAlpha(positionOffset);
+                    changeImageButtonAlpha(Math.abs(positionOffset - 0.5f) * 2);
+                    llPart.setX(((positionOffset - 1) * mIndicatorScroll) + mIndicatorScroll * preIndex);
+                } else if (preIndex <= position) {
+                    changeTextAlpha(1 - positionOffset);
+                    changeImageButtonAlpha(Math.abs(0.5f - positionOffset) * 2);
+                    llPart.setX(positionOffset * mIndicatorScroll + mIndicatorScroll * preIndex);
+                }
             }
 
             @Override
             public void onPageSelected(int position) {
-                dragging=false;
                 preIndex = position;
                 launchData(position);
                 changeTextAlpha(1);
@@ -196,16 +188,10 @@ public class VideoDetailActivity2 extends BaseActivity {
                     }
                     postEvent(position);
                 }
-
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
-                if (state == 1) {
-                    dragging = true;
-                } else {
-                    dragging=false;
-                }
             }
         });
         vpVideo.setPageTransformer(true, new DepthPageTransformer());
@@ -215,12 +201,22 @@ public class VideoDetailActivity2 extends BaseActivity {
                     public boolean onPreDraw() {
                         vpVideo.getViewTreeObserver().removeOnPreDrawListener(this);
                         animateText();
-                        int w=llPart.getWidth();
-                        mIndicatorScroll= (AppUtil.getScreenWidth(VideoDetailActivity2.this)-w)/(mViewDatas.size()-1);
-                        llPart.setX(mIndex*mIndicatorScroll);
+                        int w = llPart.getWidth();
+                        mIndicatorScroll = (AppUtil.getScreenWidth(VideoDetailActivity2.this) - w) / (mViewDatas.size() - 1);
+                        llPart.setX(mIndex * mIndicatorScroll);
                         return true;
                     }
                 });
+
+    }
+
+    private void initData() {
+        mIndexMap = new SparseArray<>();
+        if (fromRelate) {
+            mViewDatas = FeedModel.getInstance().getRelate(mVideoID, mParentIndex);
+        } else {
+            mViewDatas = FeedModel.getInstance().getVideoListByIndex(mParentIndex, mIndexMap);
+        }
     }
 
     private void stopAnimChar() {
@@ -229,8 +225,8 @@ public class VideoDetailActivity2 extends BaseActivity {
         mTvDes.stop();
     }
 
-    private void postEvent(int p){
-        mEventSubscription=Observable.just(new VideoSelectEvent(mIndexMap.get(vpVideo.getCurrentItem())-(mIndexMap.get(mIndex)-mIndex))).delay(500,TimeUnit.MILLISECONDS).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<VideoSelectEvent>() {
+    private void postEvent(int p) {
+        mEventSubscription = Observable.just(new VideoSelectEvent(mIndexMap.get(vpVideo.getCurrentItem()) - (mIndexMap.get(mIndex) - mIndex))).delay(500, TimeUnit.MILLISECONDS).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<VideoSelectEvent>() {
             @Override
             public void call(VideoSelectEvent event) {
                 EventBus.getDefault().post(event);
@@ -242,13 +238,37 @@ public class VideoDetailActivity2 extends BaseActivity {
         mRlButton.setAlpha(alpha);
     }
 
-    @OnClick(R.id.iv_back)
-    public void back(){
-        onBackPressed();
+    @OnClick({R.id.iv_back, R.id.iv_play, R.id.tv_reply_count})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.iv_back:
+                onBackPressed();
+                break;
+            case R.id.iv_play:
+                if (fromRelate) {
+                    VideoActivity.startList(this, vpVideo.getCurrentItem(), mParentIndex, true, mVideoID);
+                } else {
+                    VideoActivity.startList(this, vpVideo.getCurrentItem(), mParentIndex);
+                }
+                break;
+            case R.id.tv_reply_count:
+                ItemListData data = mViewDatas.get(vpVideo.getCurrentItem()).getData();
+                VideoReplyActivity.start(this, data.getId(), data.getConsumption().getReplyCount(), data.getTitle(), data.getCover().getBlurred());
+                break;
+            default:
+                break;
+        }
+
     }
+
     @OnClick(R.id.iv_play)
-    public void play(){
-        VideoActivity.startList(this,vpVideo.getCurrentItem(),mParentIndex);
+    public void play() {
+        if (fromRelate) {
+            VideoActivity.startList(this, vpVideo.getCurrentItem(), mParentIndex, true, mVideoID);
+        } else {
+            VideoActivity.startList(this, vpVideo.getCurrentItem(), mParentIndex);
+        }
+
     }
 
 
@@ -256,8 +276,9 @@ public class VideoDetailActivity2 extends BaseActivity {
     public void goToRelate() {
         ItemListData data = mViewDatas.get(vpVideo.getCurrentItem()).getData();
         VideoRelateActivity.start(this, data.getId(), data.getTitle(),
-            data.getCover().getBlurred());
+                data.getCover().getBlurred());
     }
+
     private void animateText() {
         mTvTitle.postDelayed(new Runnable() {
             @Override
@@ -266,7 +287,7 @@ public class VideoDetailActivity2 extends BaseActivity {
                 mTvCategory.animateChar();
                 mTvDes.animateChar();
             }
-        },16);
+        }, 16);
 
     }
 
@@ -289,7 +310,7 @@ public class VideoDetailActivity2 extends BaseActivity {
         } else {
             mRlAuthor.setVisibility(View.GONE);
         }
-        tvPart.setText((position+1)+" - "+mViewDatas.size());
+        tvPart.setText((position + 1) + " - " + mViewDatas.size());
         mTvLikeCount.setText(String.valueOf(data.getConsumption().getCollectionCount()));
         mTvReplyCount.setText(String.valueOf(data.getConsumption().getReplyCount()));
         mTvShareCount.setText(String.valueOf(data.getConsumption().getShareCount()));
@@ -308,13 +329,13 @@ public class VideoDetailActivity2 extends BaseActivity {
         if (!fromRelate) {
             if (hasScrolled) {
                 EventBus.getDefault()
-                    .post(new VideoSelectEvent(mIndexMap.get(vpVideo.getCurrentItem()) -
-                        (mIndexMap.get(mIndex) - mIndex)));
+                        .post(new VideoSelectEvent(mIndexMap.get(vpVideo.getCurrentItem()) -
+                                (mIndexMap.get(mIndex) - mIndex)));
             }
             EventBus.getDefault()
-                .post(new VideoDetailBackEvent(vpVideo.getCurrentItem(),
-                    mViewDatas.get(vpVideo.getCurrentItem()).getData().getCover().getDetail(),
-                    hasScrolled));
+                    .post(new VideoDetailBackEvent(vpVideo.getCurrentItem(),
+                            mViewDatas.get(vpVideo.getCurrentItem()).getData().getCover().getDetail(),
+                            hasScrolled));
         }
         super.onBackPressed();
     }
@@ -323,7 +344,7 @@ public class VideoDetailActivity2 extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mEventSubscription!=null) {
+        if (mEventSubscription != null) {
             mEventSubscription.unsubscribe();
         }
 

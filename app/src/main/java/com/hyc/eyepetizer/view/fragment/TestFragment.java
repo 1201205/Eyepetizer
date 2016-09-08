@@ -15,6 +15,7 @@ import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.base.BaseFragment;
 import com.hyc.eyepetizer.contract.SelectionContract;
 import com.hyc.eyepetizer.event.VideoSelectEvent;
+import com.hyc.eyepetizer.model.FromType;
 import com.hyc.eyepetizer.model.beans.ViewData;
 import com.hyc.eyepetizer.presenter.SelectionPresenter;
 import com.hyc.eyepetizer.view.adapter.TestAdapter;
@@ -81,7 +82,7 @@ public class TestFragment extends BaseFragment<SelectionPresenter>
 
     @Subscribe
     public void handleSelectEvent(VideoSelectEvent event) {
-        if (mLastIndex==event.position) {
+        if (event.fromType != FromType.TYPE_MAIN || mLastIndex == event.position) {
             return;
         }
         mLastIndex=event.position;
@@ -142,7 +143,8 @@ public class TestFragment extends BaseFragment<SelectionPresenter>
 
     @Override
     public void showSelection(List<ViewData> datas) {
-        mAdapter = new TestAdapter.Builder(getContext(), datas).horizontalItemCilckListener(
+        mAdapter = new TestAdapter.Builder(getContext(), datas).type(FromType.TYPE_MAIN)
+            .horizontalItemCilckListener(
             new TestAdapter.HorizontalItemCilckListener() {
                 @Override
                 public void onItemClicked(int parentPosition, int myPosition, int position) {

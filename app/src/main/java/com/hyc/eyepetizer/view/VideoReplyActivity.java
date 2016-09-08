@@ -7,7 +7,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.RelativeLayout;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.base.BaseActivity;
@@ -18,17 +20,16 @@ import com.hyc.eyepetizer.utils.AppUtil;
 import com.hyc.eyepetizer.utils.FrescoHelper;
 import com.hyc.eyepetizer.view.adapter.VideoReplyAdapter;
 import com.hyc.eyepetizer.widget.CustomTextView;
-
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * Created by Administrator on 2016/9/7.
  */
 public class VideoReplyActivity extends BaseActivity<VideoReplyPresenter> implements VideoReplyContract.View {
+    private static final String ID = "id";
+    private static final String TITLE = "title";
+    private static final String COUNT = "count";
+    private static final String URL = "url";
     @BindView(R.id.tv_title)
     CustomTextView mTvTitle;
     @BindView(R.id.tv_count)
@@ -48,16 +49,11 @@ public class VideoReplyActivity extends BaseActivity<VideoReplyPresenter> implem
     private String mUrl;
     private String mTitle;
     private VideoReplyAdapter mAdapter;
-
     private boolean isRequesting;
     private RecyclerView.OnScrollListener mOnScrollListener;
     private LinearLayoutManager mManager;
     private boolean hasMore=true;
 
-    private static final String ID = "id";
-    private static final String TITLE = "title";
-    private static final String COUNT = "count";
-    private static final String URL = "url";
 
     public static void start(Context context, int id, int count, String title, String url) {
         Intent intent = new Intent(context, VideoReplyActivity.class);
@@ -85,6 +81,7 @@ public class VideoReplyActivity extends BaseActivity<VideoReplyPresenter> implem
     @Override
     public void showReply(List<VideoReply> replies, boolean hasMore) {
         if (mAdapter == null) {
+            mRvReply.setVisibility(View.VISIBLE);
             mRlError.setVisibility(View.GONE);
             mAdapter = new VideoReplyAdapter(this);
             mRvReply.setAdapter(mAdapter);
@@ -96,6 +93,7 @@ public class VideoReplyActivity extends BaseActivity<VideoReplyPresenter> implem
 
     @Override
     public void showError() {
+        mRvReply.setVisibility(View.GONE);
         mTvError.setText(R.string.net_error_retry);
         mRlError.setVisibility(View.VISIBLE);
     }
@@ -157,7 +155,8 @@ public class VideoReplyActivity extends BaseActivity<VideoReplyPresenter> implem
         mRvReply.addOnScrollListener(mOnScrollListener);
     }
 
-    @OnClick({R.id.tv_input, R.id.rl_head, R.id.rl_error})
+
+    @OnClick({ R.id.tv_input, R.id.rl_head, R.id.rl_error })
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_input:

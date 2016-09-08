@@ -13,13 +13,16 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.base.BaseActivity;
 import com.hyc.eyepetizer.event.VideoDetailBackEvent;
 import com.hyc.eyepetizer.event.VideoSelectEvent;
 import com.hyc.eyepetizer.model.FeedModel;
+import com.hyc.eyepetizer.model.FromType;
 import com.hyc.eyepetizer.model.VideoListInterface;
 import com.hyc.eyepetizer.model.ViewDataListFactory;
 import com.hyc.eyepetizer.model.beans.Author;
@@ -32,20 +35,9 @@ import com.hyc.eyepetizer.view.adapter.VideoDetailAdapter;
 import com.hyc.eyepetizer.widget.AnimateTextView;
 import com.hyc.eyepetizer.widget.CustomTextView;
 import com.hyc.eyepetizer.widget.DepthPageTransformer;
-
-import org.greenrobot.eventbus.EventBus;
-
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import rx.Observable;
+import org.greenrobot.eventbus.EventBus;
 import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by ray on 16/9/4.
@@ -55,6 +47,10 @@ public class VideoDetailActivity2 extends BaseActivity {
     private static final String INDEX = "index";
     private static final String FORM_RELATE = "form_relate";
     private static final String VIDEO_ID = "video_id";
+    private static final String TYPE = "type";
+    private static final int STOP_ANIM = 1;
+    private static final int START_ANIM = 2;
+    private static final int POST_TO_PRE = 3;
     @BindView(R.id.vp_video)
     ViewPager vpVideo;
     @BindView(R.id.tv_part)
@@ -112,26 +108,7 @@ public class VideoDetailActivity2 extends BaseActivity {
     private View mTarget;
     //最后一个selection
     private boolean fromTheLast;
-
-
-    public static Intent newIntent(Context context, int index, int parentIndex) {
-        Intent intent = new Intent(context, VideoDetailActivity2.class);
-        intent.putExtra(INDEX, index);
-        intent.putExtra(PARENT_INDEX, parentIndex);
-        return intent;
-    }
-
-
-    public static Intent newIntent(Context context, int index, int parentIndex, int videoID) {
-        Intent intent = newIntent(context, index, parentIndex);
-        intent.putExtra(FORM_RELATE, true);
-        intent.putExtra(VIDEO_ID, videoID);
-        return intent;
-    }
-
-    private static final int STOP_ANIM = 1;
-    private static final int START_ANIM = 2;
-    private static final int POST_TO_PRE = 3;
+    private int mFromType;
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -151,16 +128,44 @@ public class VideoDetailActivity2 extends BaseActivity {
                     mAnimator.start();
                     break;
                 case POST_TO_PRE:
-                    EventBus.getDefault().post(new VideoSelectEvent(mIndexMap.get(vpVideo.getCurrentItem()) - (mIndexMap.get(mIndex) - mIndex)));
+                    //// TODO: 16/9/8   更换计算方式
+                    int index = 0;
+                    if (mFromType == FromType.TYPE_DAILY) {
+                        index = vpVideo.getCurrentItem();
+                    } else if (mFromType == FromType.TYPE_MAIN) {
+                        index = mIndexMap.get(vpVideo.getCurrentItem()) -
+                            (mIndexMap.get(mIndex) - mIndex);
+                    }
+                    EventBus.getDefault().post(new VideoSelectEvent(mFromType, index));
                     break;
 
             }
         }
     };
+    private VideoListInterface mModel;
+
+
+    public static Intent newIntent(int type, Context context, int index, int parentIndex) {
+        Intent intent = new Intent(context, VideoDetailActivity2.class);
+        intent.putExtra(INDEX, index);
+        intent.putExtra(PARENT_INDEX, parentIndex);
+        intent.putExtra(TYPE, type);
+        return intent;
+    }
+
+
+    public static Intent newIntent(int type, Context context, int index, int parentIndex, int videoID) {
+        Intent intent = newIntent(type, context, index, parentIndex);
+        intent.putExtra(FORM_RELATE, true);
+        intent.putExtra(VIDEO_ID, videoID);
+        return intent;
+    }
+
 
     @Override
     protected void handleIntent() {
         Intent intent = getIntent();
+        mFromType = intent.getIntExtra(TYPE, -1);
         mParentIndex = intent.getIntExtra(PARENT_INDEX, -1);
         mIndex = intent.getIntExtra(INDEX, -1);
         fromRelate = intent.getBooleanExtra(FORM_RELATE, false);
@@ -201,6 +206,7 @@ public class VideoDetailActivity2 extends BaseActivity {
         mAnimator.setRepeatCount(ValueAnimator.INFINITE);
         mAnimator.setRepeatMode(ValueAnimator.REVERSE);
     }
+
 
     private void initViewPager() {
         vpVideo.setOffscreenPageLimit(2);
@@ -268,15 +274,13 @@ public class VideoDetailActivity2 extends BaseActivity {
                 });
 
     }
-    private VideoListInterface mModel;
+
+
     private void initData() {
         mIndexMap = new SparseArray<>();
-        mModel= ViewDataListFactory.getModel(1);
+        mModel = ViewDataListFactory.getModel(mFromType);
         mViewDatas=mModel.getVideoList(mVideoID,mParentIndex,mIndexMap);
-        if (fromRelate) {
-            mViewDatas = FeedModel.getInstance().getRelate(mVideoID, mParentIndex);
-        } else {
-            mViewDatas = FeedModel.getInstance().getVideoListByIndex(mParentIndex, mIndexMap);
+        if (mFromType == FromType.TYPE_MAIN) {
             fromTheLast = FeedModel.getInstance().isTheLastSelection(mParentIndex);
         }
     }
@@ -306,11 +310,8 @@ public class VideoDetailActivity2 extends BaseActivity {
                 onBackPressed();
                 break;
             case R.id.iv_play:
-                if (fromRelate) {
-                    VideoActivity.startList(this, vpVideo.getCurrentItem(), mParentIndex, true, mVideoID);
-                } else {
-                    VideoActivity.startList(this, vpVideo.getCurrentItem(), mParentIndex);
-                }
+                VideoActivity.startList(mFromType, this, vpVideo.getCurrentItem(), mParentIndex,
+                    true, mVideoID);
                 break;
             case R.id.tv_reply_count:
                 mRlButton.setVisibility(View.GONE);
@@ -397,12 +398,10 @@ public class VideoDetailActivity2 extends BaseActivity {
         resetAnimView(mTarget);
         if (!fromRelate) {
             if (hasScrolled) {
-                EventBus.getDefault()
-                        .post(new VideoSelectEvent(mIndexMap.get(vpVideo.getCurrentItem()) -
-                                (mIndexMap.get(mIndex) - mIndex)));
+                mHandler.sendEmptyMessage(POST_TO_PRE);
             }
             EventBus.getDefault()
-                    .post(new VideoDetailBackEvent(vpVideo.getCurrentItem(),
+                .post(new VideoDetailBackEvent(mFromType, vpVideo.getCurrentItem(),
                             mViewDatas.get(vpVideo.getCurrentItem()).getData().getCover().getDetail(),
                             hasScrolled,theLast));
         }

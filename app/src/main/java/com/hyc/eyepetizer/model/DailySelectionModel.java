@@ -1,9 +1,7 @@
 package com.hyc.eyepetizer.model;
 
 import android.util.SparseArray;
-
 import com.hyc.eyepetizer.model.beans.ViewData;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,30 +11,14 @@ import java.util.List;
 public class DailySelectionModel implements VideoListInterface {
     private static DailySelectionModel sModel;
     private List<ViewData> mDatas;
+    private List<ViewData> mVideoDatas;
     private SparseArray<Integer> mMap;
 
 
     private DailySelectionModel() {
         mDatas = new ArrayList<>();
+        mVideoDatas = new ArrayList<>();
         mMap = new SparseArray<>();
-    }
-
-    public void addData(List<ViewData> datas) {
-        mDatas.addAll(datas);
-    }
-
-    public int getSize() {
-        return mDatas.size();
-    }
-
-    public SparseArray<Integer> getMap() {
-        return mMap;
-    }
-
-    public void clear() {
-        mMap.clear();
-        mDatas.clear();
-        sModel = null;
     }
 
 
@@ -52,9 +34,38 @@ public class DailySelectionModel implements VideoListInterface {
         return sModel;
     }
 
+
+    public void addData(List<ViewData> datas) {
+        mDatas.addAll(datas);
+    }
+
+
+    public int getSize() {
+        return mDatas.size();
+    }
+
+
+    public SparseArray<Integer> getMap() {
+        return mMap;
+    }
+
+
+    public void clear() {
+        mMap.clear();
+        mDatas.clear();
+        mVideoDatas.clear();
+        sModel = null;
+    }
+
+
+    public void addVideoData(ViewData data) {
+        mVideoDatas.add(data);
+    }
+
+
     @Override
     public List<ViewData> getVideoList(int videoID, int parentIndex, SparseArray<Integer> array) {
         array = mMap;
-        return mDatas;
+        return mVideoDatas;
     }
 }

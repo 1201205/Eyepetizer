@@ -9,8 +9,11 @@ public class VideoDetailBackEvent {
     public String url;
     public boolean hasScrolled;
     public boolean theLast;
+    public int fromType;
 
-    public VideoDetailBackEvent(int position, String url, boolean hasScrolled,boolean theLast) {
+
+    public VideoDetailBackEvent(int fromType, int position, String url, boolean hasScrolled, boolean theLast) {
+        this.fromType = fromType;
         this.position = position;
         this.url = url;
         this.hasScrolled = hasScrolled;

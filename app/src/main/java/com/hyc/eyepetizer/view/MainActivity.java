@@ -21,6 +21,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.event.StartVideoDetailEvent;
 import com.hyc.eyepetizer.event.VideoDetailBackEvent;
+import com.hyc.eyepetizer.model.FromType;
 import com.hyc.eyepetizer.utils.AppUtil;
 import com.hyc.eyepetizer.utils.FrescoHelper;
 import com.hyc.eyepetizer.utils.TypefaceHelper;
@@ -131,6 +132,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Subscribe
     public void handleStartActivity(final StartVideoDetailEvent event) {
+        if (event.fromType != FromType.TYPE_MAIN) {
+            return;
+        }
         if (mTestFragment.isLoading()) {
             return;
         }
@@ -146,7 +150,8 @@ public class MainActivity extends AppCompatActivity {
             .setDuration(ANIMTION_DURATION)
             .setListener(new MyAnimatorListener() {
                 @Override public void onAnimationEnd(Animator animator) {
-                    Intent intent = VideoDetailActivity2.newIntent(MainActivity.this, event.index,
+                    Intent intent = VideoDetailActivity2.newIntent(FromType.TYPE_MAIN,
+                        MainActivity.this, event.index,
                         event.parentIndex);
                     startActivity(intent);
                     overridePendingTransition(0, 0);
@@ -159,8 +164,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Subscribe
     public void handleResumeAnim(VideoDetailBackEvent event) {
+        if (event.fromType != FromType.TYPE_MAIN) {
+            return;
+        }
         FrescoHelper.loadUrl(sdvAnim, event.url);
-
         if (event.hasScrolled) {
             if (event.theLast) {
                 sdvAnim.animate()

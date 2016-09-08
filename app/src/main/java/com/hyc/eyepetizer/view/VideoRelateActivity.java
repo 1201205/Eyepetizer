@@ -13,6 +13,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.base.BaseActivity;
 import com.hyc.eyepetizer.contract.VideoRelateContract;
+import com.hyc.eyepetizer.model.FromType;
 import com.hyc.eyepetizer.model.beans.ViewData;
 import com.hyc.eyepetizer.presenter.VideoRelatePresenter;
 import com.hyc.eyepetizer.utils.FrescoHelper;
@@ -70,7 +71,8 @@ public class VideoRelateActivity extends BaseActivity<VideoRelatePresenter>
                     @Override
                     public void onItemClicked(int parentPosition, int myPosition, int position) {
                         Intent intent =
-                            VideoDetailActivity2.newIntent(VideoRelateActivity.this, myPosition,
+                            VideoDetailActivity2.newIntent(FromType.TYPE_RELATE,
+                                VideoRelateActivity.this, myPosition,
                                 position, mID);
                         startActivity(intent);
                     }

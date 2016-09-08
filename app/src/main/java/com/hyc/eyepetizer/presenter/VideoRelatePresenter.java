@@ -48,10 +48,9 @@ public class VideoRelatePresenter extends BasePresenter<VideoRelateContract.View
                                 .get(i)
                                 .getData()
                                 .getItemList();
-                            mModel.addData(i, datas);
                             data.put(i, datas);
                         }
-                        FeedModel.getInstance().addRelate(mID, data);
+                        mModel.addRelate(mID, data);
                         if (TextUtils.isEmpty(videoRelated.getNextPageUrl())) {
                             List<ViewData> datas = new ArrayList<ViewData>();
                             datas.addAll(videoRelated.getItemList());

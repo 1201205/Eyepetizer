@@ -9,31 +9,14 @@ import java.util.List;
  */
 public class VideoRelateModel implements VideoListInterface {
     private static VideoRelateModel sModel;
-    private SparseArray<List<ViewData>> mViewDatas;
     private SparseArray<SparseArray<List<ViewData>>> mRelate;
 
 
     private VideoRelateModel() {
-        mViewDatas = new SparseArray<>();
         mRelate=new SparseArray<>();
     }
 
 
-    public void addData(int index, List<ViewData> datas) {
-        mViewDatas.put(index, datas);
-    }
-
-
-    public void clear() {
-        mViewDatas.clear();
-    }
-    public void addRelate(int id, SparseArray<List<ViewData>> data) {
-        mRelate.put(id, data);
-    }
-
-    @Override public List<ViewData> getVideoListByIndex(int index) {
-        return mViewDatas.get(index);
-    }
     public static VideoRelateModel getInstance() {
 
         if (sModel == null) {
@@ -44,5 +27,24 @@ public class VideoRelateModel implements VideoListInterface {
             }
         }
         return sModel;
+    }
+
+
+    public void clear() {
+        mRelate.clear();
+    }
+
+
+    public void addRelate(int id, SparseArray<List<ViewData>> data) {
+        mRelate.put(id, data);
+    }
+
+
+    @Override
+    public List<ViewData> getVideoList(int videoID, int parentIndex, SparseArray<Integer> array) {
+        if (mRelate.get(videoID) != null) {
+            return mRelate.get(videoID).get(parentIndex);
+        }
+        return null;
     }
 }

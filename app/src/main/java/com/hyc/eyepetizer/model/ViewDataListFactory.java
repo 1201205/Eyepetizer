@@ -7,17 +7,14 @@ public class ViewDataListFactory {
     /**
      * 根据跳转来源  进行数据获取
      */
-    public static final int TYPE_MAIN=1;
-    public static final int TYPE_DAILY=2;
-    public static final int TYPE_RELATE=3;
 
     public static VideoListInterface getModel(int type){
         switch (type){
-            case TYPE_MAIN:
+            case FromType.TYPE_MAIN:
                 return FeedModel.getInstance();
-            case TYPE_DAILY:
-                break;
-            case TYPE_RELATE:
+            case FromType.TYPE_DAILY:
+                return DailySelectionModel.getInstance();
+            case FromType.TYPE_RELATE:
                 return VideoRelateModel.getInstance();
         }
         return null;

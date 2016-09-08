@@ -30,7 +30,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.base.BaseActivity;
-import com.hyc.eyepetizer.model.FeedModel;
 import com.hyc.eyepetizer.model.VideoListInterface;
 import com.hyc.eyepetizer.model.ViewDataListFactory;
 import com.hyc.eyepetizer.model.beans.ItemListData;
@@ -56,6 +55,7 @@ public class VideoActivity extends BaseActivity implements
     private static final String TITLE = "title";
     private static final String FORM_RELATE = "form_relate";
     private static final String VIDEO_ID = "video_id";
+    private static final String TYPE = "type";
     private static int SIZE_DEFAULT = 0;
     private static int SIZE_4_3 = 1;
     private static int SIZE_16_9 = 2;
@@ -159,21 +159,29 @@ public class VideoActivity extends BaseActivity implements
     private ItemListData mCurrentData;
     private boolean formRelate;
     private int mVideoID;
+    private VideoListInterface mModel;
+    private int mFromType;
 
-    public static void startList(Context context, int index, int parentIndex) {
+
+    public static void startList(int type, Context context, int index, int parentIndex) {
         Intent intent = new Intent(context, VideoActivity.class);
         intent.putExtra(INDEX, index);
         intent.putExtra(PARENT_INDEX, parentIndex);
+        intent.putExtra(TYPE, type);
         context.startActivity(intent);
     }
-    public static void startList(Context context, int index, int parentIndex,boolean formRelate,int videoID) {
+
+
+    public static void startList(int type, Context context, int index, int parentIndex, boolean formRelate, int videoID) {
         Intent intent = new Intent(context, VideoActivity.class);
         intent.putExtra(INDEX, index);
         intent.putExtra(PARENT_INDEX, parentIndex);
         intent.putExtra(FORM_RELATE, formRelate);
         intent.putExtra(VIDEO_ID,videoID);
+        intent.putExtra(TYPE, type);
         context.startActivity(intent);
     }
+
 
     public static void startSingle(Context context, String url, String title) {
         Intent intent = new Intent(context, VideoActivity.class);
@@ -181,14 +189,14 @@ public class VideoActivity extends BaseActivity implements
         intent.putExtra(TITLE, title);
         context.startActivity(intent);
     }
-    private VideoListInterface mModel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
-        mModel= ViewDataListFactory.getModel(1);
+        mModel = ViewDataListFactory.getModel(mFromType);
         mViewDatas=mModel.getVideoList(mVideoID,mParentIndex,new SparseArray<Integer>());
 //        if (formRelate) {
 //            mViewDatas=FeedModel.getInstance().getRelate(mVideoID,mParentIndex);
@@ -230,9 +238,12 @@ public class VideoActivity extends BaseActivity implements
         });
         initVideo(mUrl);
     }
+
+
     @Override
     protected void handleIntent() {
         Intent intent=getIntent();
+        mFromType = intent.getIntExtra(TYPE, -1);
         mParentIndex = intent.getIntExtra(PARENT_INDEX, -1);
         mIndex = intent.getIntExtra(INDEX, -1);
         formRelate=intent.getBooleanExtra(FORM_RELATE,false);

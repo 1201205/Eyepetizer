@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/fl_all"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <include layout="@layout/title_bar"/>
+
+        <com.hyc.eyepetizer.widget.PullToRefreshView
+            android:id="@+id/ptrf_main"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@id/head"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:layout_marginTop="-120dp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <com.hyc.eyepetizer.widget.CustomTextView
+                    android:id="@id/tv_remain"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_marginTop="30dp"
+                    android:textColor="@color/title_black"/>
+
+                <com.hyc.eyepetizer.widget.LoadingAnimView
+                    android:id="@id/loading"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"/>
+            </LinearLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@id/target"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </com.hyc.eyepetizer.widget.PullToRefreshView>
+
+    </LinearLayout>
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/sdv_anim"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        fresco:fadeDuration="0"
+        fresco:viewAspectRatio="1.44"/>
+</FrameLayout>

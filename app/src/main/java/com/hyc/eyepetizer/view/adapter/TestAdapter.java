@@ -1,11 +1,12 @@
 package com.hyc.eyepetizer.view.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
-
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.event.StartVideoDetailEvent;
 import com.hyc.eyepetizer.model.beans.ItemListData;
@@ -15,6 +16,7 @@ import com.hyc.eyepetizer.utils.DataHelper;
 import com.hyc.eyepetizer.utils.FrescoHelper;
 import com.hyc.eyepetizer.utils.TypefaceHelper;
 import com.hyc.eyepetizer.utils.WidgetHelper;
+import com.hyc.eyepetizer.view.SelectionActivity;
 import com.hyc.eyepetizer.view.adapter.holder.BlankViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.BriefCardViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.BriefVideoViewHolder;
@@ -26,10 +28,9 @@ import com.hyc.eyepetizer.view.adapter.holder.TextHeaderViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.TitleVideoViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.VideoViewHolder;
 import com.hyc.eyepetizer.widget.HorizontalDecoration;
-
-import org.greenrobot.eventbus.EventBus;
-
+import java.util.ArrayList;
 import java.util.List;
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * Created by Administrator on 2016/8/26.
@@ -43,6 +44,7 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private HorizontalItemCilckListener horizontalItemCilckListener;
     //视频相关  白色
     private int mTitleColor = AppUtil.getColor(R.color.title_black);
+    private int mType;
 
 
     private TestAdapter(Context context, List<ViewData> datas) {
@@ -115,9 +117,12 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             @Override
             public void onItemClicked(int locationY, int p) {
                 EventBus.getDefault()
-                        .post(
-                                new StartVideoDetailEvent(locationY, data.getParentIndex(), data.getIndex(),
-                                        itemData.getCover().getDetail(), position));
+                    .post(
+                        new StartVideoDetailEvent(mType, locationY, data.getParentIndex(),
+                            data.getIndex(),
+                            itemData.getCover().getDetail(), position));
+
+
                 // TODO: 16/9/4 先暂时使用当前的shareElement方式  有时间改为正常的方式
 
 //                ActivityOptionsCompat compat = ActivityOptionsCompat.makeSceneTransitionAnimation(
@@ -172,6 +177,7 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         holder.recyclerView.setAdapter(adapter);
     }
 
+
     private void bindView(BriefCardViewHolder holder, final ViewData data) {
         FrescoHelper.loadUrl(holder.ico, data.getData().getIcon());
         holder.count.setText(data.getData().getSubTitle());
@@ -181,6 +187,7 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         holder.name.setTextColor(mTitleColor);
         holder.des.setTextColor(mTitleColor);
     }
+
 
     private void bindView(TextHeaderViewHolder holder, ViewData data) {
         holder.head.setTypeface(TypefaceHelper.getTypeface(data.getData().getFont()));
@@ -192,6 +199,14 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private void bindView(ForwardViewHolder holder, ViewData data) {
         holder.textView.setTypeface(TypefaceHelper.getTypeface(data.getData().getFont()));
         holder.textView.setText(data.getData().getText());
+        if ("eyepetizer://feed/".equals(data.getData().getActionUrl())) {
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override public void onClick(View view) {
+                    Intent intent = new Intent(context, SelectionActivity.class);
+                    context.startActivity(intent);
+                }
+            });
+        }
     }
 
 
@@ -244,6 +259,7 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return (WidgetHelper.getViewType(mDatas.get(position).getType()));
     }
 
+
     @Override
     public int getItemCount() {
         return mDatas == null ? 0 : mDatas.size();
@@ -255,8 +271,6 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         mDatas.addAll(datas);
         notifyItemRangeInserted(count, datas.size());
     }
-
-
     public interface HorizontalItemCilckListener {
         //首页需要用到  前面两个参数，其余的需要用到后面两个
 
@@ -278,11 +292,20 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
 
 
+        public Builder(Context context) {
+            adapter = new TestAdapter(context, new ArrayList<ViewData>());
+        }
+
         public Builder setTitleTextColor(int color) {
             adapter.mTitleColor = color;
             return this;
         }
 
+
+        public Builder type(int type) {
+            adapter.mType = type;
+            return this;
+        }
 
         public Builder horizontalItemCilckListener(HorizontalItemCilckListener listener) {
             adapter.horizontalItemCilckListener = listener;

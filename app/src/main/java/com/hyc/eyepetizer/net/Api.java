@@ -1,5 +1,6 @@
 package com.hyc.eyepetizer.net;
 
+import com.hyc.eyepetizer.model.beans.DailySelection;
 import com.hyc.eyepetizer.model.beans.Reply;
 import com.hyc.eyepetizer.model.beans.Selection;
 import com.hyc.eyepetizer.model.beans.VideoRelated;
@@ -23,6 +24,8 @@ public interface Api {
      *
      *  视频评论:
      *  http://baobab.wandoujia.com/api/v1/replies/video?id=9034&udid=8954dd2dac7e41d68d967d5cc8115ced8b7af94c&vc=126&vn=2.4.1&deviceModel=Redmi%20Note%203&first_channel=eyepetizer_yingyongbao_market&last_channel=eyepetizer_yingyongbao_market&system_version_code=22
+     *  每日精选
+     * http://baobab.wandoujia.com/api/v2/feed?num=2&udid=8954dd2dac7e41d68d967d5cc8115ced8b7af94c&vc=126&vn=2.4.1&deviceModel=Redmi%20Note%203&first_channel=eyepetizer_yingyongbao_market&last_channel=eyepetizer_yingyongbao_market&system_version_code=22
      *
      * http://baobab.wandoujia.com/api/v3/tabs/selected?pagination=1&needFilter=true&udid=8954dd2dac7e41d68d967d5cc8115ced8b7af94c&vc=126&vn=2.4.1&deviceModel=Redmi%20Note%203&first_channel=eyepetizer_xiaomi_market&last_channel=eyepetizer_xiaomi_market&system_version_code=22
      * 往期：
@@ -47,4 +50,21 @@ public interface Api {
     //    id=9034&lastId=9&num=10
     @GET("/api/v1/replies/video") Observable<Reply> getMoreReply(
             @Query("id") int id,@Query("lastId") int lastId,@Query("num") int num);
+
+    /**
+     * 获取今天的精选
+     * @param num
+     * @return
+     */
+    @GET("/api/v2/feed") Observable<DailySelection> getDailySelection(
+            @Query("num") int num);
+
+    /**
+     * 获取指定的精选
+     * @param num
+     * @param date
+     * @return
+     */
+    @GET("/api/v2/feed") Observable<DailySelection> getDailySelection(
+            @Query("num") int num,@Query("date") long date);
 }

@@ -1,8 +1,11 @@
 package com.hyc.eyepetizer.view;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.view.ViewPager;
 import android.util.SparseArray;
 import android.view.View;
@@ -17,6 +20,8 @@ import com.hyc.eyepetizer.base.BaseActivity;
 import com.hyc.eyepetizer.event.VideoDetailBackEvent;
 import com.hyc.eyepetizer.event.VideoSelectEvent;
 import com.hyc.eyepetizer.model.FeedModel;
+import com.hyc.eyepetizer.model.VideoListInterface;
+import com.hyc.eyepetizer.model.ViewDataListFactory;
 import com.hyc.eyepetizer.model.beans.Author;
 import com.hyc.eyepetizer.model.beans.ItemListData;
 import com.hyc.eyepetizer.model.beans.ViewData;
@@ -103,6 +108,10 @@ public class VideoDetailActivity2 extends BaseActivity {
     private int mIndicatorScroll;
     private int mVideoID;
     private boolean fromRelate;
+    private ValueAnimator mAnimator;
+    private View mTarget;
+    //最后一个selection
+    private boolean fromTheLast;
 
 
     public static Intent newIntent(Context context, int index, int parentIndex) {
@@ -120,6 +129,34 @@ public class VideoDetailActivity2 extends BaseActivity {
         return intent;
     }
 
+    private static final int STOP_ANIM = 1;
+    private static final int START_ANIM = 2;
+    private static final int POST_TO_PRE = 3;
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case STOP_ANIM:
+                    mHandler.removeMessages(START_ANIM);
+                    mAnimator.end();
+                    resetAnimView(mTarget);
+                    break;
+                case START_ANIM:
+                    mHandler.removeMessages(START_ANIM);
+                    mTarget = mAdapter.getPrimaryItem().findViewById(R.id.sdv_img);
+                    if (mTarget==null) {
+                        mHandler.sendEmptyMessageDelayed(START_ANIM,1000);
+                        return;
+                    }
+                    mAnimator.start();
+                    break;
+                case POST_TO_PRE:
+                    EventBus.getDefault().post(new VideoSelectEvent(mIndexMap.get(vpVideo.getCurrentItem()) - (mIndexMap.get(mIndex) - mIndex)));
+                    break;
+
+            }
+        }
+    };
 
     @Override
     protected void handleIntent() {
@@ -146,6 +183,23 @@ public class VideoDetailActivity2 extends BaseActivity {
         initData();
         launchData(mIndex);
         initViewPager();
+        mAnimator = ValueAnimator.ofFloat(1f, 1.2f);
+        mAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                if (mTarget==null) {
+                    mAnimator.cancel();
+                    mHandler.sendEmptyMessageDelayed(START_ANIM,1000);
+                    return;
+                }
+                float f = valueAnimator.getAnimatedFraction() * 0.2f + 1;
+                mTarget.setScaleX(f);
+                mTarget.setScaleY(f);
+            }
+        });
+        mAnimator.setDuration(5000);
+        mAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        mAnimator.setRepeatMode(ValueAnimator.REVERSE);
     }
 
     private void initViewPager() {
@@ -182,16 +236,20 @@ public class VideoDetailActivity2 extends BaseActivity {
                 //修复快速滑动引起的卡顿
                 //如果马上执行会影响vp的速度 会有一点卡
                 //修正位置：因为之前已经传入了开始位置，已经加入了本节非Video的item个数，所以现在应该减掉
-                if (!fromRelate) {
-                    if (mEventSubscription != null) {
-                        mEventSubscription.unsubscribe();
-                    }
-                    postEvent(position);
-                }
+
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
+                if (state == 1) {
+                    mHandler.sendEmptyMessage(STOP_ANIM);
+                    mHandler.removeMessages(POST_TO_PRE);
+                } else if (state == 0) {
+                    mHandler.sendEmptyMessageDelayed(START_ANIM, 1000);
+                    if (!fromRelate) {
+                        mHandler.sendEmptyMessageDelayed(POST_TO_PRE,600);
+                    }
+                }
             }
         });
         vpVideo.setPageTransformer(true, new DepthPageTransformer());
@@ -204,18 +262,22 @@ public class VideoDetailActivity2 extends BaseActivity {
                         int w = llPart.getWidth();
                         mIndicatorScroll = (AppUtil.getScreenWidth(VideoDetailActivity2.this) - w) / (mViewDatas.size() - 1);
                         llPart.setX(mIndex * mIndicatorScroll);
+                        mHandler.sendEmptyMessageDelayed(START_ANIM, 1000);
                         return true;
                     }
                 });
 
     }
-
+    private VideoListInterface mModel;
     private void initData() {
         mIndexMap = new SparseArray<>();
+        mModel= ViewDataListFactory.getModel(1);
+        mViewDatas=mModel.getVideoList(mVideoID,mParentIndex,mIndexMap);
         if (fromRelate) {
             mViewDatas = FeedModel.getInstance().getRelate(mVideoID, mParentIndex);
         } else {
             mViewDatas = FeedModel.getInstance().getVideoListByIndex(mParentIndex, mIndexMap);
+            fromTheLast = FeedModel.getInstance().isTheLastSelection(mParentIndex);
         }
     }
 
@@ -225,20 +287,19 @@ public class VideoDetailActivity2 extends BaseActivity {
         mTvDes.stop();
     }
 
-    private void postEvent(int p) {
-        mEventSubscription = Observable.just(new VideoSelectEvent(mIndexMap.get(vpVideo.getCurrentItem()) - (mIndexMap.get(mIndex) - mIndex))).delay(500, TimeUnit.MILLISECONDS).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<VideoSelectEvent>() {
-            @Override
-            public void call(VideoSelectEvent event) {
-                EventBus.getDefault().post(event);
-            }
-        });
+    private void resetAnimView(View view) {
+        if (view==null) {
+            return;
+        }
+        view.setScaleX(1);
+        view.setScaleY(1);
     }
 
     private void changeImageButtonAlpha(float alpha) {
         mRlButton.setAlpha(alpha);
     }
 
-    @OnClick({R.id.iv_back, R.id.iv_play, R.id.tv_reply_count})
+    @OnClick({R.id.iv_back, R.id.iv_play, R.id.tv_reply_count, R.id.iv_more})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_back:
@@ -252,31 +313,19 @@ public class VideoDetailActivity2 extends BaseActivity {
                 }
                 break;
             case R.id.tv_reply_count:
+                mRlButton.setVisibility(View.GONE);
                 ItemListData data = mViewDatas.get(vpVideo.getCurrentItem()).getData();
                 VideoReplyActivity.start(this, data.getId(), data.getConsumption().getReplyCount(), data.getTitle(), data.getCover().getBlurred());
+                break;
+            case R.id.iv_more:
+                ItemListData data2 = mViewDatas.get(vpVideo.getCurrentItem()).getData();
+                VideoRelateActivity.start(this, data2.getId(), data2.getTitle(),
+                        data2.getCover().getBlurred());
                 break;
             default:
                 break;
         }
 
-    }
-
-    @OnClick(R.id.iv_play)
-    public void play() {
-        if (fromRelate) {
-            VideoActivity.startList(this, vpVideo.getCurrentItem(), mParentIndex, true, mVideoID);
-        } else {
-            VideoActivity.startList(this, vpVideo.getCurrentItem(), mParentIndex);
-        }
-
-    }
-
-
-    @OnClick(R.id.iv_more)
-    public void goToRelate() {
-        ItemListData data = mViewDatas.get(vpVideo.getCurrentItem()).getData();
-        VideoRelateActivity.start(this, data.getId(), data.getTitle(),
-                data.getCover().getBlurred());
     }
 
     private void animateText() {
@@ -303,29 +352,49 @@ public class VideoDetailActivity2 extends BaseActivity {
         mTvDes.setAnimText(data.getDescription());
         Author author = data.getAuthor();
         if (author != null) {
+            mRlAuthor.setVisibility(View.VISIBLE);
             FrescoHelper.loadUrl(mSdvIcon, author.getIcon());
             mTvAuthorName.setText(author.getName());
             mTvAuthorDes.setText(author.getDescription());
-            mTvCount.setText(author.getVideoNum() + "个视频");
+            mTvCount.setText(String.format(AppUtil.getString(R.string.video_count),author.getVideoNum()));
         } else {
             mRlAuthor.setVisibility(View.GONE);
         }
-        tvPart.setText((position + 1) + " - " + mViewDatas.size());
+        tvPart.setText(String.format(AppUtil.getString(R.string.item_count),position + 1, mViewDatas.size()));
         mTvLikeCount.setText(String.valueOf(data.getConsumption().getCollectionCount()));
         mTvReplyCount.setText(String.valueOf(data.getConsumption().getReplyCount()));
         mTvShareCount.setText(String.valueOf(data.getConsumption().getShareCount()));
         animateText();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (mAnimator.isPaused()) {
+            mAnimator.start();
+        }
+    }
 
     @Override
     protected void onResume() {
         super.onResume();
+        mRlButton.setVisibility(View.VISIBLE);
+
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mAnimator.pause();
+    }
 
     @Override
     public void onBackPressed() {
+        boolean theLast=false;
+        if (fromTheLast) {
+            theLast=  vpVideo.getCurrentItem()==mViewDatas.size()-1;
+        }
+        resetAnimView(mTarget);
         if (!fromRelate) {
             if (hasScrolled) {
                 EventBus.getDefault()
@@ -335,7 +404,7 @@ public class VideoDetailActivity2 extends BaseActivity {
             EventBus.getDefault()
                     .post(new VideoDetailBackEvent(vpVideo.getCurrentItem(),
                             mViewDatas.get(vpVideo.getCurrentItem()).getData().getCover().getDetail(),
-                            hasScrolled));
+                            hasScrolled,theLast));
         }
         super.onBackPressed();
     }
@@ -343,6 +412,10 @@ public class VideoDetailActivity2 extends BaseActivity {
 
     @Override
     protected void onDestroy() {
+        mAnimator.cancel();
+        mAnimator.removeAllUpdateListeners();
+        mTarget=null;
+        mHandler.removeCallbacksAndMessages(null);
         super.onDestroy();
         if (mEventSubscription != null) {
             mEventSubscription.unsubscribe();

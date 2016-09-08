@@ -6,9 +6,12 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.CompoundButton;
+import android.widget.FrameLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -42,12 +45,15 @@ public class MainActivity extends AppCompatActivity {
     SimpleDraweeView sdvAnim;
     @BindView(R.id.rl_title)
     RelativeLayout rlTitle;
+    @BindView(R.id.fl_all)
+    FrameLayout mRlAll;
     private TestFragment mTestFragment;
     //recyclerView中video高度
     private float mItemHeight;
     private float mTitleHeight;
     private float mRatio;
     private int lastY;
+    private int mEndY;
     private AccelerateDecelerateInterpolator mInterpolator = new AccelerateDecelerateInterpolator();
     private int mStatusBarHeight;
     private MyAnimatorListener mListener = new MyAnimatorListener() {
@@ -63,10 +69,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_test_main);
         EventBus.getDefault().register(this);
         ButterKnife.bind(this);
-        mItemHeight = AppUtil.dip2px(250);
+        mRlAll.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                mRlAll.getViewTreeObserver().removeOnPreDrawListener(this);
+                mEndY= (int) (mRlAll.getHeight()-AppUtil.dip2px(350));
+                return true;
+            }
+        });
         mTitleHeight = AppUtil.dip2px(45);
+        mItemHeight = AppUtil.dip2px(250);
         mRatio = AppUtil.dip2px(353) / mItemHeight;
-
+        Log.e("hyc_i",AppUtil.getScreenHeight(this)+"--");
         //getWindow().setSharedElementEnterTransition(DraweeTransition.createTransitionSet(ScalingUtils.ScaleType.CENTER_CROP,
         //    ScalingUtils.ScaleType.CENTER_CROP));
         //getWindow().setSharedElementReturnTransition(DraweeTransition.createTransitionSet(ScalingUtils.ScaleType.CENTER_CROP,
@@ -146,17 +160,27 @@ public class MainActivity extends AppCompatActivity {
     @Subscribe
     public void handleResumeAnim(VideoDetailBackEvent event) {
         FrescoHelper.loadUrl(sdvAnim, event.url);
+
         if (event.hasScrolled) {
-            int[] l = new int[2];
-            sdvAnim.getLocationInWindow(l);
-            sdvAnim.animate()
-                .scaleX(1)
-                .setInterpolator(mInterpolator)
-                .scaleY(1)
-                .y(mTitleHeight)
-                .setListener(mListener)
-                .setDuration(ANIMTION_DURATION)
-                .start();
+            if (event.theLast) {
+                sdvAnim.animate()
+                        .scaleX(1)
+                        .setInterpolator(mInterpolator)
+                        .scaleY(1)
+                        .y(mEndY)
+                        .setListener(mListener)
+                        .setDuration(ANIMTION_DURATION)
+                        .start();
+            } else {
+                sdvAnim.animate()
+                        .scaleX(1)
+                        .setInterpolator(mInterpolator)
+                        .scaleY(1)
+                        .y(mTitleHeight)
+                        .setListener(mListener)
+                        .setDuration(ANIMTION_DURATION)
+                        .start();
+            }
         } else {
             int[] l = new int[2];
             sdvAnim.getLocationInWindow(l);

@@ -24,4 +24,6 @@
     <string name="no_comment">暂无评论\n快去评论吧</string>
     <string name="the_end">- The End -</string>
     <string name="comment_count">- %1$s条评论 -</string>
+    <string name="item_count">%1$s - %2$s</string>
+    <string name="video_count">%1$s个视频</string>
 </resources>

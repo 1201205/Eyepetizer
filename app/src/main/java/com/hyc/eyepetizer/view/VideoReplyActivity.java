@@ -49,6 +49,11 @@ public class VideoReplyActivity extends BaseActivity<VideoReplyPresenter> implem
     private String mTitle;
     private VideoReplyAdapter mAdapter;
 
+    private boolean isRequesting;
+    private RecyclerView.OnScrollListener mOnScrollListener;
+    private LinearLayoutManager mManager;
+    private boolean hasMore=true;
+
     private static final String ID = "id";
     private static final String TITLE = "title";
     private static final String COUNT = "count";
@@ -78,12 +83,14 @@ public class VideoReplyActivity extends BaseActivity<VideoReplyPresenter> implem
     }
 
     @Override
-    public void showReply(List<VideoReply> replies) {
+    public void showReply(List<VideoReply> replies, boolean hasMore) {
         if (mAdapter == null) {
             mRlError.setVisibility(View.GONE);
             mAdapter = new VideoReplyAdapter(this);
             mRvReply.setAdapter(mAdapter);
         }
+        this.hasMore = hasMore;
+        isRequesting=false;
         mAdapter.addReplies(replies);
     }
 
@@ -112,6 +119,13 @@ public class VideoReplyActivity extends BaseActivity<VideoReplyPresenter> implem
         initView();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mPresenter.detachView();
+        mRvReply.clearOnScrollListeners();
+    }
+
     private void initPresenter() {
         mPresenter = new VideoReplyPresenter(this);
         mPresenter.attachView();
@@ -120,11 +134,27 @@ public class VideoReplyActivity extends BaseActivity<VideoReplyPresenter> implem
 
     private void initView() {
         FrescoHelper.loadUrl(mSdvBlur, mUrl);
-        LinearLayoutManager manager = new LinearLayoutManager(this);
-        manager.setOrientation(LinearLayoutManager.VERTICAL);
-        mRvReply.setLayoutManager(manager);
+        mManager = new LinearLayoutManager(this);
+        mManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mRvReply.setLayoutManager(mManager);
         showCount(mCount);
         mTvTitle.setText(mTitle);
+        mOnScrollListener = new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            }
+
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (hasMore && !isRequesting &&
+                        mManager.findLastVisibleItemPosition() >= mAdapter.getItemCount() - 4) {
+                    mPresenter.getMoreReply();
+                    isRequesting = true;
+                }
+            }
+        };
+        mRvReply.addOnScrollListener(mOnScrollListener);
     }
 
     @OnClick({R.id.tv_input, R.id.rl_head, R.id.rl_error})

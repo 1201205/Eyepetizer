@@ -8,11 +8,14 @@ import java.util.List;
  * Created by ray on 16/9/6.
  */
 public class VideoRelateModel implements VideoListInterface {
+    private static VideoRelateModel sModel;
     private SparseArray<List<ViewData>> mViewDatas;
+    private SparseArray<SparseArray<List<ViewData>>> mRelate;
 
 
-    public VideoRelateModel() {
+    private VideoRelateModel() {
         mViewDatas = new SparseArray<>();
+        mRelate=new SparseArray<>();
     }
 
 
@@ -24,9 +27,22 @@ public class VideoRelateModel implements VideoListInterface {
     public void clear() {
         mViewDatas.clear();
     }
-
+    public void addRelate(int id, SparseArray<List<ViewData>> data) {
+        mRelate.put(id, data);
+    }
 
     @Override public List<ViewData> getVideoListByIndex(int index) {
         return mViewDatas.get(index);
+    }
+    public static VideoRelateModel getInstance() {
+
+        if (sModel == null) {
+            synchronized (VideoRelateModel.class) {
+                if (sModel == null) {
+                    sModel = new VideoRelateModel();
+                }
+            }
+        }
+        return sModel;
     }
 }

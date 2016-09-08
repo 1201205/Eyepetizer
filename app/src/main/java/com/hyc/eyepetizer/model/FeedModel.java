@@ -17,14 +17,14 @@ import java.util.List;
 public class FeedModel implements VideoListInterface {
 
     private static FeedModel sModel;
-    private List<SectionList> mSectionLists;
+    private SparseArray<SectionList> mSectionListSparseArray;
     private SparseArray<List<ViewData>> mViewDatas;
     private SparseArray<SparseArray<List<ViewData>>> mRelate;
 
     private FeedModel() {
-        mSectionLists = new ArrayList<>();
         mViewDatas=new SparseArray<>();
         mRelate = new SparseArray<>();
+        mSectionListSparseArray=new SparseArray<>();
     }
 
 
@@ -41,27 +41,24 @@ public class FeedModel implements VideoListInterface {
     }
 
 
-    public void addSection(List<SectionList> datas) {
-        mSectionLists.addAll(datas);
-    }
-
     public void addSection(SectionList data) {
-        mSectionLists.add(data);
+        mSectionListSparseArray.put(data.getId(),data);
     }
-
     public void clear() {
-        mSectionLists.clear();
+        mSectionListSparseArray.clear();
     }
 
     public List<ViewData> getVideoListByIndex(int index, SparseArray<Integer> array) {
-        if (mSectionLists.size() < index) {
+        SectionList sectionList=mSectionListSparseArray.get(index);
+        if (sectionList==null) {
             return null;
         }
         List<ViewData> datas = new ArrayList<>();
-        int count=mSectionLists.get(index-1).getItemList().size();
+
+        int count=sectionList.getItemList().size();
         int j=0;
         for (int i=0;i<count;i++) {
-            ViewData data=mSectionLists.get(index-1).getItemList().get(i);
+            ViewData data=sectionList.getItemList().get(i);
             if (WidgetHelper.Type.VIDEO.equals(data.getType())) {
                 datas.add(data);
                 array.put(j,i);
@@ -75,8 +72,10 @@ public class FeedModel implements VideoListInterface {
         return datas;
     }
 
+    public boolean isTheLastSelection(int index){
+        return mSectionListSparseArray.indexOfKey(index)==mSectionListSparseArray.size()-1;
+    }
 
-    @Override
     public List<ViewData> getVideoListByIndex(int index){
         if (mViewDatas.get(index)==null) {
             return getVideoListByIndex(index,new SparseArray<Integer>());
@@ -110,4 +109,28 @@ public class FeedModel implements VideoListInterface {
         }
     }
 
+    @Override
+    public List<ViewData> getVideoList(int videoID, int parentIndex, SparseArray<Integer> array) {
+        SectionList sectionList=mSectionListSparseArray.get(parentIndex);
+        if (sectionList==null) {
+            return null;
+        }
+        List<ViewData> datas = new ArrayList<>();
+
+        int count=sectionList.getItemList().size();
+        int j=0;
+        for (int i=0;i<count;i++) {
+            ViewData data=sectionList.getItemList().get(i);
+            if (WidgetHelper.Type.VIDEO.equals(data.getType())) {
+                datas.add(data);
+                array.put(j,i);
+                j++;
+            }
+        }
+        if (mViewDatas.get(parentIndex)!=null) {
+            mViewDatas.get(parentIndex).clear();
+        }
+        mViewDatas.put(parentIndex,datas);
+        return datas;
+    }
 }

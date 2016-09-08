@@ -60,7 +60,17 @@ public class VideoDetailAdapter extends PagerAdapter {
         return view;
     }
 
+    private View mCurrentView;
 
+    @Override
+    public void setPrimaryItem(ViewGroup container, int position, Object object) {
+        mCurrentView = (View)object;
+        super.setPrimaryItem(container,position,object);
+    }
+
+    public View getPrimaryItem() {
+        return mCurrentView;
+    }
     private void initView(int position) {
         ItemListData data = mViewDatas.get(position).getData();
         FrescoHelper.loadUrl(sdvImg, data.getCover().getDetail());

@@ -11,7 +11,10 @@ import com.hyc.eyepetizer.model.beans.VideoReply;
 import com.hyc.eyepetizer.net.Requests;
 import com.hyc.eyepetizer.view.adapter.VideoReplyAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import rx.functions.Action1;
 
@@ -62,9 +65,12 @@ public class VideoReplyPresenter extends BasePresenter<VideoReplyContract.View> 
     private void showReply(Reply reply) {
         List<VideoReply> list = reply.getReplyList();
         mLastID = list.get(list.size() - 1).getSequence();
+        boolean hasMore = true;
         if (TextUtils.isEmpty(reply.getNextPageUrl())) {
             list.add(new VideoReply(VideoReplyAdapter.EMPTY));
+            hasMore = false;
         }
-        mView.showReply(list);
+        mView.showReply(list, hasMore);
     }
+
 }

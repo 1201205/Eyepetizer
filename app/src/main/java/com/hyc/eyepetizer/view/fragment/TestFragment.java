@@ -134,7 +134,7 @@ public class TestFragment extends BaseFragment<SelectionPresenter>
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
         super.onDestroy();
-        mRecyclerView.removeOnScrollListener(mOnScrollListener);
+        mRecyclerView.clearOnScrollListeners();
         mUnbinder.unbind();
         mPresenter.detachView();
     }

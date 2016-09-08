@@ -28,7 +28,7 @@ public class VideoRelatePresenter extends BasePresenter<VideoRelateContract.View
 
     public VideoRelatePresenter(VideoRelateContract.View view) {
         super(view);
-        mModel = new VideoRelateModel();
+        mModel = VideoRelateModel.getInstance();
     }
 
 

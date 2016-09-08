@@ -49,8 +49,9 @@ public class SelectionPresenter extends BasePresenter<SelectionContract.View>
                 if (bean.getFooter() != null) {
                     datas.add(bean.getFooter());
                 }
+                mModel.addSection(bean);
             }
-            mModel.addSection(selection.getSectionList());
+
             if (!TextUtils.isEmpty(selection.getNextPageUrl())) {
                 mPageCount++;
             } else {

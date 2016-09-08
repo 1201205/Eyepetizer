@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -30,6 +31,8 @@ import butterknife.OnClick;
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.base.BaseActivity;
 import com.hyc.eyepetizer.model.FeedModel;
+import com.hyc.eyepetizer.model.VideoListInterface;
+import com.hyc.eyepetizer.model.ViewDataListFactory;
 import com.hyc.eyepetizer.model.beans.ItemListData;
 import com.hyc.eyepetizer.model.beans.ViewData;
 import com.hyc.eyepetizer.utils.AppUtil;
@@ -178,18 +181,20 @@ public class VideoActivity extends BaseActivity implements
         intent.putExtra(TITLE, title);
         context.startActivity(intent);
     }
-
+    private VideoListInterface mModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
-        if (formRelate) {
-            mViewDatas=FeedModel.getInstance().getRelate(mVideoID,mParentIndex);
-        } else {
-            mViewDatas = FeedModel.getInstance().getVideoListByIndex(mParentIndex);
-        }
+        mModel= ViewDataListFactory.getModel(1);
+        mViewDatas=mModel.getVideoList(mVideoID,mParentIndex,new SparseArray<Integer>());
+//        if (formRelate) {
+//            mViewDatas=FeedModel.getInstance().getRelate(mVideoID,mParentIndex);
+//        } else {
+//            mViewDatas = FeedModel.getInstance().getVideoListByIndex(mParentIndex);
+//        }
         mCurrentData=mViewDatas.get(mIndex).getData();
         initView();
     }

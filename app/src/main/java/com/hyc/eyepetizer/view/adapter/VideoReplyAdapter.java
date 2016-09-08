@@ -62,6 +62,7 @@ public class VideoReplyAdapter extends RecyclerView.Adapter {
     private void bindHolder(VideoReplyViewHolder holder, VideoReply reply) {
         FrescoHelper.loadUrl(holder.sdvIcon, reply.getUser().getAvatar());
         holder.tvContent.setText(reply.getMessage());
+        //// TODO: 2016/9/8 转换
         holder.tvTime.setText(reply.getCreateTime() + "");
         if (reply.getHot()) {
             holder.tvHot.setVisibility(View.VISIBLE);

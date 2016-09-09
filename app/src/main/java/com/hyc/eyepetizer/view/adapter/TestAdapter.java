@@ -265,6 +265,9 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return mDatas == null ? 0 : mDatas.size();
     }
 
+    public ViewData getDataByIndex(int index){
+        return mDatas.get(index);
+    }
 
     public void addData(List<ViewData> datas) {
         int count = getItemCount();

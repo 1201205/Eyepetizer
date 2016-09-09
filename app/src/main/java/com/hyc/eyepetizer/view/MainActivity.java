@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private static final long ANIMTION_DURATION = 350;
     @BindView(R.id.test1)
     ViewPager mPager;
-    @BindView(R.id.tv_title)
+    @BindView(R.id.tv_head_title)
     CustomTextView mTitle;
     @BindView(R.id.rg_tab)
     RadioGroup mTab;
@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     private float mRatio;
     private int lastY;
     private int mEndY;
+    private boolean isStarting;
     private AccelerateDecelerateInterpolator mInterpolator = new AccelerateDecelerateInterpolator();
     private int mStatusBarHeight;
     private MyAnimatorListener mListener = new MyAnimatorListener() {
@@ -132,12 +133,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Subscribe
     public void handleStartActivity(final StartVideoDetailEvent event) {
-        if (event.fromType != FromType.TYPE_MAIN) {
+        if (isStarting||event.fromType != FromType.TYPE_MAIN) {
             return;
         }
         if (mTestFragment.isLoading()) {
             return;
         }
+        isStarting=true;
         sdvAnim.setVisibility(View.VISIBLE);
         sdvAnim.setY(event.locationY - getStatusBarHeight());
         FrescoHelper.loadUrl(sdvAnim, event.url);
@@ -150,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
             .setDuration(ANIMTION_DURATION)
             .setListener(new MyAnimatorListener() {
                 @Override public void onAnimationEnd(Animator animator) {
+                    isStarting=false;
                     Intent intent = VideoDetailActivity2.newIntent(FromType.TYPE_MAIN,
                         MainActivity.this, event.index,
                         event.parentIndex);

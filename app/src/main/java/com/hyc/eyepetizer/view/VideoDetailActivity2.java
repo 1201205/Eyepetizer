@@ -7,20 +7,20 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.base.BaseActivity;
 import com.hyc.eyepetizer.event.VideoDetailBackEvent;
 import com.hyc.eyepetizer.event.VideoSelectEvent;
+import com.hyc.eyepetizer.model.DailySelectionModel;
 import com.hyc.eyepetizer.model.FeedModel;
 import com.hyc.eyepetizer.model.FromType;
 import com.hyc.eyepetizer.model.VideoListInterface;
@@ -35,8 +35,14 @@ import com.hyc.eyepetizer.view.adapter.VideoDetailAdapter;
 import com.hyc.eyepetizer.widget.AnimateTextView;
 import com.hyc.eyepetizer.widget.CustomTextView;
 import com.hyc.eyepetizer.widget.DepthPageTransformer;
-import java.util.List;
+
 import org.greenrobot.eventbus.EventBus;
+
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import rx.Subscription;
 
 /**
@@ -51,6 +57,7 @@ public class VideoDetailActivity2 extends BaseActivity {
     private static final int STOP_ANIM = 1;
     private static final int START_ANIM = 2;
     private static final int POST_TO_PRE = 3;
+    private static final int NOTIFY = 4;
     @BindView(R.id.vp_video)
     ViewPager vpVideo;
     @BindView(R.id.tv_part)
@@ -121,8 +128,8 @@ public class VideoDetailActivity2 extends BaseActivity {
                 case START_ANIM:
                     mHandler.removeMessages(START_ANIM);
                     mTarget = mAdapter.getPrimaryItem().findViewById(R.id.sdv_img);
-                    if (mTarget==null) {
-                        mHandler.sendEmptyMessageDelayed(START_ANIM,1000);
+                    if (mTarget == null) {
+                        mHandler.sendEmptyMessageDelayed(START_ANIM, 1000);
                         return;
                     }
                     mAnimator.start();
@@ -134,9 +141,14 @@ public class VideoDetailActivity2 extends BaseActivity {
                         index = vpVideo.getCurrentItem();
                     } else if (mFromType == FromType.TYPE_MAIN) {
                         index = mIndexMap.get(vpVideo.getCurrentItem()) -
-                            (mIndexMap.get(mIndex) - mIndex);
+                                (mIndexMap.get(mIndex) - mIndex);
                     }
                     EventBus.getDefault().post(new VideoSelectEvent(mFromType, index));
+                    break;
+                case NOTIFY:
+                    mHandler.removeMessages(NOTIFY);
+                    resetIndicator();
+                    mAdapter.notifyDataSetChanged();
                     break;
 
             }
@@ -192,9 +204,9 @@ public class VideoDetailActivity2 extends BaseActivity {
         mAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                if (mTarget==null) {
+                if (mTarget == null) {
                     mAnimator.cancel();
-                    mHandler.sendEmptyMessageDelayed(START_ANIM,1000);
+                    mHandler.sendEmptyMessageDelayed(START_ANIM, 1000);
                     return;
                 }
                 float f = valueAnimator.getAnimatedFraction() * 0.2f + 1;
@@ -253,7 +265,7 @@ public class VideoDetailActivity2 extends BaseActivity {
                 } else if (state == 0) {
                     mHandler.sendEmptyMessageDelayed(START_ANIM, 1000);
                     if (!fromRelate) {
-                        mHandler.sendEmptyMessageDelayed(POST_TO_PRE,600);
+                        mHandler.sendEmptyMessageDelayed(POST_TO_PRE, 600);
                     }
                 }
             }
@@ -265,24 +277,39 @@ public class VideoDetailActivity2 extends BaseActivity {
                     public boolean onPreDraw() {
                         vpVideo.getViewTreeObserver().removeOnPreDrawListener(this);
                         animateText();
-                        int w = llPart.getWidth();
-                        mIndicatorScroll = (AppUtil.getScreenWidth(VideoDetailActivity2.this) - w) / (mViewDatas.size() - 1);
-                        llPart.setX(mIndex * mIndicatorScroll);
+                        mIndicatorWidth= llPart.getWidth();
+                        resetIndicator();
                         mHandler.sendEmptyMessageDelayed(START_ANIM, 1000);
                         return true;
                     }
                 });
 
     }
-
+    private int mIndicatorWidth;
 
     private void initData() {
         mIndexMap = new SparseArray<>();
         mModel = ViewDataListFactory.getModel(mFromType);
-        mViewDatas=mModel.getVideoList(mVideoID,mParentIndex,mIndexMap);
+        mViewDatas = mModel.getVideoList(mVideoID, mParentIndex, mIndexMap);
         if (mFromType == FromType.TYPE_MAIN) {
             fromTheLast = FeedModel.getInstance().isTheLastSelection(mParentIndex);
+        } else if (mFromType == FromType.TYPE_DAILY) {
+            fromTheLast = true;
+            ((DailySelectionModel)mModel).setObserver(new DailySelectionModel.Observer() {
+                @Override
+                public void notifyDataSetAdd() {
+                    //由于是一个一个的加入
+                    mHandler.removeMessages(NOTIFY);
+                    mHandler.sendEmptyMessageDelayed(NOTIFY,50);
+                }
+            });
         }
+    }
+
+    private void resetIndicator() {
+        mIndicatorScroll = (AppUtil.getScreenWidth(VideoDetailActivity2.this) - mIndicatorWidth) / (mViewDatas.size() - 1);
+        llPart.setX(vpVideo.getCurrentItem() * mIndicatorScroll);
+        tvPart.setText(String.format(AppUtil.getString(R.string.item_count), vpVideo.getCurrentItem() + 1, mViewDatas.size()));
     }
 
     private void stopAnimChar() {
@@ -292,7 +319,7 @@ public class VideoDetailActivity2 extends BaseActivity {
     }
 
     private void resetAnimView(View view) {
-        if (view==null) {
+        if (view == null) {
             return;
         }
         view.setScaleX(1);
@@ -311,7 +338,7 @@ public class VideoDetailActivity2 extends BaseActivity {
                 break;
             case R.id.iv_play:
                 VideoActivity.startList(mFromType, this, vpVideo.getCurrentItem(), mParentIndex,
-                    true, mVideoID);
+                        true, mVideoID);
                 break;
             case R.id.tv_reply_count:
                 mRlButton.setVisibility(View.GONE);
@@ -357,11 +384,11 @@ public class VideoDetailActivity2 extends BaseActivity {
             FrescoHelper.loadUrl(mSdvIcon, author.getIcon());
             mTvAuthorName.setText(author.getName());
             mTvAuthorDes.setText(author.getDescription());
-            mTvCount.setText(String.format(AppUtil.getString(R.string.video_count),author.getVideoNum()));
+            mTvCount.setText(String.format(AppUtil.getString(R.string.video_count), author.getVideoNum()));
         } else {
             mRlAuthor.setVisibility(View.GONE);
         }
-        tvPart.setText(String.format(AppUtil.getString(R.string.item_count),position + 1, mViewDatas.size()));
+        tvPart.setText(String.format(AppUtil.getString(R.string.item_count), position + 1, mViewDatas.size()));
         mTvLikeCount.setText(String.valueOf(data.getConsumption().getCollectionCount()));
         mTvReplyCount.setText(String.valueOf(data.getConsumption().getReplyCount()));
         mTvShareCount.setText(String.valueOf(data.getConsumption().getShareCount()));
@@ -391,9 +418,11 @@ public class VideoDetailActivity2 extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        boolean theLast=false;
+        Log.e("time--3",System.currentTimeMillis()+"");
+        boolean theLast = false;
+        stopAnimChar();
         if (fromTheLast) {
-            theLast=  vpVideo.getCurrentItem()==mViewDatas.size()-1;
+            theLast = vpVideo.getCurrentItem() == mViewDatas.size() - 1;
         }
         resetAnimView(mTarget);
         if (!fromRelate) {
@@ -401,11 +430,12 @@ public class VideoDetailActivity2 extends BaseActivity {
                 mHandler.sendEmptyMessage(POST_TO_PRE);
             }
             EventBus.getDefault()
-                .post(new VideoDetailBackEvent(mFromType, vpVideo.getCurrentItem(),
+                    .post(new VideoDetailBackEvent(mFromType, vpVideo.getCurrentItem(),
                             mViewDatas.get(vpVideo.getCurrentItem()).getData().getCover().getDetail(),
-                            hasScrolled,theLast));
+                            hasScrolled, theLast));
         }
         super.onBackPressed();
+        Log.e("time--3",System.currentTimeMillis()+"");
     }
 
 
@@ -413,7 +443,7 @@ public class VideoDetailActivity2 extends BaseActivity {
     protected void onDestroy() {
         mAnimator.cancel();
         mAnimator.removeAllUpdateListeners();
-        mTarget=null;
+        mTarget = null;
         mHandler.removeCallbacksAndMessages(null);
         super.onDestroy();
         if (mEventSubscription != null) {

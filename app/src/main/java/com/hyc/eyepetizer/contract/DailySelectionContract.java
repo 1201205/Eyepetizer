@@ -12,6 +12,7 @@ import java.util.List;
 public interface DailySelectionContract {
     interface View extends BaseView {
         void showSelection(List<ViewData> datas, boolean hasMore);
+        void setRefreshTime(long time);
         void showError();
     }
 

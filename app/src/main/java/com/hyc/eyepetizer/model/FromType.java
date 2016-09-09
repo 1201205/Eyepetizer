@@ -7,5 +7,5 @@ public interface FromType {
     int TYPE_MAIN = 1;
     int TYPE_DAILY = 2;
     int TYPE_RELATE = 3;
-
+    int TYPE_RANK = 4;
 }

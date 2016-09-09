@@ -1,22 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/rl_title"
-    android:layout_width="match_parent"
-    android:layout_height="45dp">
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/rl_title"
+                android:layout_width="match_parent"
+                android:layout_height="45dp">
+
     <ImageView
         android:id="@+id/img_left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         android:layout_centerVertical="true"
-        android:src="@drawable/ic_action_back"/>
+        android:src="@drawable/ic_action_back"
+        android:visibility="gone"/>
+
     <com.hyc.eyepetizer.widget.CustomTextView
-        android:id="@+id/tv_title"
+        android:id="@+id/tv_head_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="17sp"
+        android:layout_centerInParent="true"
         android:textColor="@color/title_black"
-        android:layout_centerInParent="true"/>
+        android:textSize="17sp"
+        app:typeface="@string/type_lobster"/>
+
     <ImageView
         android:id="@+id/img_right"
         android:layout_width="wrap_content"
@@ -29,9 +34,16 @@
         android:id="@+id/tv_right"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="10dp"
         android:textColor="@color/title_black"
-        android:visibility="gone"
         android:textSize="12sp"
-        android:textAppearance="@string/type_lobster"
-        android:layout_centerHorizontal="true"/>
+        android:visibility="gone"
+        app:typeface="@string/type_lobster"/>
+    <View
+        android:background="@color/space_line_bg"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="1px"/>
 </RelativeLayout>

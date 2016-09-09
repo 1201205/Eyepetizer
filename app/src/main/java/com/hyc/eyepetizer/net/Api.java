@@ -4,6 +4,7 @@ import com.hyc.eyepetizer.model.beans.DailySelection;
 import com.hyc.eyepetizer.model.beans.Reply;
 import com.hyc.eyepetizer.model.beans.Selection;
 import com.hyc.eyepetizer.model.beans.VideoRelated;
+import com.hyc.eyepetizer.model.beans.Videos;
 
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -20,7 +21,24 @@ public interface Api {
      * http://baobab.wandoujia.com/api/v3/tabs/selected?udid=8954dd2dac7e41d68d967d5cc8115ced8b7af94c&vc=126&vn=2.4.1&deviceModel=Redmi%20Note%203&first_channel=eyepetizer_xiaomi_market&last_channel=eyepetizer_xiaomi_market&system_version_code=22
      *
      * http://baobab.wandoujia.com/api/v3/video/9194/detail/related?udid=8954dd2dac7e41d68d967d5cc8115ced8b7af94c&vc=126&vn=2.4.1&deviceModel=Redmi%20Note%203&first_channel=eyepetizer_yingyongbao_market&last_channel=eyepetizer_yingyongbao_market&system_version_code=22
+     *   排行
+     *   monthly  weekly
+     *  http://baobab.wandoujia.com/api/v3/ranklist?num=10&strategy=historical&udid=8954dd2dac7e41d68d967d5cc8115ced8b7af94c&vc=126&vn=2.4.1&deviceModel=Redmi%20Note%203&first_channel=eyepetizer_yingyongbao_market&last_channel=eyepetizer_yingyongbao_market&system_version_code=22
      *
+     *
+     * 轻主题
+     * http://baobab.wandoujia.com/api/v3/lightTopics/42?udid=8954dd2dac7e41d68d967d5cc8115ced8b7af94c&vc=126&vn=2.4.1&deviceModel=Redmi%20Note%203&first_channel=eyepetizer_yingyongbao_market&last_channel=eyepetizer_yingyongbao_market&system_version_code=22
+     *
+     * category
+     * date  shareCount
+     * http://baobab.wandoujia.com/api/v3/videos?categoryId=30&strategy=date&udid=8954dd2dac7e41d68d967d5cc8115ced8b7af94c&vc=126&vn=2.4.1&deviceModel=Redmi%20Note%203&first_channel=eyepetizer_yingyongbao_market&last_channel=eyepetizer_yingyongbao_market&system_version_code=22
+     *
+     * 标签：
+     * http://baobab.wandoujia.com/api/v3/tag/videos?tagId=80&strategy=date&udid=8954dd2dac7e41d68d967d5cc8115ced8b7af94c&vc=126&vn=2.4.1&deviceModel=Redmi%20Note%203&first_channel=eyepetizer_yingyongbao_market&last_channel=eyepetizer_yingyongbao_market&system_version_code=22
+     *
+     * 个人
+     * date  shareCount
+     * http://baobab.wandoujia.com/api/v3/pgc/videos?pgcId=170&strategy=date&udid=8954dd2dac7e41d68d967d5cc8115ced8b7af94c&vc=126&vn=2.4.1&deviceModel=Redmi%20Note%203&first_channel=eyepetizer_yingyongbao_market&last_channel=eyepetizer_yingyongbao_market&system_version_code=22
      *
      *  视频评论:
      *  http://baobab.wandoujia.com/api/v1/replies/video?id=9034&udid=8954dd2dac7e41d68d967d5cc8115ced8b7af94c&vc=126&vn=2.4.1&deviceModel=Redmi%20Note%203&first_channel=eyepetizer_yingyongbao_market&last_channel=eyepetizer_yingyongbao_market&system_version_code=22
@@ -67,4 +85,13 @@ public interface Api {
      */
     @GET("/api/v2/feed") Observable<DailySelection> getDailySelection(
             @Query("num") int num,@Query("date") long date);
+
+    /**
+     * 获取排行榜视频
+     * @param num  10
+     * @param strategy  monthly  weekly  historical
+     * @return
+     */
+    @GET("/api/v3/ranklist") Observable<Videos> getRankByStrategy(
+            @Query("num") int num,@Query("strategy") String strategy);
 }

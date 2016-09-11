@@ -8,4 +8,16 @@ public interface FromType {
     int TYPE_DAILY = 2;
     int TYPE_RELATE = 3;
     int TYPE_RANK = 4;
+    int TYPE_WEEK = -5;
+    int TYPE_MONTH = -6;
+    int TYPE_HISTORY = -7;
+
+
+    interface Tag {
+        String RANK_WEEK = "weekly";
+        String RANK_MONTH = "monthly";
+        String RANK_HISTORY = "historical";
+        String DATE = "date";
+        String SHARE_COUNT="shareCount";
+    }
 }

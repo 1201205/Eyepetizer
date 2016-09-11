@@ -16,6 +16,7 @@ import com.hyc.eyepetizer.utils.DataHelper;
 import com.hyc.eyepetizer.utils.FrescoHelper;
 import com.hyc.eyepetizer.utils.TypefaceHelper;
 import com.hyc.eyepetizer.utils.WidgetHelper;
+import com.hyc.eyepetizer.view.RankActivity;
 import com.hyc.eyepetizer.view.SelectionActivity;
 import com.hyc.eyepetizer.view.adapter.holder.BlankViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.BriefCardViewHolder;
@@ -139,6 +140,14 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private void bindView(CoverVideoViewHolder holder, ViewData data) {
         holder.cover.setImageURI(data.getData().getHeader().getCover());
+        if ("eyepetizer://ranklist/".equals(data.getData().getHeader().getActionUrl())) {
+            holder.cover.setOnClickListener(new View.OnClickListener() {
+                @Override public void onClick(View view) {
+                    Intent intent = new Intent(context, RankActivity.class);
+                    context.startActivity(intent);
+                }
+            });
+        }
         if (holder.recyclerView.getLayoutManager() == null) {
             LinearLayoutManager manager = new LinearLayoutManager(context);
             manager.setOrientation(LinearLayoutManager.HORIZONTAL);

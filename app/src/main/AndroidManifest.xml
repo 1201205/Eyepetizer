@@ -51,6 +51,9 @@
         <activity
             android:screenOrientation="portrait"
             android:name=".view.SelectionActivity"/>
+        <activity
+            android:screenOrientation="portrait"
+            android:name=".view.RankActivity"/>
     </application>
 
 </manifest>

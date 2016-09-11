@@ -16,7 +16,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="30dp">
+            android:layout_height="36dp">
 
             <LinearLayout
                 android:id="@+id/ll_rank_bar"
@@ -34,6 +34,8 @@
                     android:id="@+id/tv_week"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/shape_indicator"
+                    android:text="@string/rank_week"
                     android:textColor="@color/title_black"/>
 
                 <Space
@@ -44,7 +46,10 @@
                 <com.hyc.eyepetizer.widget.CustomTextView
                     android:id="@+id/tv_month"
                     android:layout_width="wrap_content"
+
                     android:layout_height="wrap_content"
+                    android:background="@drawable/shape_indicator"
+                    android:text="@string/rank_month"
                     android:textColor="@color/title_black"/>
 
                 <Space
@@ -55,7 +60,10 @@
                 <com.hyc.eyepetizer.widget.CustomTextView
                     android:id="@+id/tv_all"
                     android:layout_width="wrap_content"
+
                     android:layout_height="wrap_content"
+                    android:background="@drawable/shape_indicator"
+                    android:text="@string/rank_history"
                     android:textColor="@color/title_black"/>
 
                 <Space
@@ -70,8 +78,8 @@
                 android:layout_centerVertical="true"/>
         </RelativeLayout>
 
-        <FrameLayout
-            android:id="@+id/fl_container"
+        <android.support.v4.view.ViewPager
+            android:id="@+id/vp_video"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"/>

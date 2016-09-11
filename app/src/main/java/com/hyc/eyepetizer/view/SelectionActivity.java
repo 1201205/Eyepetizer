@@ -12,7 +12,9 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.base.BaseActivity;
@@ -32,15 +34,9 @@ import com.hyc.eyepetizer.widget.CustomTextView;
 import com.hyc.eyepetizer.widget.LoadingAnimView;
 import com.hyc.eyepetizer.widget.MyAnimatorListener;
 import com.hyc.eyepetizer.widget.PullToRefreshView;
-
+import java.util.List;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-
-import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * todo 还有一个界面也是类似的 重复代码过多 需要进行重构
@@ -127,9 +123,6 @@ public class SelectionActivity extends BaseActivity<DailySelectionPresenter> imp
         final int p = mMap.get(event.position);
         if (event.fromType != FromType.TYPE_DAILY || mManager.findFirstCompletelyVisibleItemPosition() == p) {
             return;
-        }
-        if (mMap == null) {
-            mMap = DailySelectionModel.getInstance().getMap();
         }
         if (mLastIndex != event.position) {
             FrescoHelper.loadUrl(sdvAnim, DailySelectionModel.getInstance().getVideoList(0, 0, null).get(event.position).getData().getCover().getDetail());

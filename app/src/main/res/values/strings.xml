@@ -28,4 +28,7 @@
     <string name="video_count">%1$s个视频</string>
     <string name="today">Today</string>
     <string name="selection">每日精选</string>
+    <string name="rank_week">周排行</string>
+    <string name="rank_month">月排行</string>
+    <string name="rank_history">总排行</string>
 </resources>

@@ -15,6 +15,8 @@ import java.util.UUID;
  * Created by Administrator on 2016/8/26.
  */
 public class AppUtil {
+
+    private static int sStausHeight = -1;
     /**
      * 生成唯一设备识别id
      * @return
@@ -85,13 +87,15 @@ public class AppUtil {
 
 
     public static int getStatusBarHeight(Context context) {
-        int result = 0;
-        int resourceId = context.getResources()
-            .getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            result = context.getResources().getDimensionPixelSize(resourceId);
+        if (sStausHeight == -1) {
+            int resourceId = context.getResources()
+                .getIdentifier("status_bar_height", "dimen", "android");
+            if (resourceId > 0) {
+                sStausHeight = context.getResources().getDimensionPixelSize(resourceId);
+            }
         }
-        return result;
+
+        return sStausHeight;
     }
 
 

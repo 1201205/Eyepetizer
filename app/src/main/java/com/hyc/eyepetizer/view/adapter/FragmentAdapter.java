@@ -3,22 +3,22 @@ package com.hyc.eyepetizer.view.adapter;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.view.ViewGroup;
-
 import java.util.List;
 
 /**
  * Created by Administrator on 2016/8/29.
  */
-public class FragmentAdapter extends FragmentStatePagerAdapter {
-    private List<Fragment> mFragments;
-    public FragmentAdapter(FragmentManager fm, List<Fragment> fragments) {
+public class FragmentAdapter<T extends Fragment> extends FragmentStatePagerAdapter {
+    private List<T> mFragments;
+
+
+    public FragmentAdapter(FragmentManager fm, List<T> fragments) {
         super(fm);
         mFragments=fragments;
     }
 
     @Override
-    public Fragment getItem(int position) {
+    public T getItem(int position) {
         return mFragments.get(position);
     }
     @Override

@@ -14,7 +14,9 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.base.BaseActivity;
@@ -35,14 +37,8 @@ import com.hyc.eyepetizer.view.adapter.VideoDetailAdapter;
 import com.hyc.eyepetizer.widget.AnimateTextView;
 import com.hyc.eyepetizer.widget.CustomTextView;
 import com.hyc.eyepetizer.widget.DepthPageTransformer;
-
-import org.greenrobot.eventbus.EventBus;
-
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+import org.greenrobot.eventbus.EventBus;
 import rx.Subscription;
 
 /**
@@ -116,6 +112,8 @@ public class VideoDetailActivity2 extends BaseActivity {
     //最后一个selection
     private boolean fromTheLast;
     private int mFromType;
+    private VideoListInterface mModel;
+    private int mIndicatorWidth;
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -137,11 +135,18 @@ public class VideoDetailActivity2 extends BaseActivity {
                 case POST_TO_PRE:
                     //// TODO: 16/9/8   更换计算方式
                     int index = 0;
-                    if (mFromType == FromType.TYPE_DAILY) {
-                        index = vpVideo.getCurrentItem();
-                    } else if (mFromType == FromType.TYPE_MAIN) {
-                        index = mIndexMap.get(vpVideo.getCurrentItem()) -
+                    switch (mFromType) {
+                        case FromType.TYPE_DAILY:
+                        case FromType.TYPE_HISTORY:
+                        case FromType.TYPE_MONTH:
+                        case FromType.TYPE_WEEK:
+                            index = vpVideo.getCurrentItem();
+                            break;
+                        case FromType.TYPE_MAIN:
+                            index = mIndexMap.get(vpVideo.getCurrentItem()) -
                                 (mIndexMap.get(mIndex) - mIndex);
+                            break;
+
                     }
                     EventBus.getDefault().post(new VideoSelectEvent(mFromType, index));
                     break;
@@ -154,7 +159,6 @@ public class VideoDetailActivity2 extends BaseActivity {
             }
         }
     };
-    private VideoListInterface mModel;
 
 
     public static Intent newIntent(int type, Context context, int index, int parentIndex) {
@@ -168,7 +172,7 @@ public class VideoDetailActivity2 extends BaseActivity {
 
     public static Intent newIntent(int type, Context context, int index, int parentIndex, int videoID) {
         Intent intent = newIntent(type, context, index, parentIndex);
-        intent.putExtra(FORM_RELATE, true);
+        //intent.putExtra(FORM_RELATE, true);
         intent.putExtra(VIDEO_ID, videoID);
         return intent;
     }
@@ -181,9 +185,9 @@ public class VideoDetailActivity2 extends BaseActivity {
         mParentIndex = intent.getIntExtra(PARENT_INDEX, -1);
         mIndex = intent.getIntExtra(INDEX, -1);
         fromRelate = intent.getBooleanExtra(FORM_RELATE, false);
-        if (fromRelate) {
+        //if (fromRelate) {
             mVideoID = intent.getIntExtra(VIDEO_ID, -1);
-        }
+        //}
     }
 
 
@@ -285,7 +289,7 @@ public class VideoDetailActivity2 extends BaseActivity {
                 });
 
     }
-    private int mIndicatorWidth;
+
 
     private void initData() {
         mIndexMap = new SparseArray<>();

@@ -11,8 +11,12 @@ public class VideoListPresenterGenerator {
     public static VideoListPresenter generate(int fromType, String tag, VideoListContract.View view) {
 
         switch (fromType) {
-            case FromType.TYPE_RANK:
-                return new RankPresenter(view, tag);
+            case FromType.TYPE_HISTORY:
+                return new RankPresenter(FromType.TYPE_HISTORY, view, tag);
+            case FromType.TYPE_WEEK:
+                return new RankPresenter(FromType.TYPE_WEEK, view, tag);
+            case FromType.TYPE_MONTH:
+                return new RankPresenter(FromType.TYPE_MONTH, view, tag);
         }
         return null;
     }

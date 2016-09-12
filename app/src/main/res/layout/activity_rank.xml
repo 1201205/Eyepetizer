@@ -32,9 +32,9 @@
 
                 <com.hyc.eyepetizer.widget.CustomTextView
                     android:id="@+id/tv_week"
+                    android:textSize="12sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/shape_indicator"
                     android:text="@string/rank_week"
                     android:textColor="@color/title_black"/>
 
@@ -45,10 +45,9 @@
 
                 <com.hyc.eyepetizer.widget.CustomTextView
                     android:id="@+id/tv_month"
+                    android:textSize="12sp"
                     android:layout_width="wrap_content"
-
                     android:layout_height="wrap_content"
-                    android:background="@drawable/shape_indicator"
                     android:text="@string/rank_month"
                     android:textColor="@color/title_black"/>
 
@@ -58,11 +57,10 @@
                     android:layout_weight="2"/>
 
                 <com.hyc.eyepetizer.widget.CustomTextView
+                    android:textSize="12sp"
                     android:id="@+id/tv_all"
                     android:layout_width="wrap_content"
-
                     android:layout_height="wrap_content"
-                    android:background="@drawable/shape_indicator"
                     android:text="@string/rank_history"
                     android:textColor="@color/title_black"/>
 
@@ -73,8 +71,10 @@
             </LinearLayout>
 
             <View
-                android:layout_width="40dp"
-                android:layout_height="20dp"
+                android:id="@+id/indicator"
+                android:background="@drawable/shape_indicator"
+                android:layout_width="50dp"
+                android:layout_height="30dp"
                 android:layout_centerVertical="true"/>
         </RelativeLayout>
 

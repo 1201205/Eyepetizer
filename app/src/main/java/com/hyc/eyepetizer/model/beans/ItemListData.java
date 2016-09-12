@@ -38,7 +38,7 @@ public class ItemListData implements java.io.Serializable {
     private Author author;
     private String dataType;
     private Consumption consumption;
-    private Object label;
+    private Label label;
     private List<Tags> tags;
     private Object webAdTrack;
     private List<PlayInfo> playInfo;
@@ -231,10 +231,10 @@ public class ItemListData implements java.io.Serializable {
     }
 
 
-    public Object getLabel() {return this.label;}
+    public Label getLabel() {return this.label;}
 
 
-    public void setLabel(Object label) {this.label = label;}
+    public void setLabel(Label label) {this.label = label;}
 
 
     public List<Tags> getTags() {return this.tags;}

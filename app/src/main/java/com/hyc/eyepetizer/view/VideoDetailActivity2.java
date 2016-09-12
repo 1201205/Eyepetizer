@@ -14,9 +14,7 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.base.BaseActivity;
@@ -37,8 +35,14 @@ import com.hyc.eyepetizer.view.adapter.VideoDetailAdapter;
 import com.hyc.eyepetizer.widget.AnimateTextView;
 import com.hyc.eyepetizer.widget.CustomTextView;
 import com.hyc.eyepetizer.widget.DepthPageTransformer;
-import java.util.List;
+
 import org.greenrobot.eventbus.EventBus;
+
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import rx.Subscription;
 
 /**
@@ -144,7 +148,7 @@ public class VideoDetailActivity2 extends BaseActivity {
                             break;
                         case FromType.TYPE_MAIN:
                             index = mIndexMap.get(vpVideo.getCurrentItem()) -
-                                (mIndexMap.get(mIndex) - mIndex);
+                                    (mIndexMap.get(mIndex) - mIndex);
                             break;
 
                     }
@@ -186,7 +190,7 @@ public class VideoDetailActivity2 extends BaseActivity {
         mIndex = intent.getIntExtra(INDEX, -1);
         fromRelate = intent.getBooleanExtra(FORM_RELATE, false);
         //if (fromRelate) {
-            mVideoID = intent.getIntExtra(VIDEO_ID, -1);
+        mVideoID = intent.getIntExtra(VIDEO_ID, -1);
         //}
     }
 
@@ -269,7 +273,7 @@ public class VideoDetailActivity2 extends BaseActivity {
                 } else if (state == 0) {
                     mHandler.sendEmptyMessageDelayed(START_ANIM, 1000);
                     if (!fromRelate) {
-                        mHandler.sendEmptyMessageDelayed(POST_TO_PRE, 600);
+                        mHandler.sendEmptyMessageDelayed(POST_TO_PRE, 300);
                     }
                 }
             }
@@ -281,7 +285,7 @@ public class VideoDetailActivity2 extends BaseActivity {
                     public boolean onPreDraw() {
                         vpVideo.getViewTreeObserver().removeOnPreDrawListener(this);
                         animateText();
-                        mIndicatorWidth= llPart.getWidth();
+                        mIndicatorWidth = llPart.getWidth();
                         resetIndicator();
                         mHandler.sendEmptyMessageDelayed(START_ANIM, 1000);
                         return true;
@@ -295,19 +299,41 @@ public class VideoDetailActivity2 extends BaseActivity {
         mIndexMap = new SparseArray<>();
         mModel = ViewDataListFactory.getModel(mFromType);
         mViewDatas = mModel.getVideoList(mVideoID, mParentIndex, mIndexMap);
-        if (mFromType == FromType.TYPE_MAIN) {
-            fromTheLast = FeedModel.getInstance().isTheLastSelection(mParentIndex);
-        } else if (mFromType == FromType.TYPE_DAILY) {
-            fromTheLast = true;
-            ((DailySelectionModel)mModel).setObserver(new DailySelectionModel.Observer() {
-                @Override
-                public void notifyDataSetAdd() {
-                    //由于是一个一个的加入
-                    mHandler.removeMessages(NOTIFY);
-                    mHandler.sendEmptyMessageDelayed(NOTIFY,50);
-                }
-            });
+        switch (mFromType) {
+            case FromType.TYPE_MAIN:
+                fromTheLast = FeedModel.getInstance().isTheLastSelection(mParentIndex);
+                break;
+            case FromType.TYPE_DAILY:
+                fromTheLast = true;
+                ((DailySelectionModel) mModel).setObserver(new DailySelectionModel.Observer() {
+                    @Override
+                    public void notifyDataSetAdd() {
+                        //由于是一个一个的加入
+                        mHandler.removeMessages(NOTIFY);
+                        mHandler.sendEmptyMessageDelayed(NOTIFY, 50);
+                    }
+                });
+                break;
+            case FromType.TYPE_HISTORY:
+            case FromType.TYPE_MONTH:
+            case FromType.TYPE_WEEK:
+                fromTheLast = true;
+                break;
+
         }
+//        if (mFromType == FromType.TYPE_MAIN) {
+//            fromTheLast = FeedModel.getInstance().isTheLastSelection(mParentIndex);
+//        } else if (mFromType == FromType.TYPE_DAILY) {
+//            fromTheLast = true;
+//            ((DailySelectionModel)mModel).setObserver(new DailySelectionModel.Observer() {
+//                @Override
+//                public void notifyDataSetAdd() {
+//                    //由于是一个一个的加入
+//                    mHandler.removeMessages(NOTIFY);
+//                    mHandler.sendEmptyMessageDelayed(NOTIFY,50);
+//                }
+//            });
+//        }
     }
 
     private void resetIndicator() {
@@ -422,7 +448,7 @@ public class VideoDetailActivity2 extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        Log.e("time--3",System.currentTimeMillis()+"");
+        Log.e("time--3", System.currentTimeMillis() + "");
         boolean theLast = false;
         stopAnimChar();
         if (fromTheLast) {
@@ -439,7 +465,7 @@ public class VideoDetailActivity2 extends BaseActivity {
                             hasScrolled, theLast));
         }
         super.onBackPressed();
-        Log.e("time--3",System.currentTimeMillis()+"");
+        Log.e("time--3", System.currentTimeMillis() + "");
     }
 
 

@@ -3,6 +3,7 @@ package com.hyc.eyepetizer.view.adapter.holder;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -22,8 +23,8 @@ public class HorizontalViewHolder extends RecyclerView.ViewHolder {
     public CustomTextView title;
     @BindView(R.id.sdv_img)
     public SimpleDraweeView img;
-    @BindView(R.id.ll_flow)
-    public LinearLayout flow;
+    @BindView(R.id.rl_flow)
+    public RelativeLayout flow;
 
     public HorizontalViewHolder(View itemView) {
         super(itemView);

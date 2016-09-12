@@ -9,36 +9,32 @@ import android.view.ViewConfiguration;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.utils.TypefaceHelper;
 import com.hyc.eyepetizer.widget.CustomTextView;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by Administrator on 2016/8/31.
  */
-public class VideoViewHolder extends RecyclerView.ViewHolder {
+public class HorizontalVideoViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.tv_category)
     public CustomTextView category;
     @BindView(R.id.tv_title)
     public CustomTextView title;
     @BindView(R.id.sdv_img)
     public SimpleDraweeView img;
-    @BindView(R.id.rl_flow)
-    public RelativeLayout flow;
-    @BindView(R.id.tv_label)
-    public CustomTextView label;
-    @BindView(R.id.tv_rank)
-    public CustomTextView rank;
-
+    @BindView(R.id.ll_flow)
+    public LinearLayout flow;
     private Animator mAnimator;
     private float mLastX;
     private float mLastY;
     private float mMask;
     private ItemClickListener mItemClickListener;
-    public VideoViewHolder(View itemView) {
+    public HorizontalVideoViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
         title.setTypeface(TypefaceHelper.getTypeface(TypefaceHelper.BOLD));

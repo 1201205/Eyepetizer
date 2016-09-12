@@ -66,8 +66,8 @@ public class VideoRelateActivity extends BaseActivity<VideoRelatePresenter>
             return;
         }
         mAdapter = new TestAdapter.Builder(this, datas).setTitleTextColor(Color.WHITE)
-            .horizontalItemCilckListener(
-                new TestAdapter.HorizontalItemCilckListener() {
+            .horizontalItemClickListener(
+                new TestAdapter.HorizontalItemClickListener() {
                     @Override
                     public void onItemClicked(int parentPosition, int myPosition, int position) {
                         Intent intent =

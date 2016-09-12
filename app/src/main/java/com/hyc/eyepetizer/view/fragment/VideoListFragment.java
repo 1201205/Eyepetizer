@@ -116,7 +116,8 @@ public class VideoListFragment extends BaseFragment<VideoListPresenter>
     @Override
     public void showList(List<ViewData> datas) {
         if (mAdapter == null) {
-            mAdapter = new TestAdapter.Builder(getContext(), datas).type(mType).build();
+            mRlError.setVisibility(View.GONE);
+            mAdapter = new TestAdapter.Builder(getContext(), datas).formRank().type(mType).build();
             mRvVideo.setAdapter(mAdapter);
         }
     }
@@ -124,6 +125,12 @@ public class VideoListFragment extends BaseFragment<VideoListPresenter>
 
     @Override
     public void showError() {
-
+        mRlError.setVisibility(View.VISIBLE);
+        mRlError.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mPresenter.getVideoList();
+            }
+        });
     }
 }

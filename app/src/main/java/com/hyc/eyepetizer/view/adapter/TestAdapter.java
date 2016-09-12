@@ -42,7 +42,7 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<ViewData> mDatas;
 
     private int mSpace;
-    private HorizontalItemCilckListener horizontalItemCilckListener;
+    private HorizontalItemClickListener horizontalItemCilckListener;
     //视频相关  白色
     private int mTitleColor = AppUtil.getColor(R.color.title_black);
     private int mType;
@@ -133,6 +133,15 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 //                ActivityCompat.startActivity((Activity) context, intent, compat.toBundle());
             }
         });
+        if (itemData.getLabel() != null) {
+            holder.label.setText(itemData.getLabel().getText());
+        } else {
+            holder.label.setText(null);
+        }
+        if (formRank) {
+            holder.rank.setVisibility(View.VISIBLE);
+            holder.rank.setText((position+1)+".");
+        }
         holder.title.setText(itemData.getTitle());
         holder.category.setText(DataHelper.getCategoryAndDuration(itemData.getCategory(), itemData.getDuration()));
     }
@@ -283,7 +292,7 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         mDatas.addAll(datas);
         notifyItemRangeInserted(count, datas.size());
     }
-    public interface HorizontalItemCilckListener {
+    public interface HorizontalItemClickListener {
         //首页需要用到  前面两个参数，其余的需要用到后面两个
 
         /**
@@ -293,7 +302,7 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
          */
         void onItemClicked(int parentID, int myPosition, int position);
     }
-
+    private boolean formRank;
 
     public static class Builder {
         private TestAdapter adapter;
@@ -319,11 +328,15 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             return this;
         }
 
-        public Builder horizontalItemCilckListener(HorizontalItemCilckListener listener) {
+        public Builder horizontalItemClickListener(HorizontalItemClickListener listener) {
             adapter.horizontalItemCilckListener = listener;
             return this;
         }
 
+        public Builder formRank(){
+            adapter.formRank=true;
+            return this;
+        }
 
         public TestAdapter build() {
             return adapter;

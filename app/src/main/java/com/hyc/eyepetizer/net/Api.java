@@ -92,6 +92,6 @@ public interface Api {
      * @param strategy  monthly  weekly  historical
      * @return
      */
-    @GET("/api/v3/ranklist") Observable<Videos> getRankByStrategy(
+    @GET("/api/v3/ranklist?vc=126") Observable<Videos> getRankByStrategy(
             @Query("num") int num,@Query("strategy") String strategy);
 }

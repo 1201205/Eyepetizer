@@ -8,13 +8,14 @@ import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.model.beans.ItemListData;
 import com.hyc.eyepetizer.model.beans.ViewData;
 import com.hyc.eyepetizer.utils.DataHelper;
+import com.hyc.eyepetizer.view.adapter.holder.HorizontalVideoViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.VideoViewHolder;
 import java.util.List;
 
 /**
  * Created by Administrator on 2016/8/26.
  */
-public class HorizontalAdapter extends RecyclerView.Adapter<VideoViewHolder> {
+public class HorizontalAdapter extends RecyclerView.Adapter<HorizontalVideoViewHolder> {
     private List<ViewData> mDatas;
     private Context mContext;
     private LayoutInflater mLayoutInflater;
@@ -24,11 +25,11 @@ public class HorizontalAdapter extends RecyclerView.Adapter<VideoViewHolder> {
         mLayoutInflater=context;
     }
     @Override
-    public VideoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        VideoViewHolder holder = new VideoViewHolder(
+    public HorizontalVideoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        HorizontalVideoViewHolder holder = new HorizontalVideoViewHolder(
             mLayoutInflater.inflate(R.layout.item_video_horizontal, parent, false));
         if (listener != null) {
-            holder.setOnItemClickListener(new VideoViewHolder.ItemClickListener() {
+            holder.setOnItemClickListener(new HorizontalVideoViewHolder.ItemClickListener() {
                 @Override public void onItemClicked(int locationY, int p) {
                     listener.onItemClicked(p);
                 }
@@ -38,7 +39,7 @@ public class HorizontalAdapter extends RecyclerView.Adapter<VideoViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(VideoViewHolder holder, int position) {
+    public void onBindViewHolder(HorizontalVideoViewHolder holder, int position) {
         ItemListData data = mDatas.get(position).getData();
         holder.category.setText(
             DataHelper.getCategoryAndDuration(data.getCategory(), data.getDuration()));

@@ -144,8 +144,8 @@ public class TestFragment extends BaseFragment<SelectionPresenter>
     @Override
     public void showSelection(List<ViewData> datas) {
         mAdapter = new TestAdapter.Builder(getContext(), datas).type(FromType.TYPE_MAIN)
-            .horizontalItemCilckListener(
-            new TestAdapter.HorizontalItemCilckListener() {
+            .horizontalItemClickListener(
+            new TestAdapter.HorizontalItemClickListener() {
                 @Override
                 public void onItemClicked(int parentPosition, int myPosition, int position) {
                     Log.e("------", parentPosition + "----" + myPosition);

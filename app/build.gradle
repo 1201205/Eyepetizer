@@ -42,5 +42,6 @@ dependencies {
     apt 'com.jakewharton:butterknife-compiler:8.3.0'
     compile 'com.android.support:recyclerview-v7:24.2.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.android.support:design:24.2.0'
 
 }

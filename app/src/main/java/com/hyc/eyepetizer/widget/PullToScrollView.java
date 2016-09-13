@@ -2,26 +2,77 @@ package com.hyc.eyepetizer.widget;
 
 import android.content.Context;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.NestedScrollView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
-import android.widget.FrameLayout;
-import android.widget.HorizontalScrollView;
-import android.widget.ScrollView;
 import android.widget.Scroller;
-
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.utils.AppUtil;
 
 /**
  * Created by ray on 16/9/12.
  */
-public class PullToScrollView extends ScrollView {
+public class PullToScrollView extends NestedScrollView {
+    int mPointerId;
+    //@Override
+    //public boolean dispatchTouchEvent(MotionEvent event) {
+    //    float y = event.getRawY();
+    //    int scrollY = getScrollY();
+    //    boolean intercept = false;
+    //    if (scrollY < mHintY) {
+    //        intercept = true;
+    //    }
+    //    switch (event.getAction()) {
+    //        case MotionEvent.ACTION_DOWN:
+    //            mPointerId = event.getPointerId(0);
+    //
+    //            mVelocityTracker = VelocityTracker.obtain(); // 初始化
+    //            mVelocityTracker.addMovement(event);
+    //            mCurrentY = y;
+    //        case MotionEvent.ACTION_MOVE:
+    //
+    //            if (intercept) {
+    //                if (scrollY == 0 && y > mCurrentY) {
+    //                    mCurrentY = y;
+    //                    return super.dispatchTouchEvent(event);
+    //                } else if (scrollY+mCurrentY-y<0) {
+    //                    mCurrentY=y;
+    //                    scrollTo(0,0);
+    //                    return true;
+    //                } else if (mCurrentY - y + scrollY > mHintY) {
+    //                    scrollBy(0, mHintY - scrollY);
+    //                } else {
+    //                    scrollBy(0, (int) (mCurrentY - y));
+    //                }
+    //                mVelocityTracker.computeCurrentVelocity(1000, mMaximumVelocity);
+    //                int initialVelocity = (int) mVelocityTracker.getYVelocity(mPointerId);
+    //                // 在 ACTION_UP 和 ACTION_CANCEL 中 销毁
+    //                if (initialVelocity!=0) {
+    //                    fling(initialVelocity);
+    //                }
+    //
+    //                mCurrentY = y;
+    //                return true;
+    //            }
+    //            break;
+    //        //https://github.com/hyr0318/MaterialCoordinatorLayout
+    //        case MotionEvent.ACTION_UP:
+    //            mVelocityTracker.computeCurrentVelocity(1000, mMaximumVelocity);
+    //            int initialVelocity = (int) mVelocityTracker.getYVelocity(mPointerId);
+    //            mVelocityTracker.recycle();
+    //            Log.e("initialVelocity",initialVelocity+"----");
+    //            // 在 ACTION_UP 和 ACTION_CANCEL 中 销毁
+    //            fling(initialVelocity);
+    //            break;
+    //    }
+    //    return super.dispatchTouchEvent(event);
+    //}
+    VelocityTracker mVelocityTracker;
+    int mMaximumVelocity;
     private int mHeight;
     private int mWidth;
     private View head;
@@ -31,7 +82,8 @@ public class PullToScrollView extends ScrollView {
     private int mHintY;
     private GestureDetector mGestureDetector;
     private Scroller mScroller;
-
+    private float mCurrentY;
+    private View all;
 
 
     public PullToScrollView(Context context) {
@@ -47,68 +99,12 @@ public class PullToScrollView extends ScrollView {
     public PullToScrollView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mTitleBarHeight = AppUtil.dip2px(45);
-//        mGestureDetector=new GestureDetector(getContext(),new GestureListener());
-//        mScroller = new Scroller(getContext());
+        //        mGestureDetector=new GestureDetector(getContext(),new GestureListener());
+        //        mScroller = new Scroller(getContext());
         mMaximumVelocity = ViewConfiguration.get(context).getScaledMaximumFlingVelocity();
     }
 
-    private float mCurrentY;
-    int mPointerId;
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
-        float y = event.getRawY();
-        int scrollY = getScrollY();
-        boolean intercept = false;
-        if (scrollY < mHintY) {
-            intercept = true;
-        }
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                mPointerId = event.getPointerId(0);
 
-                mVelocityTracker = VelocityTracker.obtain(); // 初始化
-                mVelocityTracker.addMovement(event);
-                mCurrentY = y;
-            case MotionEvent.ACTION_MOVE:
-
-                if (intercept) {
-                    if (scrollY == 0 && y > mCurrentY) {
-                        mCurrentY = y;
-                        return super.dispatchTouchEvent(event);
-                    } else if (scrollY+mCurrentY-y<0) {
-                        mCurrentY=y;
-                        scrollTo(0,0);
-                        return true;
-                    } else if (mCurrentY - y + scrollY > mHintY) {
-                        scrollBy(0, mHintY - scrollY);
-                    } else {
-                        scrollBy(0, (int) (mCurrentY - y));
-                    }
-                    mVelocityTracker.computeCurrentVelocity(1000, mMaximumVelocity);
-                    int initialVelocity = (int) mVelocityTracker.getYVelocity(mPointerId);
-                    // 在 ACTION_UP 和 ACTION_CANCEL 中 销毁
-                    if (initialVelocity!=0) {
-                        fling(initialVelocity);
-                    }
-
-                    mCurrentY = y;
-                    return true;
-                }
-                break;
-            //https://github.com/hyr0318/MaterialCoordinatorLayout
-            case MotionEvent.ACTION_UP:
-                mVelocityTracker.computeCurrentVelocity(1000, mMaximumVelocity);
-                int initialVelocity = (int) mVelocityTracker.getYVelocity(mPointerId);
-                mVelocityTracker.recycle();
-                Log.e("initialVelocity",initialVelocity+"----");
-                // 在 ACTION_UP 和 ACTION_CANCEL 中 销毁
-                fling(initialVelocity);
-                break;
-        }
-        return super.dispatchTouchEvent(event);
-    }
-    VelocityTracker mVelocityTracker;
-    int mMaximumVelocity ;
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -169,7 +165,6 @@ public class PullToScrollView extends ScrollView {
         pager = (ViewPager) findViewById(R.id.vp_target);
         all=findViewById(R.id.fl_all);
     }
-    private View all;
 //    public class GestureListener extends GestureDetector.SimpleOnGestureListener {
 //
 //        @Override

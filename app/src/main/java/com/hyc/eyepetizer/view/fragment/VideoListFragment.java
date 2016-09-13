@@ -99,7 +99,9 @@ public class VideoListFragment extends BaseFragment<VideoListPresenter>
         mUnBinder = ButterKnife.bind(this, view);
         mManager = new LinearLayoutManager(getContext());
         mManager.setOrientation(LinearLayoutManager.VERTICAL);
+
         mRvVideo.setLayoutManager(mManager);
+
         //45+36
         mTop = (int) (AppUtil.dip2px(81) + AppUtil.getStatusBarHeight(getContext()));
         return view;

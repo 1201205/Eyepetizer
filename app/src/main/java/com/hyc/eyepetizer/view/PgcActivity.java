@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
-import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
 import com.hyc.eyepetizer.R;
@@ -16,8 +15,6 @@ import com.hyc.eyepetizer.widget.MyAnimatorListener;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import butterknife.BindView;
 
 /**
  * Created by ray on 16/9/13.
@@ -53,7 +50,7 @@ public class PgcActivity extends BaseActivity {
         mMonth = VideoListFragment.instantiate(FromType.TYPE_MONTH, FromType.Tag.RANK_MONTH);
         mHistory = VideoListFragment.instantiate(FromType.TYPE_HISTORY, FromType.Tag.RANK_HISTORY);
         mFragments.add(mWeek);
-//        mFragments.add(mMonth);
+        mFragments.add(mMonth);
 //        mFragments.add(mHistory);
         mAdapter = new FragmentAdapter(getSupportFragmentManager(), mFragments);
         vpVideo.setAdapter(mAdapter);

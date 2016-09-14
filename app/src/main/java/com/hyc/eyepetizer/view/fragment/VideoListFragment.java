@@ -21,6 +21,7 @@ import com.hyc.eyepetizer.presenter.VideoListPresenterGenerator;
 import com.hyc.eyepetizer.utils.AppUtil;
 import com.hyc.eyepetizer.view.adapter.TestAdapter;
 import com.hyc.eyepetizer.widget.CustomTextView;
+
 import java.util.List;
 
 /**

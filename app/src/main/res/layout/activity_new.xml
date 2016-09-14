@@ -1,33 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:id="@+id/main_content"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="@color/white"
               android:orientation="vertical">
 
-    <include layout="@layout/title_bar"/>
+    <RelativeLayout
+        android:id="@+id/rl_title"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@color/white">
 
-    <com.hyc.eyepetizer.widget.MyNestedScrollView xmlns:tools="http://schemas.android.com/tools"
+        <ImageView
+            android:id="@+id/img_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_action_back"
+            android:visibility="gone"/>
+
+        <com.hyc.eyepetizer.widget.CustomTextView
+            android:id="@+id/tv_head_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:textColor="@color/title_black"
+            android:textSize="17sp"
+            app:typeface="@string/type_lobster"/>
+
+        <ImageView
+            android:id="@+id/img_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"/>
+
+        <com.hyc.eyepetizer.widget.CustomTextView
+            android:id="@+id/tv_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:textColor="@color/title_black"
+            android:textSize="12sp"
+            android:visibility="gone"
+            app:typeface="@string/type_lobster"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_alignParentBottom="true"
+            android:background="@color/space_line_bg"/>
+    </RelativeLayout>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/test"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        tools:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_weight="1">
 
-        <LinearLayout
-            android:id="@+id/fl_all"
-
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
             <LinearLayout
                 android:id="@+id/rl_head"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="100dp"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                app:layout_scrollFlags="scroll">
 
                 <com.facebook.drawee.view.SimpleDraweeView
                     android:id="@+id/sdv_icon"
@@ -57,68 +104,68 @@
                     android:layout_marginTop="10dp"
                     android:textColor="@color/title_black"
                     android:textSize="12sp"/>
-
-                <RelativeLayout
-                    android:id="@+id/rl_indicator"
-                    android:layout_width="match_parent"
-                    android:layout_height="36dp"
-                    android:layout_below="@id/tv_name"
-                    android:layout_marginTop="100dp">
-
-                    <LinearLayout
-                        android:id="@+id/ll_bar"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:orientation="horizontal">
-
-                        <Space
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"/>
-
-                        <com.hyc.eyepetizer.widget.CustomTextView
-                            android:id="@+id/tv_time"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/rank_week"
-                            android:textColor="@color/title_black"
-                            android:textSize="12sp"/>
-
-                        <Space
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="2"/>
-
-                        <com.hyc.eyepetizer.widget.CustomTextView
-                            android:id="@+id/tv_share"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/rank_history"
-                            android:textColor="@color/title_black"
-                            android:textSize="12sp"/>
-
-                        <Space
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"/>
-                    </LinearLayout>
-
-                    <View
-                        android:id="@+id/indicator"
-                        android:layout_width="50dp"
-                        android:layout_height="30dp"
-                        android:layout_centerVertical="true"
-                        android:background="@drawable/shape_indicator"/>
-                </RelativeLayout>
             </LinearLayout>
 
-            <android.support.v4.view.ViewPager xmlns:tools="http://schemas.android.com/tools"
-                android:id="@+id/vp_target"
+            <RelativeLayout
+                android:id="@+id/rl_indicator"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:layout_behavior="@string/appbar_scrolling_view_behavior"/>
-        </LinearLayout>
-    </com.hyc.eyepetizer.widget.MyNestedScrollView>
-</LinearLayout>
+                android:layout_height="36dp"
+                android:layout_below="@id/tv_name"
+                >
 
+                <LinearLayout
+                    android:id="@+id/ll_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"/>
+
+                    <com.hyc.eyepetizer.widget.CustomTextView
+                        android:id="@+id/tv_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/rank_week"
+                        android:textColor="@color/title_black"
+                        android:textSize="12sp"/>
+
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"/>
+
+                    <com.hyc.eyepetizer.widget.CustomTextView
+                        android:id="@+id/tv_share"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/rank_history"
+                        android:textColor="@color/title_black"
+                        android:textSize="12sp"/>
+
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"/>
+                </LinearLayout>
+
+                <View
+                    android:id="@+id/indicator"
+                    android:layout_width="50dp"
+                    android:layout_height="30dp"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/shape_indicator"/>
+            </RelativeLayout>
+
+        </android.support.design.widget.AppBarLayout>
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/vp_target"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+    </android.support.design.widget.CoordinatorLayout>
+</LinearLayout>

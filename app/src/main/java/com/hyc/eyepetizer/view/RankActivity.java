@@ -15,7 +15,6 @@ import android.widget.LinearLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.base.BaseActivity;
@@ -81,6 +80,10 @@ public class RankActivity extends BaseActivity {
         }
     };
     private int mLastIndex;
+    private int preIndex;
+    private int mIndicatorScroll;
+    private boolean isStarting;
+    private int mLastType;
 
 
     @Override
@@ -105,30 +108,33 @@ public class RankActivity extends BaseActivity {
         initViewPager();
     }
 
+
     private void initView() {
-        mIndicatorY=new int[3];
+        mIndicatorY = new int[3];
         mTitleHeight = AppUtil.dip2px(81);
         mItemHeight = AppUtil.dip2px(250);
         mRatio = AppUtil.dip2px(353) / mItemHeight;
         mEndY = (int) (AppUtil.getScreenHeight(this) - AppUtil.getStatusBarHeight(this) -
-                mItemHeight-AppUtil.dip2px(60));
-        indicator.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-            @Override
-            public boolean onPreDraw() {
-                indicator.getViewTreeObserver().removeOnPreDrawListener(this);
-                int width=indicator.getWidth();
-                int textWidth=tvWeek.getWidth();
-                int[] location=new int[2];
-                tvWeek.getLocationInWindow(location);
-                mIndicatorY[0]=location[0]-(width-textWidth)/2;
-                tvMonth.getLocationInWindow(location);
-                mIndicatorY[1]=location[0]-(width-textWidth)/2;
-                indicator.setX(mIndicatorY[0]);
-                mIndicatorScroll=mIndicatorY[1]-mIndicatorY[0];
-                return true;
-            }
-        });
+            mItemHeight - AppUtil.dip2px(60));
+        indicator.getViewTreeObserver()
+            .addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    indicator.getViewTreeObserver().removeOnPreDrawListener(this);
+                    int width = indicator.getWidth();
+                    int textWidth = tvWeek.getWidth();
+                    int[] location = new int[2];
+                    tvWeek.getLocationInWindow(location);
+                    mIndicatorY[0] = location[0] - (width - textWidth) / 2;
+                    tvMonth.getLocationInWindow(location);
+                    mIndicatorY[1] = location[0] - (width - textWidth) / 2;
+                    indicator.setX(mIndicatorY[0]);
+                    mIndicatorScroll = mIndicatorY[1] - mIndicatorY[0];
+                    return true;
+                }
+            });
     }
+
 
     private void initViewPager() {
         mFragments = new ArrayList<>();
@@ -145,16 +151,21 @@ public class RankActivity extends BaseActivity {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 if (preIndex > position) {
-                    indicator.setX(((positionOffset - 1) * mIndicatorScroll) + mIndicatorScroll * preIndex+mIndicatorY[0]);
+                    indicator.setX(
+                        ((positionOffset - 1) * mIndicatorScroll) + mIndicatorScroll * preIndex +
+                            mIndicatorY[0]);
                 } else if (preIndex <= position) {
-                    indicator.setX(positionOffset * mIndicatorScroll + mIndicatorScroll * preIndex+mIndicatorY[0]);
+                    indicator.setX(positionOffset * mIndicatorScroll + mIndicatorScroll * preIndex +
+                        mIndicatorY[0]);
                 }
             }
 
+
             @Override
             public void onPageSelected(int position) {
-                preIndex=position;
+                preIndex = position;
             }
+
 
             @Override
             public void onPageScrollStateChanged(int state) {
@@ -163,25 +174,25 @@ public class RankActivity extends BaseActivity {
         });
     }
 
+
     private void initTitleBar() {
         imgBack.setVisibility(View.VISIBLE);
         tvTitle.setText(R.string.app_name);
         tvTitle.setTypeface(TypefaceHelper.getTypeface(TypefaceHelper.LOBSTER));
     }
 
-    private int preIndex;
-    private int mIndicatorScroll;
-    @OnClick({R.id.tv_all,R.id.tv_week,R.id.tv_month,R.id.img_left})
-    public void onClick(View view){
-        switch (view.getId()){
+
+    @OnClick({ R.id.tv_all, R.id.tv_week, R.id.tv_month, R.id.img_left })
+    public void onClick(View view) {
+        switch (view.getId()) {
             case R.id.tv_week:
-                vpVideo.setCurrentItem(0,true);
+                vpVideo.setCurrentItem(0, true);
                 break;
             case R.id.tv_month:
-                vpVideo.setCurrentItem(1,true);
+                vpVideo.setCurrentItem(1, true);
                 break;
             case R.id.tv_all:
-                vpVideo.setCurrentItem(2,true);
+                vpVideo.setCurrentItem(2, true);
                 break;
             case R.id.img_left:
                 finish();
@@ -189,14 +200,16 @@ public class RankActivity extends BaseActivity {
         }
     }
 
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (isAnimating||isStarting) {
-            Log.e("dispatchTouchEvent","dispatchTouchEvent");
+        if (isAnimating || isStarting) {
+            Log.e("dispatchTouchEvent", "dispatchTouchEvent");
             return true;
         }
         return super.dispatchTouchEvent(ev);
     }
+
 
     @Subscribe
     public void handleStartActivity(final StartVideoDetailEvent event) {
@@ -223,7 +236,7 @@ public class RankActivity extends BaseActivity {
                         Intent intent = VideoDetailActivity2.newIntent(event.fromType,
                             RankActivity.this, event.position,
                             event.parentIndex, event.fromType);
-                        isStarting=true;
+                        isStarting = true;
                         startActivity(intent);
                         overridePendingTransition(0, 0);
                     }
@@ -232,75 +245,72 @@ public class RankActivity extends BaseActivity {
                 .start();
         }
     }
-    private boolean isStarting;
+
 
     @Override
     protected void onResume() {
         super.onResume();
-        isStarting=false;
-        isAnimating=false;
+        isStarting = false;
+        isAnimating = false;
     }
+
 
     @Subscribe
     public void handleResumeAnim(final VideoDetailBackEvent event) {
-        sdvAnim.postDelayed(new Runnable() {
-            @Override public void run() {
-                if (event.fromType == FromType.TYPE_HISTORY ||
-                    event.fromType == FromType.TYPE_MONTH ||
-                    event.fromType == FromType.TYPE_WEEK) {
-                    if (mLastType != event.fromType || mLastIndex != event.position) {
-                        FrescoHelper.loadUrl(sdvAnim, event.url);
-                    }
-                    mLastType=event.fromType;
-                    mLastIndex = event.position;
-
-                    if (event.hasScrolled) {
-                        if (event.theLast) {
-                            sdvAnim.animate()
-                                .scaleX(1)
-                                .setInterpolator(mInterpolator)
-                                .scaleY(1)
-                                .y(mEndY)
-                                .setListener(mListener)
-                                .setDuration(ANIMATION_DURATION)
-                                .start();
-                        } else {
-                            sdvAnim.animate()
-                                .scaleX(1)
-                                .setInterpolator(mInterpolator)
-                                .scaleY(1)
-                                .y(mTitleHeight)
-                                .setListener(mListener)
-                                .setDuration(ANIMATION_DURATION)
-                                .start();
-                        }
-                    } else {
-                        int[] l = new int[2];
-                        sdvAnim.getLocationInWindow(l);
-                        sdvAnim.animate()
-                            .scaleX(1)
-                            .scaleY(1)
-                            .y(lastY - l[1])
-                            .setListener(mListener)
-                            .setDuration(ANIMATION_DURATION)
-                            .setInterpolator(mInterpolator)
-                            .start();
-                    }
-                }
+        if (event.fromType == FromType.TYPE_HISTORY ||
+            event.fromType == FromType.TYPE_MONTH ||
+            event.fromType == FromType.TYPE_WEEK) {
+            if (mLastType != event.fromType || mLastIndex != event.position) {
+                FrescoHelper.loadUrl(sdvAnim, event.url);
             }
-        }, 0);
+            mLastType = event.fromType;
+            mLastIndex = event.position;
+
+            if (event.hasScrolled) {
+                if (event.theLast) {
+                    sdvAnim.animate()
+                        .scaleX(1)
+                        .setInterpolator(mInterpolator)
+                        .scaleY(1)
+                        .y(mEndY)
+                        .setListener(mListener)
+                        .setDuration(ANIMATION_DURATION)
+                        .start();
+                } else {
+                    sdvAnim.animate()
+                        .scaleX(1)
+                        .setInterpolator(mInterpolator)
+                        .scaleY(1)
+                        .y(mTitleHeight)
+                        .setListener(mListener)
+                        .setDuration(ANIMATION_DURATION)
+                        .start();
+                }
+            } else {
+                int[] l = new int[2];
+                sdvAnim.getLocationInWindow(l);
+                sdvAnim.animate()
+                    .scaleX(1)
+                    .scaleY(1)
+                    .y(lastY - l[1])
+                    .setListener(mListener)
+                    .setDuration(ANIMATION_DURATION)
+                    .setInterpolator(mInterpolator)
+                    .start();
+            }
+        }
 
     }
-    private int mLastType;
+
 
     @Subscribe
     public void handleSelectEvent(VideoSelectEvent event) {
         if (mLastType != event.fromType || mLastIndex != event.position) {
             sdvAnim.setImageURI(VideoListModel.getInstance()
-                    .getVideo(event.fromType, event.position)
-                    .getData()
-                    .getCover()
-                    .getDetail());
+                .getVideo(event.fromType, event.position)
+                .getData()
+                .getCover()
+                .getDetail());
             switch (event.fromType) {
                 case FromType.TYPE_HISTORY:
                     mHistory.scrollTo(event.position);
@@ -312,8 +322,8 @@ public class RankActivity extends BaseActivity {
                     mMonth.scrollTo(event.position);
                     break;
             }
-            mLastType=event.fromType;
-            mLastIndex=event.position;
+            mLastType = event.fromType;
+            mLastIndex = event.position;
         }
     }
 

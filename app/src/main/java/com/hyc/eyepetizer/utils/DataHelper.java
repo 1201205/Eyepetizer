@@ -52,4 +52,16 @@ public class DataHelper {
         return 0;
     }
 
+
+    public static int getID(String text) {
+
+        Pattern p = Pattern.compile("(\\d+)");
+        Matcher m = p.matcher(text);
+        while (m.find()) {
+            String find = m.group(1).toString();
+            return Integer.valueOf(find);
+        }
+        return 0;
+    }
+
 }

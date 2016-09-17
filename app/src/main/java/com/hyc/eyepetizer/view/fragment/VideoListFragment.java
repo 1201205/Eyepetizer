@@ -21,7 +21,6 @@ import com.hyc.eyepetizer.presenter.VideoListPresenterGenerator;
 import com.hyc.eyepetizer.utils.AppUtil;
 import com.hyc.eyepetizer.view.adapter.TestAdapter;
 import com.hyc.eyepetizer.widget.CustomTextView;
-
 import java.util.List;
 
 /**
@@ -31,6 +30,7 @@ public class VideoListFragment extends BaseFragment<VideoListPresenter>
     implements VideoListContract.View {
     private static final String FROM_TYPE = "from_type";
     private static final String TAG = "tag";
+    private static final String ID = "id";
     @BindView(R.id.rv_video)
     RecyclerView mRvVideo;
     @BindView(R.id.iv_error)
@@ -39,6 +39,7 @@ public class VideoListFragment extends BaseFragment<VideoListPresenter>
     CustomTextView mTvError;
     @BindView(R.id.rl_error)
     RelativeLayout mRlError;
+    private int mID;
     private int mType;
     private String mTag;
     private LinearLayoutManager mManager;
@@ -61,14 +62,26 @@ public class VideoListFragment extends BaseFragment<VideoListPresenter>
     }
 
 
+    public static VideoListFragment instantiate(int fromType, String tag, int id) {
+        VideoListFragment fragment = new VideoListFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt(FROM_TYPE, fromType);
+        bundle.putString(TAG, tag);
+        bundle.putInt(ID, id);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
+
+
     @Override
     protected void initPresenter() {
         Bundle bundle = getArguments();
         if (bundle != null) {
             mTag = bundle.getString(TAG);
             mType = bundle.getInt(FROM_TYPE);
+            mID = bundle.getInt(ID);
         }
-        mPresenter = VideoListPresenterGenerator.generate(mType, mTag, this);
+        mPresenter = VideoListPresenterGenerator.generate(mType, mTag, mID, this);
         mPresenter.attachView();
         mPresenter.getVideoList();
     }
@@ -90,6 +103,7 @@ public class VideoListFragment extends BaseFragment<VideoListPresenter>
             }
         }, 5);
     }
+
 
     @Nullable
     @Override

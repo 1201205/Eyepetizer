@@ -31,4 +31,6 @@
     <string name="rank_week">周排行</string>
     <string name="rank_month">月排行</string>
     <string name="rank_history">总排行</string>
+    <string name="date_list">按时间排序</string>
+    <string name="share_list">按分享排序</string>
 </resources>

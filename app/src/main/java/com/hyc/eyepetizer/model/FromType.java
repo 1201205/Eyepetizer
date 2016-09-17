@@ -11,6 +11,8 @@ public interface FromType {
     int TYPE_WEEK = -5;
     int TYPE_MONTH = -6;
     int TYPE_HISTORY = -7;
+    int TYPE_PGC_DATE = -8;
+    int TYPE_PGC_SHARE = -9;
 
 
     interface Tag {

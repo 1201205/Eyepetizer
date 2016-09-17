@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.event.StartVideoDetailEvent;
+import com.hyc.eyepetizer.model.beans.CoverHeader;
 import com.hyc.eyepetizer.model.beans.ItemListData;
 import com.hyc.eyepetizer.model.beans.ViewData;
 import com.hyc.eyepetizer.utils.AppUtil;
@@ -16,6 +17,7 @@ import com.hyc.eyepetizer.utils.DataHelper;
 import com.hyc.eyepetizer.utils.FrescoHelper;
 import com.hyc.eyepetizer.utils.TypefaceHelper;
 import com.hyc.eyepetizer.utils.WidgetHelper;
+import com.hyc.eyepetizer.view.PgcActivity;
 import com.hyc.eyepetizer.view.RankActivity;
 import com.hyc.eyepetizer.view.SelectionActivity;
 import com.hyc.eyepetizer.view.adapter.holder.BlankViewHolder;
@@ -46,6 +48,7 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     //视频相关  白色
     private int mTitleColor = AppUtil.getColor(R.color.title_black);
     private int mType;
+    private boolean formRank;
 
 
     private TestAdapter(Context context, List<ViewData> datas) {
@@ -168,10 +171,19 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
     private void bindView(BriefVideoViewHolder holder, final ViewData data, final int position) {
-        FrescoHelper.loadUrl(holder.ico, data.getData().getHeader().getIco());
-        holder.count.setText(data.getData().getHeader().getSubTitle());
-        holder.name.setText(data.getData().getHeader().getTitle());
-        holder.des.setText(data.getData().getHeader().getDescription());
+        final CoverHeader header = data.getData().getHeader();
+
+        holder.rlHead.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View view) {
+                PgcActivity.start(context, header.getTitle(), header.getDescription(),
+                    header.getIco(),
+                    DataHelper.getID(header.getActionUrl()));
+            }
+        });
+        FrescoHelper.loadUrl(holder.ico, header.getIco());
+        holder.count.setText(header.getSubTitle());
+        holder.name.setText(header.getTitle());
+        holder.des.setText(header.getDescription());
         holder.count.setTextColor(mTitleColor);
         holder.name.setTextColor(mTitleColor);
         holder.des.setTextColor(mTitleColor);
@@ -283,9 +295,11 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return mDatas == null ? 0 : mDatas.size();
     }
 
+
     public ViewData getDataByIndex(int index){
         return mDatas.get(index);
     }
+
 
     public void addData(List<ViewData> datas) {
         int count = getItemCount();
@@ -302,7 +316,7 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
          */
         void onItemClicked(int parentID, int myPosition, int position);
     }
-    private boolean formRank;
+
 
     public static class Builder {
         private TestAdapter adapter;

@@ -2,7 +2,7 @@ package com.hyc.eyepetizer.view.adapter.holder;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.RelativeLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -21,6 +21,8 @@ public class BriefVideoViewHolder extends RecyclerView.ViewHolder{
     public SimpleDraweeView ico;
     @BindView(R.id.rv_collection)
     public RecyclerView recyclerView;
+    @BindView(R.id.rl_head)
+    public RelativeLayout rlHead;
     public BriefVideoViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this,itemView);

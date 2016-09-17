@@ -14,7 +14,9 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.base.BaseActivity;
@@ -35,14 +37,8 @@ import com.hyc.eyepetizer.view.adapter.VideoDetailAdapter;
 import com.hyc.eyepetizer.widget.AnimateTextView;
 import com.hyc.eyepetizer.widget.CustomTextView;
 import com.hyc.eyepetizer.widget.DepthPageTransformer;
-
-import org.greenrobot.eventbus.EventBus;
-
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+import org.greenrobot.eventbus.EventBus;
 import rx.Subscription;
 
 /**
@@ -144,6 +140,8 @@ public class VideoDetailActivity2 extends BaseActivity {
                         case FromType.TYPE_HISTORY:
                         case FromType.TYPE_MONTH:
                         case FromType.TYPE_WEEK:
+                        case FromType.TYPE_PGC_DATE:
+                        case FromType.TYPE_PGC_SHARE:
                             index = vpVideo.getCurrentItem();
                             break;
                         case FromType.TYPE_MAIN:

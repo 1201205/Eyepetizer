@@ -5,7 +5,6 @@ import com.hyc.eyepetizer.model.beans.Reply;
 import com.hyc.eyepetizer.model.beans.Selection;
 import com.hyc.eyepetizer.model.beans.VideoRelated;
 import com.hyc.eyepetizer.model.beans.Videos;
-
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -85,7 +84,7 @@ public interface Api {
      */
     @GET("/api/v2/feed") Observable<DailySelection> getDailySelection(
             @Query("num") int num,@Query("date") long date);
-
+    ///api/v3/pgc/videos?pgcId=170&strategy=date
     /**
      * 获取排行榜视频
      * @param num  10
@@ -94,4 +93,12 @@ public interface Api {
      */
     @GET("/api/v3/ranklist?vc=126") Observable<Videos> getRankByStrategy(
             @Query("num") int num,@Query("strategy") String strategy);
+    /**
+     * 获取pgc视频
+     *
+     * @param pgcId 10
+     * @param strategy monthly  weekly  historical
+     */
+    @GET("/api/v3/pgc/videos") Observable<Videos> getPgcByStrategy(
+        @Query("pgcId") int pgcId, @Query("strategy") String strategy);
 }

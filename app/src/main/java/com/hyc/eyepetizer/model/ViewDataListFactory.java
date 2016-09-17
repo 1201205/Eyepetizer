@@ -19,6 +19,8 @@ public class ViewDataListFactory {
             case FromType.TYPE_HISTORY:
             case FromType.TYPE_MONTH:
             case FromType.TYPE_WEEK:
+            case FromType.TYPE_PGC_DATE:
+            case FromType.TYPE_PGC_SHARE:
                 return VideoListModel.getInstance();
         }
         return null;

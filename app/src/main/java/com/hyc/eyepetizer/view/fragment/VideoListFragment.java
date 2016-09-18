@@ -51,6 +51,7 @@ public class VideoListFragment extends BaseFragment<VideoListPresenter>
     private int mTop;
     private int mLastIndex;
     private boolean mIsRequesting;
+    private RecyclerView.OnScrollListener mOnScrollListener;
 
 
     public VideoListFragment() {}
@@ -109,9 +110,12 @@ public class VideoListFragment extends BaseFragment<VideoListPresenter>
             }
         }, 5);
     }
+
+
     public void setLastIndex(int index){
         mLastIndex=index;
     }
+
 
     public void scrollTo(int index,final int y) {
         Log.e("hyc-po", mLastIndex + "--scrollTo--");
@@ -132,7 +136,8 @@ public class VideoListFragment extends BaseFragment<VideoListPresenter>
             }
         }, 5);
     }
-    private RecyclerView.OnScrollListener mOnScrollListener;
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -160,8 +165,8 @@ public class VideoListFragment extends BaseFragment<VideoListPresenter>
                     }
                 }
             };
+            mRvVideo.addOnScrollListener(mOnScrollListener);
         }
-        mRvVideo.addOnScrollListener(mOnScrollListener);
         //45+36
         mTop = (int) (AppUtil.dip2px(81) + AppUtil.getStatusBarHeight(getContext()));
         return view;

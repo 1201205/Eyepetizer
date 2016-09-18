@@ -16,7 +16,8 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-
+import butterknife.BindView;
+import butterknife.OnClick;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.base.BaseActivity;
@@ -32,14 +33,10 @@ import com.hyc.eyepetizer.view.adapter.FragmentAdapter;
 import com.hyc.eyepetizer.view.fragment.VideoListFragment;
 import com.hyc.eyepetizer.widget.CustomTextView;
 import com.hyc.eyepetizer.widget.MyAnimatorListener;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import butterknife.BindView;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 /**
  * Created by ray on 16/9/13.
@@ -110,6 +107,7 @@ public class PgcActivity extends BaseActivity {
     private int mLastType;
     private int i = 1;
 
+
     public static void start(Context context, String title, String des, String url, int id) {
         Intent intent = new Intent(context, PgcActivity.class);
         intent.putExtra(TITLE, title);
@@ -118,6 +116,7 @@ public class PgcActivity extends BaseActivity {
         intent.putExtra(ID, id);
         context.startActivity(intent);
     }
+
 
     @Override
     protected void handleIntent() {
@@ -128,10 +127,12 @@ public class PgcActivity extends BaseActivity {
         mID = intent.getIntExtra(ID, 0);
     }
 
+
     @Override
     protected int getLayoutID() {
         return R.layout.activity_pgc;
     }
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -141,59 +142,87 @@ public class PgcActivity extends BaseActivity {
         initView();
     }
 
+
     private void initView() {
         mIndicatorY = new int[3];
         mTitleHeight = AppUtil.dip2px(81);
         mItemHeight = AppUtil.dip2px(250);
         mRatio = AppUtil.dip2px(353) / mItemHeight;
         mEndY = (int) (AppUtil.getScreenHeight(this) - AppUtil.getStatusBarHeight(this) -
-                mItemHeight - AppUtil.dip2px(60));
+            mItemHeight - AppUtil.dip2px(60));
         indicator.getViewTreeObserver()
-                .addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                    @Override
-                    public boolean onPreDraw() {
-                        indicator.getViewTreeObserver().removeOnPreDrawListener(this);
-//                    appbar.setExpanded(false);
-                        //int width = indicator.getWidth();
-                        //int textWidth = tvWeek.getWidth();
-                        //int[] location = new int[2];
-                        //tvWeek.getLocationInWindow(location);
-                        //mIndicatorY[0] = location[0] - (width - textWidth) / 2;
-                        //tvMonth.getLocationInWindow(location);
-                        //mIndicatorY[1] = location[0] - (width - textWidth) / 2;
-                        //indicator.setX(mIndicatorY[0]);
-                        //mIndicatorScroll = mIndicatorY[1] - mIndicatorY[0];
-                        return true;
-                    }
-                });
+            .addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    indicator.getViewTreeObserver().removeOnPreDrawListener(this);
+                    //                    appbar.setExpanded(false);
+                    int width = indicator.getWidth();
+                    int textWidth = tvTime.getWidth();
+                    int[] location = new int[2];
+                    tvTime.getLocationInWindow(location);
+                    mIndicatorY[0] = location[0] - (width - textWidth) / 2;
+                    tvShare.getLocationInWindow(location);
+                    mIndicatorY[1] = location[0] - (width - textWidth) / 2;
+                    indicator.setX(mIndicatorY[0]);
+                    mIndicatorScroll = mIndicatorY[1] - mIndicatorY[0];
+                    return true;
+                }
+            });
         FrescoHelper.loadUrl(sdvIcon, mIcoUrl);
         tvDes.setText(mDes);
         mFragments = new ArrayList<>();
-        mDate = VideoListFragment.instantiate(FromType.TYPE_PGC_DATE, FromType.Tag.DATE, mID,true);
+        mDate = VideoListFragment.instantiate(FromType.TYPE_PGC_DATE, FromType.Tag.DATE, mID, true);
         mShare = VideoListFragment.instantiate(FromType.TYPE_PGC_SHARE, FromType.Tag.SHARE_COUNT,
-                mID,true);
+            mID, true);
         mFragments.add(mDate);
         mFragments.add(mShare);
         mAdapter = new FragmentAdapter(getSupportFragmentManager(), mFragments);
         vpVideo.setAdapter(mAdapter);
+        vpVideo.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                if (preIndex > position) {
+                    indicator.setX(
+                        ((positionOffset - 1) * mIndicatorScroll) + mIndicatorScroll * preIndex +
+                            mIndicatorY[0]);
+                } else if (preIndex <= position) {
+                    indicator.setX(positionOffset * mIndicatorScroll + mIndicatorScroll * preIndex +
+                        mIndicatorY[0]);
+                }
+            }
+
+
+            @Override
+            public void onPageSelected(int position) {
+                preIndex = position;
+            }
+
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
+
 
     private void initBar() {
         imgLeft.setVisibility(View.VISIBLE);
         imgLeft.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                int[] l = new int[2];
-//                rlIndicator.getLocationInWindow(l);
+                //                int[] l = new int[2];
+                //                rlIndicator.getLocationInWindow(l);
                 finish();
-//                appbar.setExpanded(false);
-//                mDate.scrollTo(i, (int) (l[1] - AppUtil.dip2px(45) - AppUtil.getStatusBarHeight(PgcActivity.this)));
-//                i++;
+                //                appbar.setExpanded(false);
+                //                mDate.scrollTo(i, (int) (l[1] - AppUtil.dip2px(45) - AppUtil.getStatusBarHeight(PgcActivity.this)));
+                //                i++;
             }
         });
         tvTitle.setTypeface(TypefaceHelper.getTypeface(TypefaceHelper.BOLD));
         tvTitle.setText(mTitle);
     }
+
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
@@ -204,14 +233,16 @@ public class PgcActivity extends BaseActivity {
         return super.dispatchTouchEvent(ev);
     }
 
+
     @Subscribe
     public void handleResumeAnim(final VideoDetailBackEvent event) {
+        Log.e("hyc-po", event.position + "--VideoDetailBackEvent--");
         if (event.fromType == FromType.TYPE_PGC_DATE ||
-                event.fromType == FromType.TYPE_PGC_SHARE) {
+            event.fromType == FromType.TYPE_PGC_SHARE) {
             if (mLastType != event.fromType || mLastIndex != event.position) {
                 FrescoHelper.loadUrl(sdvAnim, event.url);
             }
-            Log.e("hyc-po", event.position + "--VideoDetailBackEvent--");
+            //Log.e("hyc-po", event.position + "--VideoDetailBackEvent--");
             mLastType = event.fromType;
             mLastIndex = event.position;
 
@@ -219,34 +250,34 @@ public class PgcActivity extends BaseActivity {
                 appbar.setExpanded(false);
                 if (event.theLast) {
                     sdvAnim.animate()
-                            .scaleX(1)
-                            .setInterpolator(mInterpolator)
-                            .scaleY(1)
-                            .y(mEndY)
-                            .setListener(mListener)
-                            .setDuration(ANIMATION_DURATION)
-                            .start();
+                        .scaleX(1)
+                        .setInterpolator(mInterpolator)
+                        .scaleY(1)
+                        .y(mEndY)
+                        .setListener(mListener)
+                        .setDuration(ANIMATION_DURATION)
+                        .start();
                 } else {
                     sdvAnim.animate()
-                            .scaleX(1)
-                            .setInterpolator(mInterpolator)
-                            .scaleY(1)
-                            .y(mTitleHeight)
-                            .setListener(mListener)
-                            .setDuration(ANIMATION_DURATION)
-                            .start();
+                        .scaleX(1)
+                        .setInterpolator(mInterpolator)
+                        .scaleY(1)
+                        .y(mTitleHeight)
+                        .setListener(mListener)
+                        .setDuration(ANIMATION_DURATION)
+                        .start();
                 }
             } else {
                 int[] l = new int[2];
                 sdvAnim.getLocationInWindow(l);
                 sdvAnim.animate()
-                        .scaleX(1)
-                        .scaleY(1)
-                        .y(lastY - l[1])
-                        .setListener(mListener)
-                        .setDuration(ANIMATION_DURATION)
-                        .setInterpolator(mInterpolator)
-                        .start();
+                    .scaleX(1)
+                    .scaleY(1)
+                    .y(lastY - l[1])
+                    .setListener(mListener)
+                    .setDuration(ANIMATION_DURATION)
+                    .setInterpolator(mInterpolator)
+                    .start();
             }
         }
 
@@ -257,26 +288,28 @@ public class PgcActivity extends BaseActivity {
     public void handleSelectEvent(final VideoSelectEvent event) {
         if (mLastType != event.fromType || mLastIndex != event.position) {
             Log.e("hyc-po", event.position + "--VideoSelectEvent--");
-//            appbar.postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    appbar.setExpanded(false);
-//                }
-//            },0);
+            //            appbar.postDelayed(new Runnable() {
+            //                @Override
+            //                public void run() {
+            //                    appbar.setExpanded(false);
+            //                }
+            //            },0);
             appbar.setExpanded(false);
             sdvAnim.setImageURI(VideoListModel.getInstance()
-                    .getVideo(event.fromType, event.position)
-                    .getData()
-                    .getCover()
-                    .getDetail());
+                .getVideo(event.fromType, event.position)
+                .getData()
+                .getCover()
+                .getDetail());
             int[] l = new int[2];
             rlIndicator.getLocationInWindow(l);
             switch (event.fromType) {
                 case FromType.TYPE_PGC_DATE:
-                    mDate.scrollTo(event.position, (int) (l[1] - AppUtil.dip2px(45) - AppUtil.getStatusBarHeight(this)));
+                    mDate.scrollTo(event.position,
+                        (int) (l[1] - AppUtil.dip2px(45) - AppUtil.getStatusBarHeight(this)));
                     break;
                 case FromType.TYPE_PGC_SHARE:
-                    mShare.scrollTo(event.position, (int) (l[1] - AppUtil.dip2px(45) - AppUtil.getStatusBarHeight(this)));
+                    mShare.scrollTo(event.position,
+                        (int) (l[1] - AppUtil.dip2px(45) - AppUtil.getStatusBarHeight(this)));
                     break;
             }
             mLastType = event.fromType;
@@ -294,13 +327,29 @@ public class PgcActivity extends BaseActivity {
     }
 
 
+    @OnClick({ R.id.img_left, R.id.tv_time, R.id.tv_share })
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.img_left:
+                finish();
+                break;
+            case R.id.tv_time:
+                vpVideo.setCurrentItem(0, true);
+                break;
+            case R.id.tv_share:
+                vpVideo.setCurrentItem(1, true);
+                break;
+        }
+    }
+
+
     @Subscribe
     public void handleStartActivity(final StartVideoDetailEvent event) {
         if (isAnimating) {
             return;
         }
         if (event.fromType == FromType.TYPE_PGC_DATE ||
-                event.fromType == FromType.TYPE_PGC_SHARE) {
+            event.fromType == FromType.TYPE_PGC_SHARE) {
 
             isAnimating = true;
             //EventBus.getDefault().post(new VideoSelectEvent(FromType.TYPE_DAILY,DailySelectionModel.getInstance().getMap().indexOfValue(event.position)));
@@ -309,30 +358,30 @@ public class PgcActivity extends BaseActivity {
             FrescoHelper.loadUrl(sdvAnim, event.url);
             lastY = event.locationY;
             sdvAnim.animate()
-                    .scaleX(mRatio)
-                    .scaleY(mRatio)
-                    .y((mItemHeight * (mRatio - 1) / 2))
-                    .setDuration(ANIMATION_DURATION)
-                    .setListener(new MyAnimatorListener() {
-                        @Override
-                        public void onAnimationEnd(Animator animator) {
-                            mLastType = event.fromType;
-                            mLastIndex = event.position;
-                            if (mLastType == FromType.TYPE_PGC_DATE) {
-                                mDate.setLastIndex(mLastIndex);
-                            } else {
-                                mShare.setLastIndex(mLastIndex);
-                            }
-                            Intent intent = VideoDetailActivity2.newIntent(event.fromType,
-                                    PgcActivity.this, event.position,
-                                    event.parentIndex, event.fromType);
-                            isStarting = true;
-                            startActivity(intent);
-                            overridePendingTransition(0, 0);
+                .scaleX(mRatio)
+                .scaleY(mRatio)
+                .y((mItemHeight * (mRatio - 1) / 2))
+                .setDuration(ANIMATION_DURATION)
+                .setListener(new MyAnimatorListener() {
+                    @Override
+                    public void onAnimationEnd(Animator animator) {
+                        mLastType = event.fromType;
+                        mLastIndex = event.position;
+                        if (mLastType == FromType.TYPE_PGC_DATE) {
+                            mDate.setLastIndex(mLastIndex);
+                        } else {
+                            mShare.setLastIndex(mLastIndex);
                         }
-                    })
-                    .setInterpolator(mInterpolator)
-                    .start();
+                        Intent intent = VideoDetailActivity2.newIntent(event.fromType,
+                            PgcActivity.this, event.position,
+                            event.parentIndex, event.fromType);
+                        isStarting = true;
+                        startActivity(intent);
+                        overridePendingTransition(0, 0);
+                    }
+                })
+                .setInterpolator(mInterpolator)
+                .start();
         }
     }
 

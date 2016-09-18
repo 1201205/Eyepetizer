@@ -134,24 +134,7 @@ public class VideoDetailActivity2 extends BaseActivity {
                     mAnimator.start();
                     break;
                 case POST_TO_PRE:
-                    //// TODO: 16/9/8   更换计算方式
-                    int index = 0;
-                    switch (mFromType) {
-                        case FromType.TYPE_DAILY:
-                        case FromType.TYPE_HISTORY:
-                        case FromType.TYPE_MONTH:
-                        case FromType.TYPE_WEEK:
-                        case FromType.TYPE_PGC_DATE:
-                        case FromType.TYPE_PGC_SHARE:
-                            index = vpVideo.getCurrentItem();
-                            break;
-                        case FromType.TYPE_MAIN:
-                            index = mIndexMap.get(vpVideo.getCurrentItem()) -
-                                    (mIndexMap.get(mIndex) - mIndex);
-                            break;
-
-                    }
-                    EventBus.getDefault().post(new VideoSelectEvent(mFromType, index));
+                    sendSelectMessage();
                     break;
                 case NOTIFY:
                     mHandler.removeMessages(NOTIFY);
@@ -230,7 +213,7 @@ public class VideoDetailActivity2 extends BaseActivity {
     private void initViewPager() {
         vpVideo.setOffscreenPageLimit(2);
         mAdapter = new VideoDetailAdapter(VideoDetailActivity2.this,
-                mViewDatas);
+            mViewDatas);
         vpVideo.setAdapter(mAdapter);
         vpVideo.setCurrentItem(mIndex);
         vpVideo.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -242,13 +225,15 @@ public class VideoDetailActivity2 extends BaseActivity {
                 if (preIndex > position) {
                     changeTextAlpha(positionOffset);
                     changeImageButtonAlpha(Math.abs(positionOffset - 0.5f) * 2);
-                    llPart.setX(((positionOffset - 1) * mIndicatorScroll) + mIndicatorScroll * preIndex);
+                    llPart.setX(
+                        ((positionOffset - 1) * mIndicatorScroll) + mIndicatorScroll * preIndex);
                 } else if (preIndex <= position) {
                     changeTextAlpha(1 - positionOffset);
                     changeImageButtonAlpha(Math.abs(0.5f - positionOffset) * 2);
                     llPart.setX(positionOffset * mIndicatorScroll + mIndicatorScroll * preIndex);
                 }
             }
+
 
             @Override
             public void onPageSelected(int position) {
@@ -263,6 +248,7 @@ public class VideoDetailActivity2 extends BaseActivity {
                 //修正位置：因为之前已经传入了开始位置，已经加入了本节非Video的item个数，所以现在应该减掉
 
             }
+
 
             @Override
             public void onPageScrollStateChanged(int state) {
@@ -279,17 +265,17 @@ public class VideoDetailActivity2 extends BaseActivity {
         });
         vpVideo.setPageTransformer(true, new DepthPageTransformer());
         vpVideo.getViewTreeObserver().addOnPreDrawListener(
-                new ViewTreeObserver.OnPreDrawListener() {
-                    @Override
-                    public boolean onPreDraw() {
-                        vpVideo.getViewTreeObserver().removeOnPreDrawListener(this);
-                        animateText();
-                        mIndicatorWidth = llPart.getWidth();
-                        resetIndicator();
-                        mHandler.sendEmptyMessageDelayed(START_ANIM, 1000);
-                        return true;
-                    }
-                });
+            new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    vpVideo.getViewTreeObserver().removeOnPreDrawListener(this);
+                    animateText();
+                    mIndicatorWidth = llPart.getWidth();
+                    resetIndicator();
+                    mHandler.sendEmptyMessageDelayed(START_ANIM, 1000);
+                    return true;
+                }
+            });
 
     }
 
@@ -321,7 +307,7 @@ public class VideoDetailActivity2 extends BaseActivity {
             case FromType.TYPE_PGC_DATE:
             case FromType.TYPE_PGC_SHARE:
                 fromTheLast = true;
-                ( (VideoListModel)mModel).setObserver(new VideoListModel.Observer() {
+                ((VideoListModel) mModel).setObserver(new VideoListModel.Observer() {
                     @Override
                     public void notifyDataChanged() {
                         mHandler.sendEmptyMessage(NOTIFY);
@@ -330,32 +316,38 @@ public class VideoDetailActivity2 extends BaseActivity {
                 break;
 
         }
-//        if (mFromType == FromType.TYPE_MAIN) {
-//            fromTheLast = FeedModel.getInstance().isTheLastSelection(mParentIndex);
-//        } else if (mFromType == FromType.TYPE_DAILY) {
-//            fromTheLast = true;
-//            ((DailySelectionModel)mModel).setObserver(new DailySelectionModel.Observer() {
-//                @Override
-//                public void notifyDataSetAdd() {
-//                    //由于是一个一个的加入
-//                    mHandler.removeMessages(NOTIFY);
-//                    mHandler.sendEmptyMessageDelayed(NOTIFY,50);
-//                }
-//            });
-//        }
+        //        if (mFromType == FromType.TYPE_MAIN) {
+        //            fromTheLast = FeedModel.getInstance().isTheLastSelection(mParentIndex);
+        //        } else if (mFromType == FromType.TYPE_DAILY) {
+        //            fromTheLast = true;
+        //            ((DailySelectionModel)mModel).setObserver(new DailySelectionModel.Observer() {
+        //                @Override
+        //                public void notifyDataSetAdd() {
+        //                    //由于是一个一个的加入
+        //                    mHandler.removeMessages(NOTIFY);
+        //                    mHandler.sendEmptyMessageDelayed(NOTIFY,50);
+        //                }
+        //            });
+        //        }
     }
 
+
     private void resetIndicator() {
-        mIndicatorScroll = (AppUtil.getScreenWidth(VideoDetailActivity2.this) - mIndicatorWidth) / (mViewDatas.size() - 1);
+        mIndicatorScroll = (AppUtil.getScreenWidth(VideoDetailActivity2.this) - mIndicatorWidth) /
+            (mViewDatas.size() - 1);
         llPart.setX(vpVideo.getCurrentItem() * mIndicatorScroll);
-        tvPart.setText(String.format(AppUtil.getString(R.string.item_count), vpVideo.getCurrentItem() + 1, mViewDatas.size()));
+        tvPart.setText(
+            String.format(AppUtil.getString(R.string.item_count), vpVideo.getCurrentItem() + 1,
+                mViewDatas.size()));
     }
+
 
     private void stopAnimChar() {
         mTvTitle.stop();
         mTvCategory.stop();
         mTvDes.stop();
     }
+
 
     private void resetAnimView(View view) {
         if (view == null) {
@@ -365,11 +357,13 @@ public class VideoDetailActivity2 extends BaseActivity {
         view.setScaleY(1);
     }
 
+
     private void changeImageButtonAlpha(float alpha) {
         mRlButton.setAlpha(alpha);
     }
 
-    @OnClick({R.id.iv_back, R.id.iv_play, R.id.tv_reply_count, R.id.iv_more})
+
+    @OnClick({ R.id.iv_back, R.id.iv_play, R.id.tv_reply_count, R.id.iv_more })
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_back:
@@ -377,23 +371,25 @@ public class VideoDetailActivity2 extends BaseActivity {
                 break;
             case R.id.iv_play:
                 VideoActivity.startList(mFromType, this, vpVideo.getCurrentItem(), mParentIndex,
-                        true, mVideoID);
+                    true, mVideoID);
                 break;
             case R.id.tv_reply_count:
                 mRlButton.setVisibility(View.GONE);
                 ItemListData data = mViewDatas.get(vpVideo.getCurrentItem()).getData();
-                VideoReplyActivity.start(this, data.getId(), data.getConsumption().getReplyCount(), data.getTitle(), data.getCover().getBlurred());
+                VideoReplyActivity.start(this, data.getId(), data.getConsumption().getReplyCount(),
+                    data.getTitle(), data.getCover().getBlurred());
                 break;
             case R.id.iv_more:
                 ItemListData data2 = mViewDatas.get(vpVideo.getCurrentItem()).getData();
                 VideoRelateActivity.start(this, data2.getId(), data2.getTitle(),
-                        data2.getCover().getBlurred());
+                    data2.getCover().getBlurred());
                 break;
             default:
                 break;
         }
 
     }
+
 
     private void animateText() {
         mTvTitle.postDelayed(new Runnable() {
@@ -407,15 +403,17 @@ public class VideoDetailActivity2 extends BaseActivity {
 
     }
 
+
     private void changeTextAlpha(float alpha) {
         mRlText.setAlpha(alpha);
     }
+
 
     private void launchData(int position) {
         ItemListData data = mViewDatas.get(position).getData();
         mTvTitle.setAnimText(data.getTitle());
         mTvCategory.setAnimText(
-                DataHelper.getCategoryAndDuration(data.getCategory(), data.getDuration()));
+            DataHelper.getCategoryAndDuration(data.getCategory(), data.getDuration()));
         mTvDes.setAnimText(data.getDescription());
         Author author = data.getAuthor();
         if (author != null) {
@@ -423,16 +421,19 @@ public class VideoDetailActivity2 extends BaseActivity {
             FrescoHelper.loadUrl(mSdvIcon, author.getIcon());
             mTvAuthorName.setText(author.getName());
             mTvAuthorDes.setText(author.getDescription());
-            mTvCount.setText(String.format(AppUtil.getString(R.string.video_count), author.getVideoNum()));
+            mTvCount.setText(
+                String.format(AppUtil.getString(R.string.video_count), author.getVideoNum()));
         } else {
             mRlAuthor.setVisibility(View.GONE);
         }
-        tvPart.setText(String.format(AppUtil.getString(R.string.item_count), position + 1, mViewDatas.size()));
+        tvPart.setText(
+            String.format(AppUtil.getString(R.string.item_count), position + 1, mViewDatas.size()));
         mTvLikeCount.setText(String.valueOf(data.getConsumption().getCollectionCount()));
         mTvReplyCount.setText(String.valueOf(data.getConsumption().getReplyCount()));
         mTvShareCount.setText(String.valueOf(data.getConsumption().getShareCount()));
         animateText();
     }
+
 
     @Override
     protected void onStart() {
@@ -442,6 +443,7 @@ public class VideoDetailActivity2 extends BaseActivity {
         }
     }
 
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -449,11 +451,13 @@ public class VideoDetailActivity2 extends BaseActivity {
 
     }
 
+
     @Override
     protected void onStop() {
         super.onStop();
         mAnimator.pause();
     }
+
 
     @Override
     public void onBackPressed() {
@@ -466,13 +470,13 @@ public class VideoDetailActivity2 extends BaseActivity {
         resetAnimView(mTarget);
         if (!fromRelate) {
             if (hasScrolled) {
-                mHandler.sendEmptyMessage(POST_TO_PRE);
+                sendSelectMessage();
             }
-            Log.e("hyc-po",vpVideo.getCurrentItem()+"--back--");
+            Log.e("hyc-po", vpVideo.getCurrentItem() + "--back--");
             EventBus.getDefault()
-                    .post(new VideoDetailBackEvent(mFromType, vpVideo.getCurrentItem(),
-                            mViewDatas.get(vpVideo.getCurrentItem()).getData().getCover().getDetail(),
-                            hasScrolled, theLast));
+                .post(new VideoDetailBackEvent(mFromType, vpVideo.getCurrentItem(),
+                    mViewDatas.get(vpVideo.getCurrentItem()).getData().getCover().getDetail(),
+                    hasScrolled, theLast));
         }
         super.onBackPressed();
         Log.e("time--3", System.currentTimeMillis() + "");
@@ -499,5 +503,27 @@ public class VideoDetailActivity2 extends BaseActivity {
         if (!fromRelate) {
             overridePendingTransition(0, 0);
         }
+    }
+
+
+    private void sendSelectMessage() {
+        //// TODO: 16/9/8   更换计算方式
+        int index = 0;
+        switch (mFromType) {
+            case FromType.TYPE_DAILY:
+            case FromType.TYPE_HISTORY:
+            case FromType.TYPE_MONTH:
+            case FromType.TYPE_WEEK:
+            case FromType.TYPE_PGC_DATE:
+            case FromType.TYPE_PGC_SHARE:
+                index = vpVideo.getCurrentItem();
+                break;
+            case FromType.TYPE_MAIN:
+                index = mIndexMap.get(vpVideo.getCurrentItem()) -
+                    (mIndexMap.get(mIndex) - mIndex);
+                break;
+
+        }
+        EventBus.getDefault().post(new VideoSelectEvent(mFromType, index));
     }
 }

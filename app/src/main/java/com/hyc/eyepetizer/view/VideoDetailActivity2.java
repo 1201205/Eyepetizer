@@ -26,6 +26,7 @@ import com.hyc.eyepetizer.model.DailySelectionModel;
 import com.hyc.eyepetizer.model.FeedModel;
 import com.hyc.eyepetizer.model.FromType;
 import com.hyc.eyepetizer.model.VideoListInterface;
+import com.hyc.eyepetizer.model.VideoListModel;
 import com.hyc.eyepetizer.model.ViewDataListFactory;
 import com.hyc.eyepetizer.model.beans.Author;
 import com.hyc.eyepetizer.model.beans.ItemListData;
@@ -317,6 +318,16 @@ public class VideoDetailActivity2 extends BaseActivity {
             case FromType.TYPE_WEEK:
                 fromTheLast = true;
                 break;
+            case FromType.TYPE_PGC_DATE:
+            case FromType.TYPE_PGC_SHARE:
+                fromTheLast = true;
+                ( (VideoListModel)mModel).setObserver(new VideoListModel.Observer() {
+                    @Override
+                    public void notifyDataChanged() {
+                        mHandler.sendEmptyMessage(NOTIFY);
+                    }
+                });
+                break;
 
         }
 //        if (mFromType == FromType.TYPE_MAIN) {
@@ -457,6 +468,7 @@ public class VideoDetailActivity2 extends BaseActivity {
             if (hasScrolled) {
                 mHandler.sendEmptyMessage(POST_TO_PRE);
             }
+            Log.e("hyc-po",vpVideo.getCurrentItem()+"--back--");
             EventBus.getDefault()
                     .post(new VideoDetailBackEvent(mFromType, vpVideo.getCurrentItem(),
                             mViewDatas.get(vpVideo.getCurrentItem()).getData().getCover().getDetail(),

@@ -12,4 +12,5 @@ public abstract class VideoListPresenter extends BasePresenter<VideoListContract
     }
 
     public abstract void getVideoList();
+    public abstract void getMore();
 }

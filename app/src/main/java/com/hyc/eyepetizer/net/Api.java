@@ -101,4 +101,6 @@ public interface Api {
      */
     @GET("/api/v3/pgc/videos") Observable<Videos> getPgcByStrategy(
         @Query("pgcId") int pgcId, @Query("strategy") String strategy);
+    @GET("/api/v3/pgc/videos") Observable<Videos> getMorePgcByStrategy(@Query("start") int start,@Query("num") int num,
+            @Query("pgcId") int pgcId, @Query("strategy") String strategy);
 }

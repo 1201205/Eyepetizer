@@ -52,4 +52,9 @@ public class RankPresenter extends VideoListPresenter {
                 })
         );
     }
+
+    @Override
+    public void getMore() {
+
+    }
 }

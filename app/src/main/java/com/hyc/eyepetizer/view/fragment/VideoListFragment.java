@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,7 @@ public class VideoListFragment extends BaseFragment<VideoListPresenter>
     private static final String FROM_TYPE = "from_type";
     private static final String TAG = "tag";
     private static final String ID = "id";
+    private static final String HASMORE = "has_more";
     @BindView(R.id.rv_video)
     RecyclerView mRvVideo;
     @BindView(R.id.iv_error)
@@ -42,11 +44,13 @@ public class VideoListFragment extends BaseFragment<VideoListPresenter>
     private int mID;
     private int mType;
     private String mTag;
+    private boolean mHasMore;
     private LinearLayoutManager mManager;
     private TestAdapter mAdapter;
     private Unbinder mUnBinder;
     private int mTop;
     private int mLastIndex;
+    private boolean mIsRequesting;
 
 
     public VideoListFragment() {}
@@ -62,12 +66,13 @@ public class VideoListFragment extends BaseFragment<VideoListPresenter>
     }
 
 
-    public static VideoListFragment instantiate(int fromType, String tag, int id) {
+    public static VideoListFragment instantiate(int fromType, String tag, int id,boolean hasMore) {
         VideoListFragment fragment = new VideoListFragment();
         Bundle bundle = new Bundle();
         bundle.putInt(FROM_TYPE, fromType);
         bundle.putString(TAG, tag);
         bundle.putInt(ID, id);
+        bundle.putBoolean(HASMORE, hasMore);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -80,6 +85,7 @@ public class VideoListFragment extends BaseFragment<VideoListPresenter>
             mTag = bundle.getString(TAG);
             mType = bundle.getInt(FROM_TYPE);
             mID = bundle.getInt(ID);
+            mHasMore=bundle.getBoolean(HASMORE,false);
         }
         mPresenter = VideoListPresenterGenerator.generate(mType, mTag, mID, this);
         mPresenter.attachView();
@@ -103,8 +109,30 @@ public class VideoListFragment extends BaseFragment<VideoListPresenter>
             }
         }, 5);
     }
+    public void setLastIndex(int index){
+        mLastIndex=index;
+    }
 
+    public void scrollTo(int index,final int y) {
+        Log.e("hyc-po", mLastIndex + "--scrollTo--");
+        if (mLastIndex == index) {
+            return;
+        }
+        mLastIndex = index;
+        Log.e("hyc-po", mLastIndex + "--scrollTo--");
 
+        mManager.scrollToPosition(mLastIndex);
+        mRvVideo.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                View v = mRvVideo.getChildAt(mLastIndex - mManager.findFirstVisibleItemPosition());
+                final int[] l = new int[2];
+                v.getLocationInWindow(l);
+                mRvVideo.scrollBy(0, l[1] - mTop-y);
+            }
+        }, 5);
+    }
+    private RecyclerView.OnScrollListener mOnScrollListener;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -116,7 +144,24 @@ public class VideoListFragment extends BaseFragment<VideoListPresenter>
         mManager.setOrientation(LinearLayoutManager.VERTICAL);
 
         mRvVideo.setLayoutManager(mManager);
+        if (mHasMore) {
+            mOnScrollListener = new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                }
 
+
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    if (mHasMore && !mIsRequesting &&
+                            mManager.findLastVisibleItemPosition() >= mAdapter.getItemCount() - 6) {
+                        mPresenter.getMore();
+                        mIsRequesting = true;
+                    }
+                }
+            };
+        }
+        mRvVideo.addOnScrollListener(mOnScrollListener);
         //45+36
         mTop = (int) (AppUtil.dip2px(81) + AppUtil.getStatusBarHeight(getContext()));
         return view;
@@ -124,18 +169,22 @@ public class VideoListFragment extends BaseFragment<VideoListPresenter>
 
 
     @Override public void onDestroy() {
+        mRvVideo.removeOnScrollListener(mOnScrollListener);
+        mPresenter.detachView();
         mUnBinder.unbind();
         super.onDestroy();
-        mPresenter.detachView();
     }
 
 
     @Override
     public void showList(List<ViewData> datas) {
+        mIsRequesting=false;
         if (mAdapter == null) {
             mRlError.setVisibility(View.GONE);
             mAdapter = new TestAdapter.Builder(getContext(), datas).formRank().type(mType).build();
             mRvVideo.setAdapter(mAdapter);
+        } else {
+            mAdapter.addData(datas);
         }
     }
 
@@ -149,5 +198,10 @@ public class VideoListFragment extends BaseFragment<VideoListPresenter>
                 mPresenter.getVideoList();
             }
         });
+    }
+
+    @Override
+    public void noMore() {
+        mHasMore=false;
     }
 }

@@ -13,5 +13,6 @@ public interface VideoListContract {
     interface View extends BaseView {
         void showList(List<ViewData> datas);
         void showError();
+        void noMore();
     }
 }

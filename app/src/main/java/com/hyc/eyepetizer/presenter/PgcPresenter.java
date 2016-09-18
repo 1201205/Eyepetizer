@@ -1,5 +1,7 @@
 package com.hyc.eyepetizer.presenter;
 
+import android.text.TextUtils;
+
 import com.hyc.eyepetizer.base.DefaultTransformer;
 import com.hyc.eyepetizer.base.ExceptionAction;
 import com.hyc.eyepetizer.contract.VideoListContract;
@@ -20,6 +22,7 @@ public class PgcPresenter extends VideoListPresenter {
     private VideoListModel mModel;
     private int mTypeID;
     private int mID;
+    private int mCount;
 
 
     public PgcPresenter(VideoListContract.View view) {
@@ -48,7 +51,12 @@ public class PgcPresenter extends VideoListPresenter {
                         mModel.addVideoList(mTypeID, videos.getItemList());
                         List<ViewData> list = new ArrayList<ViewData>();
                         list.addAll(videos.getItemList());
-                        list.add(new ViewData(null, WidgetHelper.Type.NO_MORE));
+                        if (TextUtils.isEmpty(videos.getNextPageUrl())) {
+                            list.add(new ViewData(null, WidgetHelper.Type.NO_MORE));
+                            mView.noMore();
+                        } else {
+                            mCount=list.size();
+                        }
                         mView.showList(list);
                     }
                 }, new ExceptionAction() {
@@ -57,6 +65,30 @@ public class PgcPresenter extends VideoListPresenter {
                         mView.showError();
                     }
                 })
+        );
+    }
+
+    @Override
+    public void getMore() {
+        mCompositeSubscription.add(
+                Requests.getApi()
+                        .getMorePgcByStrategy(mCount,10,mID, mTag)
+                        .compose(new DefaultTransformer<Videos>())
+                        .subscribe(new Action1<Videos>() {
+                            @Override
+                            public void call(Videos videos) {
+                                mModel.addMore(mTypeID, videos.getItemList());
+                                List<ViewData> list = new ArrayList<ViewData>();
+                                list.addAll(videos.getItemList());
+                                if (TextUtils.isEmpty(videos.getNextPageUrl())) {
+                                    list.add(new ViewData(null, WidgetHelper.Type.NO_MORE));
+                                    mView.noMore();
+                                } else {
+                                    mCount+=list.size();
+                                }
+                                mView.showList(list);
+                            }
+                        }, new ExceptionAction())
         );
     }
 }

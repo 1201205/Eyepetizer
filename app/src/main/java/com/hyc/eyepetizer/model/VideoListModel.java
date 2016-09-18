@@ -10,12 +10,14 @@ import java.util.List;
 public class VideoListModel implements VideoListInterface {
     private static VideoListModel sModel;
     private SparseArray<List<ViewData>> mList;
-
+    private Observer mObserver;
 
     private VideoListModel() {
         mList = new SparseArray<>();
     }
-
+    public void setObserver(VideoListModel.Observer observer){
+        mObserver=observer;
+    }
 
     public static VideoListModel getInstance() {
 
@@ -38,7 +40,14 @@ public class VideoListModel implements VideoListInterface {
     public void addVideoList(int id, List<ViewData> data) {
         mList.put(id, data);
     }
-
+    public void addMore(int id, List<ViewData> data) {
+        if (mList.get(id)!=null) {
+            mList.get(id).addAll(data);
+            if (mObserver!=null) {
+                mObserver.notifyDataChanged();
+            }
+        }
+    }
 
     @Override
     public List<ViewData> getVideoList(int videoID, int parentIndex, SparseArray<Integer> array) {
@@ -54,5 +63,8 @@ public class VideoListModel implements VideoListInterface {
             return mList.get(videoID).get(position);
         }
         return null;
+    }
+    public interface Observer{
+        void notifyDataChanged();
     }
 }

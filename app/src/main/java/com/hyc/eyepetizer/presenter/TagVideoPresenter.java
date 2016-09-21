@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import com.hyc.eyepetizer.base.DefaultTransformer;
 import com.hyc.eyepetizer.base.ExceptionAction;
 import com.hyc.eyepetizer.contract.VideoListContract;
+import com.hyc.eyepetizer.model.VideoListModel;
 import com.hyc.eyepetizer.model.beans.TagVideoList;
 import com.hyc.eyepetizer.model.beans.ViewData;
 import com.hyc.eyepetizer.net.Requests;
@@ -21,10 +22,14 @@ import rx.functions.Action1;
 public class TagVideoPresenter extends VideoListPresenter {
     private int mID;
     private String mStragtegy;
-    public TagVideoPresenter(VideoListContract.View view,int id,String stragtegy) {
+    private VideoListModel mModel;
+    private int mTypeID;
+    public TagVideoPresenter(int typeID,int id,VideoListContract.View view,String stragtegy) {
         super(view);
         mID=id;
+        mTypeID = typeID;
         mStragtegy=stragtegy;
+        mModel = VideoListModel.getInstance();
     }
 
     @Override
@@ -35,6 +40,7 @@ public class TagVideoPresenter extends VideoListPresenter {
                     public void call(TagVideoList tagVideoList) {
                         List<ViewData> list=new ArrayList<ViewData>();
                         list.addAll(tagVideoList.getItemList());
+                        mModel.addVideoList(mTypeID, tagVideoList.getItemList());
                         if (TextUtils.isEmpty(tagVideoList.getNextPageUrl())) {
                             list.add(new ViewData(null, WidgetHelper.Type.NO_MORE));
                             mView.noMore();

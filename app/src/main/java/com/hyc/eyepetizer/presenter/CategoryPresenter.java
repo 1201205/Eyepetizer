@@ -44,29 +44,29 @@ public class CategoryPresenter extends VideoListPresenter {
     @Override
     public void getVideoList() {
         mCompositeSubscription.add(
-            Requests.getApi()
-                .getCategoryByStrategy(mID, mTag)
-                .compose(new DefaultTransformer<Videos>())
-                .subscribe(new Action1<Videos>() {
-                    @Override
-                    public void call(Videos videos) {
-                        mModel.addVideoList(mTypeID, videos.getItemList());
-                        List<ViewData> list = new ArrayList<ViewData>();
-                        list.addAll(videos.getItemList());
-                        if (TextUtils.isEmpty(videos.getNextPageUrl())) {
-                            list.add(new ViewData(null, WidgetHelper.Type.NO_MORE));
-                            mView.noMore();
-                        } else {
-                            mCount=list.size();
-                        }
-                        mView.showList(list);
-                    }
-                }, new ExceptionAction() {
-                    @Override
-                    protected void onNoNetWork() {
-                        mView.showError();
-                    }
-                })
+                Requests.getApi()
+                        .getCategoryByStrategy(mID, mTag)
+                        .compose(new DefaultTransformer<Videos>())
+                        .subscribe(new Action1<Videos>() {
+                            @Override
+                            public void call(Videos videos) {
+                                mModel.addVideoList(mTypeID, videos.getItemList());
+                                List<ViewData> list = new ArrayList<ViewData>();
+                                list.addAll(videos.getItemList());
+                                if (TextUtils.isEmpty(videos.getNextPageUrl())) {
+                                    list.add(new ViewData(null, WidgetHelper.Type.NO_MORE));
+                                    mView.noMore();
+                                } else {
+                                    mCount = list.size();
+                                }
+                                mView.showList(list);
+                            }
+                        }, new ExceptionAction() {
+                            @Override
+                            protected void onNoNetWork() {
+                                mView.showError();
+                            }
+                        })
         );
     }
 
@@ -74,7 +74,7 @@ public class CategoryPresenter extends VideoListPresenter {
     public void getMore() {
         mCompositeSubscription.add(
                 Requests.getApi()
-                        .getMoreCategoryByStrategy(mCount,10,mID, mTag)
+                        .getMoreCategoryByStrategy(mCount, 10, mID, mTag)
                         .compose(new DefaultTransformer<Videos>())
                         .subscribe(new Action1<Videos>() {
                             @Override
@@ -86,7 +86,7 @@ public class CategoryPresenter extends VideoListPresenter {
                                     list.add(new ViewData(null, WidgetHelper.Type.NO_MORE));
                                     mView.noMore();
                                 } else {
-                                    mCount+=list.size();
+                                    mCount += list.size();
                                 }
                                 mView.showList(list);
                             }

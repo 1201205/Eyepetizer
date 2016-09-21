@@ -21,6 +21,14 @@ public class VideoListPresenterGenerator {
                 return new PgcPresenter(FromType.TYPE_PGC_DATE, id, view, tag);
             case FromType.TYPE_PGC_SHARE:
                 return new PgcPresenter(FromType.TYPE_PGC_SHARE, id, view, tag);
+            case FromType.TYPE_TAG_DATE:
+                return new TagVideoPresenter(FromType.TYPE_TAG_DATE, id, view, tag);
+            case FromType.TYPE_TAG_SHARE:
+                return new TagVideoPresenter(FromType.TYPE_TAG_SHARE, id, view, tag);
+            case FromType.TYPE_CATEGORY_DATE:
+                return new CategoryPresenter(FromType.TYPE_TAG_DATE, id, view, tag);
+            case FromType.TYPE_CATEGORY_SHARE:
+                return new CategoryPresenter(FromType.TYPE_TAG_SHARE, id, view, tag);
         }
         return null;
     }

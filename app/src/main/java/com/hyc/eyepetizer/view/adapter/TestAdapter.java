@@ -7,8 +7,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.event.StartVideoDetailEvent;
+import com.hyc.eyepetizer.model.FromType;
 import com.hyc.eyepetizer.model.beans.CoverHeader;
 import com.hyc.eyepetizer.model.beans.ItemListData;
 import com.hyc.eyepetizer.model.beans.ViewData;
@@ -17,6 +19,7 @@ import com.hyc.eyepetizer.utils.DataHelper;
 import com.hyc.eyepetizer.utils.FrescoHelper;
 import com.hyc.eyepetizer.utils.TypefaceHelper;
 import com.hyc.eyepetizer.utils.WidgetHelper;
+import com.hyc.eyepetizer.view.PagerListActivity;
 import com.hyc.eyepetizer.view.PgcActivity;
 import com.hyc.eyepetizer.view.RankActivity;
 import com.hyc.eyepetizer.view.SelectionActivity;
@@ -31,9 +34,11 @@ import com.hyc.eyepetizer.view.adapter.holder.TextHeaderViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.TitleVideoViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.VideoViewHolder;
 import com.hyc.eyepetizer.widget.HorizontalDecoration;
+
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.List;
-import org.greenrobot.eventbus.EventBus;
 
 /**
  * Created by Administrator on 2016/8/26.
@@ -121,10 +126,10 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             @Override
             public void onItemClicked(int locationY, int p) {
                 EventBus.getDefault()
-                    .post(
-                        new StartVideoDetailEvent(mType, locationY, data.getParentIndex(),
-                            data.getIndex(),
-                            itemData.getCover().getDetail(), position));
+                        .post(
+                                new StartVideoDetailEvent(mType, locationY, data.getParentIndex(),
+                                        data.getIndex(),
+                                        itemData.getCover().getDetail(), position));
 
 
                 // TODO: 16/9/4 先暂时使用当前的shareElement方式  有时间改为正常的方式
@@ -143,7 +148,7 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
         if (formRank) {
             holder.rank.setVisibility(View.VISIBLE);
-            holder.rank.setText((position+1)+".");
+            holder.rank.setText((position + 1) + ".");
         }
         holder.title.setText(itemData.getTitle());
         holder.category.setText(DataHelper.getCategoryAndDuration(itemData.getCategory(), itemData.getDuration()));
@@ -152,14 +157,7 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private void bindView(CoverVideoViewHolder holder, ViewData data) {
         holder.cover.setImageURI(data.getData().getHeader().getCover());
-        if ("eyepetizer://ranklist/".equals(data.getData().getHeader().getActionUrl())) {
-            holder.cover.setOnClickListener(new View.OnClickListener() {
-                @Override public void onClick(View view) {
-                    Intent intent = new Intent(context, RankActivity.class);
-                    context.startActivity(intent);
-                }
-            });
-        }
+        holder.cover.setOnClickListener(getCoveOnClickListener(data.getData().getHeader()));
         if (holder.recyclerView.getLayoutManager() == null) {
             LinearLayoutManager manager = new LinearLayoutManager(context);
             manager.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -169,15 +167,15 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         holder.recyclerView.setAdapter(new HorizontalAdapter(data.getData().getItemList(), mLayoutInflater));
     }
 
-
     private void bindView(BriefVideoViewHolder holder, final ViewData data, final int position) {
         final CoverHeader header = data.getData().getHeader();
 
         holder.rlHead.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View view) {
+            @Override
+            public void onClick(View view) {
                 PgcActivity.start(context, header.getTitle(), header.getDescription(),
-                    header.getIco(),
-                    DataHelper.getID(header.getActionUrl()));
+                        header.getIco(),
+                        DataHelper.getID(header.getActionUrl()));
             }
         });
         FrescoHelper.loadUrl(holder.ico, header.getIco());
@@ -231,7 +229,8 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         holder.textView.setText(data.getData().getText());
         if ("eyepetizer://feed/".equals(data.getData().getActionUrl())) {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override public void onClick(View view) {
+                @Override
+                public void onClick(View view) {
                     Intent intent = new Intent(context, SelectionActivity.class);
                     context.startActivity(intent);
                 }
@@ -261,6 +260,7 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private void bindView(TitleVideoViewHolder holder, final ViewData data, final int position) {
         holder.title.setTextColor(mTitleColor);
         holder.title.setText(data.getData().getHeader().getTitle());
+        holder.title.setOnClickListener(getCoveOnClickListener(data.getData().getHeader()));
         if (holder.recyclerView.getLayoutManager() == null) {
             LinearLayoutManager manager = new LinearLayoutManager(context);
             manager.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -296,16 +296,45 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
 
-    public ViewData getDataByIndex(int index){
+    public ViewData getDataByIndex(int index) {
         return mDatas.get(index);
     }
 
+    private View.OnClickListener getCoveOnClickListener(final CoverHeader header) {
+        //// TODO: 2016/9/21   对uri进行解析
+        String url = header.getActionUrl();
+        if ("eyepetizer://ranklist/".equals(url)) {
+            return new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(context, RankActivity.class);
+                    context.startActivity(intent);
+                }
+            };
+        } else if (url.contains("eyepetizer://tag/")) {
+            return new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    PagerListActivity.start(context, header.getTitle(), header.getId(), FromType.TYPE_TAG_DATE, FromType.TYPE_TAG_SHARE, false);
+                }
+            };
+        } else if (url.contains("eyepetizer://category/")) {
+            return new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    PagerListActivity.start(context, header.getTitle(), header.getId(), FromType.TYPE_CATEGORY_DATE, FromType.TYPE_CATEGORY_SHARE, true);
+                }
+            };
+        }
+        return null;
+    }
 
     public void addData(List<ViewData> datas) {
         int count = getItemCount();
         mDatas.addAll(datas);
         notifyItemRangeInserted(count, datas.size());
     }
+
     public interface HorizontalItemClickListener {
         //首页需要用到  前面两个参数，其余的需要用到后面两个
 
@@ -347,8 +376,8 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             return this;
         }
 
-        public Builder formRank(){
-            adapter.formRank=true;
+        public Builder formRank() {
+            adapter.formRank = true;
             return this;
         }
 

@@ -13,7 +13,10 @@ public interface FromType {
     int TYPE_HISTORY = -7;
     int TYPE_PGC_DATE = -8;
     int TYPE_PGC_SHARE = -9;
-
+    int TYPE_TAG_DATE = -10;
+    int TYPE_TAG_SHARE = -11;
+    int TYPE_CATEGORY_DATE = -12;
+    int TYPE_CATEGORY_SHARE = -13;
 
     interface Tag {
         String RANK_WEEK = "weekly";

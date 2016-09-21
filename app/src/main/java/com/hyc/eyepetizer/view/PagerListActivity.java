@@ -13,7 +13,8 @@ import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-
+import butterknife.BindView;
+import butterknife.OnClick;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.base.BaseActivity;
@@ -29,15 +30,10 @@ import com.hyc.eyepetizer.view.adapter.FragmentAdapter;
 import com.hyc.eyepetizer.view.fragment.VideoListFragment;
 import com.hyc.eyepetizer.widget.CustomTextView;
 import com.hyc.eyepetizer.widget.MyAnimatorListener;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.OnClick;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 /**
  * Created by ray on 16/9/13.
@@ -95,7 +91,8 @@ public class PagerListActivity extends BaseActivity {
     private int mDateType;
     private boolean mHasMore;
 
-    public static void start(Context context, String title, int id, int dateType,int shareType,boolean hasMore) {
+
+    public static void start(Context context, String title, int id, int dateType, int shareType, boolean hasMore) {
         Intent intent = new Intent(context, PagerListActivity.class);
         intent.putExtra(ID, id);
         intent.putExtra(TITLE, title);
@@ -113,7 +110,7 @@ public class PagerListActivity extends BaseActivity {
         mTitle = intent.getStringExtra(TITLE);
         mDateType = intent.getIntExtra(DATE_TYPE, 0);
         mShareType = intent.getIntExtra(SHARE_TYPE, 0);
-        mHasMore=intent.getBooleanExtra(HAS_MORE,false);
+        mHasMore = intent.getBooleanExtra(HAS_MORE, false);
     }
 
 
@@ -138,29 +135,29 @@ public class PagerListActivity extends BaseActivity {
         mItemHeight = AppUtil.dip2px(250);
         mRatio = AppUtil.dip2px(353) / mItemHeight;
         mEndY = (int) (AppUtil.getScreenHeight(this) - AppUtil.getStatusBarHeight(this) -
-                mItemHeight - AppUtil.dip2px(60));
+            mItemHeight - AppUtil.dip2px(60));
         indicator.getViewTreeObserver()
-                .addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                    @Override
-                    public boolean onPreDraw() {
-                        indicator.getViewTreeObserver().removeOnPreDrawListener(this);
-                        //                    appbar.setExpanded(false);
-                        int width = indicator.getWidth();
-                        int textWidth = tvTime.getWidth();
-                        int[] location = new int[2];
-                        tvTime.getLocationInWindow(location);
-                        mIndicatorY[0] = location[0] - (width - textWidth) / 2;
-                        tvShare.getLocationInWindow(location);
-                        mIndicatorY[1] = location[0] - (width - textWidth) / 2;
-                        indicator.setX(mIndicatorY[0]);
-                        mIndicatorScroll = mIndicatorY[1] - mIndicatorY[0];
-                        return true;
-                    }
-                });
+            .addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    indicator.getViewTreeObserver().removeOnPreDrawListener(this);
+                    //                    appbar.setExpanded(false);
+                    int width = indicator.getWidth();
+                    int textWidth = tvTime.getWidth();
+                    int[] location = new int[2];
+                    tvTime.getLocationInWindow(location);
+                    mIndicatorY[0] = location[0] - (width - textWidth) / 2;
+                    tvShare.getLocationInWindow(location);
+                    mIndicatorY[1] = location[0] - (width - textWidth) / 2;
+                    indicator.setX(mIndicatorY[0]);
+                    mIndicatorScroll = mIndicatorY[1] - mIndicatorY[0];
+                    return true;
+                }
+            });
         mFragments = new ArrayList<>();
         mDate = VideoListFragment.instantiate(mDateType, FromType.Tag.DATE, mID, mHasMore);
         mShare = VideoListFragment.instantiate(mShareType, FromType.Tag.SHARE_COUNT,
-                mID, mHasMore);
+            mID, mHasMore);
         mFragments.add(mDate);
         mFragments.add(mShare);
         mAdapter = new FragmentAdapter(getSupportFragmentManager(), mFragments);
@@ -170,11 +167,11 @@ public class PagerListActivity extends BaseActivity {
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 if (preIndex > position) {
                     indicator.setX(
-                            ((positionOffset - 1) * mIndicatorScroll) + mIndicatorScroll * preIndex +
-                                    mIndicatorY[0]);
+                        ((positionOffset - 1) * mIndicatorScroll) + mIndicatorScroll * preIndex +
+                            mIndicatorY[0]);
                 } else if (preIndex <= position) {
                     indicator.setX(positionOffset * mIndicatorScroll + mIndicatorScroll * preIndex +
-                            mIndicatorY[0]);
+                        mIndicatorY[0]);
                 }
             }
 
@@ -221,6 +218,7 @@ public class PagerListActivity extends BaseActivity {
     }
     //eyepetizer://tag
 
+
     @Subscribe
     public void handleResumeAnim(final VideoDetailBackEvent event) {
         Log.e("hyc-po", event.position + "--VideoDetailBackEvent--");
@@ -230,41 +228,41 @@ public class PagerListActivity extends BaseActivity {
         if (mLastType != event.fromType || mLastIndex != event.position) {
             FrescoHelper.loadUrl(sdvAnim, event.url);
         }
-        //Log.e("hyc-po", event.position + "--VideoDetailBackEvent--");
+        Log.e("hyc-po", event.position + "--VideoDetailBackEvent--");
         mLastType = event.fromType;
         mLastIndex = event.position;
 
         if (event.hasScrolled) {
             if (event.theLast) {
                 sdvAnim.animate()
-                        .scaleX(1)
-                        .setInterpolator(mInterpolator)
-                        .scaleY(1)
-                        .y(mEndY)
-                        .setListener(mListener)
-                        .setDuration(ANIMATION_DURATION)
-                        .start();
+                    .scaleX(1)
+                    .setInterpolator(mInterpolator)
+                    .scaleY(1)
+                    .y(mEndY)
+                    .setListener(mListener)
+                    .setDuration(ANIMATION_DURATION)
+                    .start();
             } else {
                 sdvAnim.animate()
-                        .scaleX(1)
-                        .setInterpolator(mInterpolator)
-                        .scaleY(1)
-                        .y(mTitleHeight)
-                        .setListener(mListener)
-                        .setDuration(ANIMATION_DURATION)
-                        .start();
+                    .scaleX(1)
+                    .setInterpolator(mInterpolator)
+                    .scaleY(1)
+                    .y(mTitleHeight)
+                    .setListener(mListener)
+                    .setDuration(ANIMATION_DURATION)
+                    .start();
             }
         } else {
             int[] l = new int[2];
             sdvAnim.getLocationInWindow(l);
             sdvAnim.animate()
-                    .scaleX(1)
-                    .scaleY(1)
-                    .y(lastY - l[1])
-                    .setListener(mListener)
-                    .setDuration(ANIMATION_DURATION)
-                    .setInterpolator(mInterpolator)
-                    .start();
+                .scaleX(1)
+                .scaleY(1)
+                .y(lastY - l[1])
+                .setListener(mListener)
+                .setDuration(ANIMATION_DURATION)
+                .setInterpolator(mInterpolator)
+                .start();
         }
 
     }
@@ -272,28 +270,30 @@ public class PagerListActivity extends BaseActivity {
 
     @Subscribe
     public void handleSelectEvent(final VideoSelectEvent event) {
-        if (mLastType != event.fromType || mLastIndex != event.position) {
-            Log.e("hyc-po", event.position + "--VideoSelectEvent--");
-            //            appbar.postDelayed(new Runnable() {
-            //                @Override
-            //                public void run() {
-            //                    appbar.setExpanded(false);
-            //                }
-            //            },0);
-            sdvAnim.setImageURI(VideoListModel.getInstance()
-                    .getVideo(event.fromType, event.position)
-                    .getData()
-                    .getCover()
-                    .getDetail());
-            if (event.fromType % 2 == 0) {
-                mDate.scrollTo(event.position);
-            } else {
-                mShare.scrollTo(event.position);
-            }
-            mLastType = event.fromType;
-            mLastIndex = event.position;
-
+        if (!canDeal(event.fromType) ||
+            (mLastType == event.fromType && mLastIndex == event.position)) {
+            return;
         }
+        Log.e("hyc-po", event.position + "--VideoSelectEvent--");
+        //            appbar.postDelayed(new Runnable() {
+        //                @Override
+        //                public void run() {
+        //                    appbar.setExpanded(false);
+        //                }
+        //            },0);
+        sdvAnim.setImageURI(VideoListModel.getInstance()
+            .getVideo(event.fromType, event.position)
+            .getData()
+            .getCover()
+            .getDetail());
+        if (event.fromType % 2 == 0) {
+            mDate.scrollTo(event.position);
+        } else {
+            mShare.scrollTo(event.position);
+        }
+        mLastType = event.fromType;
+        mLastIndex = event.position;
+
     }
 
 
@@ -305,7 +305,7 @@ public class PagerListActivity extends BaseActivity {
     }
 
 
-    @OnClick({R.id.img_left, R.id.tv_time, R.id.tv_share})
+    @OnClick({ R.id.img_left, R.id.tv_time, R.id.tv_share })
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.img_left:
@@ -336,39 +336,41 @@ public class PagerListActivity extends BaseActivity {
         FrescoHelper.loadUrl(sdvAnim, event.url);
         lastY = event.locationY;
         sdvAnim.animate()
-                .scaleX(mRatio)
-                .scaleY(mRatio)
-                .y((mItemHeight * (mRatio - 1) / 2))
-                .setDuration(ANIMATION_DURATION)
-                .setListener(new MyAnimatorListener() {
-                    @Override
-                    public void onAnimationEnd(Animator animator) {
-                        mLastType = event.fromType;
-                        mLastIndex = event.position;
-                        if (mLastType == FromType.TYPE_PGC_DATE) {
-                            mDate.setLastIndex(mLastIndex);
-                        } else {
-                            mShare.setLastIndex(mLastIndex);
-                        }
-                        Intent intent = VideoDetailActivity2.newIntent(event.fromType,
-                                PagerListActivity.this, event.position,
-                                event.parentIndex, event.fromType);
-                        isStarting = true;
-                        startActivity(intent);
-                        overridePendingTransition(0, 0);
+            .scaleX(mRatio)
+            .scaleY(mRatio)
+            .y((mItemHeight * (mRatio - 1) / 2))
+            .setDuration(ANIMATION_DURATION)
+            .setListener(new MyAnimatorListener() {
+                @Override
+                public void onAnimationEnd(Animator animator) {
+                    mLastType = event.fromType;
+                    mLastIndex = event.position;
+                    if (mLastType == FromType.TYPE_PGC_DATE) {
+                        mDate.setLastIndex(mLastIndex);
+                    } else {
+                        mShare.setLastIndex(mLastIndex);
                     }
-                })
-                .setInterpolator(mInterpolator)
-                .start();
+                    Intent intent = VideoDetailActivity2.newIntent(event.fromType,
+                        PagerListActivity.this, event.position,
+                        event.parentIndex, event.fromType);
+                    isStarting = true;
+                    startActivity(intent);
+                    overridePendingTransition(0, 0);
+                }
+            })
+            .setInterpolator(mInterpolator)
+            .start();
     }
+
 
     private boolean canDeal(int type) {
         if (type <= FromType.TYPE_TAG_DATE ||
-                type >= FromType.TYPE_CATEGORY_SHARE) {
+            type >= FromType.TYPE_CATEGORY_SHARE) {
             return true;
         }
         return false;
     }
+
 
     @Override
     protected void onDestroy() {

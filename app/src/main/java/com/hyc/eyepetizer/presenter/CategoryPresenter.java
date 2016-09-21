@@ -1,7 +1,6 @@
 package com.hyc.eyepetizer.presenter;
 
 import android.text.TextUtils;
-
 import com.hyc.eyepetizer.base.DefaultTransformer;
 import com.hyc.eyepetizer.base.ExceptionAction;
 import com.hyc.eyepetizer.contract.VideoListContract;
@@ -10,10 +9,8 @@ import com.hyc.eyepetizer.model.beans.Videos;
 import com.hyc.eyepetizer.model.beans.ViewData;
 import com.hyc.eyepetizer.net.Requests;
 import com.hyc.eyepetizer.utils.WidgetHelper;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import rx.functions.Action1;
 
 /**
@@ -92,5 +89,11 @@ public class CategoryPresenter extends VideoListPresenter {
                             }
                         }, new ExceptionAction())
         );
+    }
+
+
+    @Override public void detachView() {
+        super.detachView();
+        mModel.clear(mTypeID);
     }
 }

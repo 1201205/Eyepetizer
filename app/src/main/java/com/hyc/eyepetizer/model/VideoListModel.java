@@ -15,9 +15,7 @@ public class VideoListModel implements VideoListInterface {
     private VideoListModel() {
         mList = new SparseArray<>();
     }
-    public void setObserver(VideoListModel.Observer observer){
-        mObserver=observer;
-    }
+
 
     public static VideoListModel getInstance() {
 
@@ -32,8 +30,15 @@ public class VideoListModel implements VideoListInterface {
     }
 
 
-    public void clear() {
-        mList.clear();
+    public void setObserver(VideoListModel.Observer observer){
+        mObserver=observer;
+    }
+
+
+    public void clear(int type) {
+        if (mList.get(type) != null) {
+            mList.get(type).clear();
+        }
     }
 
 

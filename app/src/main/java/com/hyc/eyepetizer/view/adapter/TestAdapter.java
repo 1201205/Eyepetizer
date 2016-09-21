@@ -7,7 +7,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.event.StartVideoDetailEvent;
 import com.hyc.eyepetizer.model.FromType;
@@ -34,11 +33,9 @@ import com.hyc.eyepetizer.view.adapter.holder.TextHeaderViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.TitleVideoViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.VideoViewHolder;
 import com.hyc.eyepetizer.widget.HorizontalDecoration;
-
-import org.greenrobot.eventbus.EventBus;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * Created by Administrator on 2016/8/26.
@@ -315,7 +312,8 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             return new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    PagerListActivity.start(context, header.getTitle(), header.getId(), FromType.TYPE_TAG_DATE, FromType.TYPE_TAG_SHARE, false);
+                    PagerListActivity.start(context, header.getTitle(), header.getId(),
+                        FromType.TYPE_TAG_DATE, FromType.TYPE_TAG_SHARE, true);
                 }
             };
         } else if (url.contains("eyepetizer://category/")) {

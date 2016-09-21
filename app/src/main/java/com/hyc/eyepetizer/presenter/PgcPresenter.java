@@ -1,7 +1,6 @@
 package com.hyc.eyepetizer.presenter;
 
 import android.text.TextUtils;
-
 import com.hyc.eyepetizer.base.DefaultTransformer;
 import com.hyc.eyepetizer.base.ExceptionAction;
 import com.hyc.eyepetizer.contract.VideoListContract;
@@ -90,5 +89,11 @@ public class PgcPresenter extends VideoListPresenter {
                             }
                         }, new ExceptionAction())
         );
+    }
+
+
+    @Override public void detachView() {
+        super.detachView();
+        mModel.clear(mTypeID);
     }
 }

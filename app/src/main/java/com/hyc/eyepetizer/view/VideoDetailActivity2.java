@@ -302,12 +302,12 @@ public class VideoDetailActivity2 extends BaseActivity {
             case FromType.TYPE_HISTORY:
             case FromType.TYPE_MONTH:
             case FromType.TYPE_WEEK:
-            case FromType.TYPE_TAG_DATE:
-            case FromType.TYPE_TAG_SHARE:
                 fromTheLast = true;
                 break;
             case FromType.TYPE_PGC_DATE:
             case FromType.TYPE_PGC_SHARE:
+            case FromType.TYPE_TAG_DATE:
+            case FromType.TYPE_TAG_SHARE:
             case FromType.TYPE_CATEGORY_DATE:
             case FromType.TYPE_CATEGORY_SHARE:
                 fromTheLast = true;
@@ -489,6 +489,7 @@ public class VideoDetailActivity2 extends BaseActivity {
 
     @Override
     protected void onDestroy() {
+
         mAnimator.cancel();
         mAnimator.removeAllUpdateListeners();
         mTarget = null;
@@ -520,6 +521,10 @@ public class VideoDetailActivity2 extends BaseActivity {
             case FromType.TYPE_WEEK:
             case FromType.TYPE_PGC_DATE:
             case FromType.TYPE_PGC_SHARE:
+            case FromType.TYPE_TAG_DATE:
+            case FromType.TYPE_TAG_SHARE:
+            case FromType.TYPE_CATEGORY_DATE:
+            case FromType.TYPE_CATEGORY_SHARE:
                 index = vpVideo.getCurrentItem();
                 break;
             case FromType.TYPE_MAIN:

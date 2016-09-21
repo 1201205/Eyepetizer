@@ -6,7 +6,6 @@ import com.hyc.eyepetizer.model.beans.Selection;
 import com.hyc.eyepetizer.model.beans.TagVideoList;
 import com.hyc.eyepetizer.model.beans.VideoRelated;
 import com.hyc.eyepetizer.model.beans.Videos;
-
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -110,6 +109,9 @@ public interface Api {
     //http://baobab.wandoujia.com/api/v3/tag/videos?tagId=458&strategy=date&udid=8954dd2dac7e41d68d967d5cc8115ced8b7af94c&vc=126&vn=2.4.1&deviceModel=Redmi%20Note%203&first_channel=eyepetizer_yingyongbao_market&last_channel=eyepetizer_yingyongbao_market&system_version_code=22
     @GET("/api/v3/tag/videos") Observable<TagVideoList> getTagVideoByStragtegy(
             @Query("tagId") int tagId, @Query("strategy") String strategy);
+    @GET("/api/v3/tag/videos") Observable<TagVideoList> getMoreTagVideoByStragtegy(
+        @Query("start") int start, @Query("num") int num,
+        @Query("tagId") int tagId, @Query("strategy") String strategy);
     //http://baobab.wandoujia.com/api/v3/videos?start=10&num=10&categoryId=38&strategy=date"
     @GET("/api/v3/videos") Observable<Videos> getCategoryByStrategy(
             @Query("categoryId") int categoryId, @Query("strategy") String strategy);

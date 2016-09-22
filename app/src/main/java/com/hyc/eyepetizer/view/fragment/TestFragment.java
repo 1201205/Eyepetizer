@@ -1,5 +1,6 @@
 package com.hyc.eyepetizer.view.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,8 +17,10 @@ import com.hyc.eyepetizer.base.BaseFragment;
 import com.hyc.eyepetizer.contract.SelectionContract;
 import com.hyc.eyepetizer.event.VideoSelectEvent;
 import com.hyc.eyepetizer.model.FromType;
+import com.hyc.eyepetizer.model.SectionModel;
 import com.hyc.eyepetizer.model.beans.ViewData;
 import com.hyc.eyepetizer.presenter.SelectionPresenter;
+import com.hyc.eyepetizer.view.VideoDetailActivity2;
 import com.hyc.eyepetizer.view.adapter.TestAdapter;
 import com.hyc.eyepetizer.widget.LoadingAnimView;
 import com.hyc.eyepetizer.widget.PullToRefreshView;
@@ -148,7 +151,9 @@ public class TestFragment extends BaseFragment<SelectionPresenter>
             new TestAdapter.HorizontalItemClickListener() {
                 @Override
                 public void onItemClicked(int parentPosition, int myPosition, int position) {
-                    Log.e("------", parentPosition + "----" + myPosition);
+                    Log.e("datgetTypea",parentPosition+"----"+myPosition);
+                  Intent intent= VideoDetailActivity2.newIntent(FromType.TYPE_SECTION,getContext(),myPosition,parentPosition);
+                    startActivity(intent);
                 }
             }).build();
         mRecyclerView.setAdapter(mAdapter);

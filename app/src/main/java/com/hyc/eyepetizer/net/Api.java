@@ -6,6 +6,7 @@ import com.hyc.eyepetizer.model.beans.Selection;
 import com.hyc.eyepetizer.model.beans.TagVideoList;
 import com.hyc.eyepetizer.model.beans.VideoRelated;
 import com.hyc.eyepetizer.model.beans.Videos;
+
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -77,6 +78,7 @@ public interface Api {
     @GET("/api/v2/feed") Observable<DailySelection> getDailySelection(
             @Query("num") int num);
 
+    @GET("/api/v3/discovery") Observable<Videos> getDiscovery();
     /**
      * 获取指定的精选
      * @param num

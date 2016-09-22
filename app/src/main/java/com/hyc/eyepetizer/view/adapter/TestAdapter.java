@@ -46,7 +46,7 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<ViewData> mDatas;
 
     private int mSpace;
-    private HorizontalItemClickListener horizontalItemCilckListener;
+    private HorizontalItemClickListener mHorizontalItemClickListener;
     //视频相关  白色
     private int mTitleColor = AppUtil.getColor(R.color.title_black);
     private int mType;
@@ -152,7 +152,7 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
 
-    private void bindView(CoverVideoViewHolder holder, ViewData data) {
+    private void bindView(CoverVideoViewHolder holder, final ViewData data) {
         holder.cover.setImageURI(data.getData().getHeader().getCover());
         holder.cover.setOnClickListener(getCoveOnClickListener(data.getData().getHeader()));
         if (holder.recyclerView.getLayoutManager() == null) {
@@ -161,7 +161,18 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             holder.recyclerView.setLayoutManager(manager);
             holder.recyclerView.addItemDecoration(new HorizontalDecoration(mSpace));
         }
-        holder.recyclerView.setAdapter(new HorizontalAdapter(data.getData().getItemList(), mLayoutInflater));
+        HorizontalAdapter adapter = new HorizontalAdapter(data.getData().getItemList(),
+                mLayoutInflater);
+        if (mHorizontalItemClickListener != null) {
+            adapter.setOnItemClickListener(new HorizontalAdapter.ItemClickListener() {
+                @Override
+                public void onItemClicked(int myIndex) {
+                    mHorizontalItemClickListener.onItemClicked(data.getData().getHeader().getId(), myIndex,
+                            0);
+                }
+            });
+        }
+        holder.recyclerView.setAdapter(adapter);
     }
 
     private void bindView(BriefVideoViewHolder holder, final ViewData data, final int position) {
@@ -190,11 +201,11 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
         HorizontalAdapter adapter = new HorizontalAdapter(data.getData().getItemList(),
                 mLayoutInflater);
-        if (horizontalItemCilckListener != null) {
+        if (mHorizontalItemClickListener != null) {
             adapter.setOnItemClickListener(new HorizontalAdapter.ItemClickListener() {
                 @Override
                 public void onItemClicked(int myIndex) {
-                    horizontalItemCilckListener.onItemClicked(data.getParentIndex(), myIndex,
+                    mHorizontalItemClickListener.onItemClicked(data.getData().getHeader().getId(), myIndex,
                             position);
                 }
             });
@@ -267,11 +278,11 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         HorizontalAdapter adapter = new HorizontalAdapter(data.getData().getItemList(),
                 mLayoutInflater);
-        if (horizontalItemCilckListener != null) {
+        if (mHorizontalItemClickListener != null) {
             adapter.setOnItemClickListener(new HorizontalAdapter.ItemClickListener() {
                 @Override
                 public void onItemClicked(int myIndex) {
-                    horizontalItemCilckListener.onItemClicked(data.getParentIndex(), myIndex,
+                    mHorizontalItemClickListener.onItemClicked(data.getData().getHeader().getId(), myIndex,
                             position);
                 }
             });
@@ -370,7 +381,7 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
 
         public Builder horizontalItemClickListener(HorizontalItemClickListener listener) {
-            adapter.horizontalItemCilckListener = listener;
+            adapter.mHorizontalItemClickListener = listener;
             return this;
         }
 

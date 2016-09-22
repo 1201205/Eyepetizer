@@ -16,6 +16,10 @@ public class ViewDataListFactory {
                 return DailySelectionModel.getInstance();
             case FromType.TYPE_RELATE:
                 return VideoRelateModel.getInstance();
+            case FromType.TYPE_RANK:
+                return VideoRelateModel.getInstance();
+            case FromType.TYPE_SECTION:
+                return SectionModel.getInstance();
             case FromType.TYPE_HISTORY:
             case FromType.TYPE_MONTH:
             case FromType.TYPE_WEEK:

@@ -59,10 +59,17 @@ public class FeedModel implements VideoListInterface {
         int j=0;
         for (int i=0;i<count;i++) {
             ViewData data=sectionList.getItemList().get(i);
-            if (WidgetHelper.Type.VIDEO.equals(data.getType())) {
-                datas.add(data);
-                array.put(j,i);
-                j++;
+            switch (data.getType()){
+                case WidgetHelper.Type.VIDEO:
+                    datas.add(data);
+                    array.put(j,i);
+                    j++;
+                    break;
+                case  WidgetHelper.Type.VIDEO_COLLECTION_WITH_BRIEF:
+                case  WidgetHelper.Type.VIDEO_COLLECTION_WITH_TITLE:
+                case  WidgetHelper.Type.VIDEO_COLLECTION_WITH_COVER:
+                    SectionModel.getInstance().putList(data.getData().getHeader().getId(),data.getData().getItemList());
+                    break;
             }
         }
         if (mViewDatas.get(index)!=null) {
@@ -121,10 +128,17 @@ public class FeedModel implements VideoListInterface {
         int j=0;
         for (int i=0;i<count;i++) {
             ViewData data=sectionList.getItemList().get(i);
-            if (WidgetHelper.Type.VIDEO.equals(data.getType())) {
-                datas.add(data);
-                array.put(j,i);
-                j++;
+            switch (data.getType()){
+                case WidgetHelper.Type.VIDEO:
+                    datas.add(data);
+                    array.put(j,i);
+                    j++;
+                    break;
+                case  WidgetHelper.Type.VIDEO_COLLECTION_WITH_BRIEF:
+                case  WidgetHelper.Type.VIDEO_COLLECTION_WITH_TITLE:
+                case  WidgetHelper.Type.VIDEO_COLLECTION_WITH_COVER:
+                    SectionModel.getInstance().putList(data.getData().getHeader().getId(),data.getData().getItemList());
+                    break;
             }
         }
         if (mViewDatas.get(parentIndex)!=null) {

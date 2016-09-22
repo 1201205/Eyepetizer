@@ -13,23 +13,6 @@ public class ItemListData implements java.io.Serializable {
     private Object favoriteAdTrack;
     private Object waterMarks;
     private String playUrl;
-
-    public String getIcon() {
-        return icon;
-    }
-
-    public void setIcon(String icon) {
-        this.icon = icon;
-    }
-
-    public String getSubTitle() {
-        return subTitle;
-    }
-
-    public void setSubTitle(String subTitle) {
-        this.subTitle = subTitle;
-    }
-
     private Cover cover;
     private int duration;
     private Provider provider;
@@ -52,6 +35,38 @@ public class ItemListData implements java.io.Serializable {
     private int count;
     private String icon;
     private String subTitle;
+    private String image;
+    private int height;
+    private String font;
+    private String actionUrl;
+    private Object promotion;
+
+    public boolean isShade() {
+        return shade;
+    }
+
+    public void setShade(boolean shade) {
+        this.shade = shade;
+    }
+
+    private boolean shade;
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
+
+    public String getSubTitle() {
+        return subTitle;
+    }
+
+    public void setSubTitle(String subTitle) {
+        this.subTitle = subTitle;
+    }
+
     public String getImage() {
         return image;
     }
@@ -60,8 +75,6 @@ public class ItemListData implements java.io.Serializable {
         this.image = image;
     }
 
-    private String image;
-
     public int getHeight() {
         return height;
     }
@@ -69,8 +82,6 @@ public class ItemListData implements java.io.Serializable {
     public void setHeight(int height) {
         this.height = height;
     }
-
-    private int height;
 
     public CoverHeader getHeader() {
         return header;
@@ -119,11 +130,6 @@ public class ItemListData implements java.io.Serializable {
     public void setActionUrl(String actionUrl) {
         this.actionUrl = actionUrl;
     }
-
-    private String font;
-    private String actionUrl;
-    private Object promotion;
-
 
     public long getDate() {return this.date;}
 

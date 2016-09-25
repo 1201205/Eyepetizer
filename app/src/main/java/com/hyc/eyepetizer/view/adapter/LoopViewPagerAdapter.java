@@ -10,14 +10,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import com.hyc.one.R;
-import com.hyc.one.beans.HeadScrollItem;
-import com.squareup.picasso.Picasso;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.hyc.eyepetizer.R;
+import com.hyc.eyepetizer.model.beans.ViewData;
+import com.hyc.eyepetizer.utils.AppUtil;
+import com.hyc.eyepetizer.utils.FrescoHelper;
 import java.util.ArrayList;
 import java.util.List;
 
 public class LoopViewPagerAdapter extends BaseLoopPagerAdapter {
-    private final List<HeadScrollItem> mDatas;
+    private final List<ViewData> mDatas;
     private final ViewGroup mIndicators;
     private ItemClickListener mItemClickListener;
     private int mLastPosition;
@@ -35,7 +37,7 @@ public class LoopViewPagerAdapter extends BaseLoopPagerAdapter {
     }
 
 
-    public void setList(List<HeadScrollItem> datas) {
+    public void setList(List<ViewData> datas) {
         mDatas.clear();
         mDatas.addAll(datas);
         notifyDataSetChanged();
@@ -50,8 +52,8 @@ public class LoopViewPagerAdapter extends BaseLoopPagerAdapter {
         if (mIndicators.getChildCount() != mDatas.size() && mDatas.size() > 1) {
             mIndicators.removeAllViews();
             Resources res = mIndicators.getResources();
-            int size = res.getDimensionPixelOffset(R.dimen.indicator_size);
-            int margin = res.getDimensionPixelOffset(R.dimen.indicator_margin);
+            int size = (int) AppUtil.dip2px(6);
+            int margin = size;
             for (int i = 0; i < getPagerCount(); i++) {
                 ImageView indicator = new ImageView(mIndicators.getContext());
                 indicator.setAlpha(240);
@@ -81,7 +83,7 @@ public class LoopViewPagerAdapter extends BaseLoopPagerAdapter {
 
 
     @Override
-    public HeadScrollItem getItem(int position) {
+    public ViewData getItem(int position) {
         return mDatas.get(position);
     }
 
@@ -91,16 +93,16 @@ public class LoopViewPagerAdapter extends BaseLoopPagerAdapter {
         ViewHolder holder = null;
         if (convertView == null) {
             convertView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_pict, parent, false);
+                .inflate(R.layout.item_img, parent, false);
             holder = new ViewHolder();
-            holder.ivBanner = (ImageView) convertView.findViewById(R.id.ivBanner);
+            holder.sdvBanner = (SimpleDraweeView) convertView.findViewById(R.id.sdv_img);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        final HeadScrollItem data = mDatas.get(position);
+        final ViewData data = mDatas.get(position);
         if (mItemClickListener != null) {
-            holder.ivBanner.setOnClickListener(new View.OnClickListener() {
+            holder.sdvBanner.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mItemClickListener.itemClicked(data);
@@ -108,11 +110,7 @@ public class LoopViewPagerAdapter extends BaseLoopPagerAdapter {
             });
         }
 
-        Picasso.with(parent.getContext())
-            .load(data.getCover())
-            .placeholder(R.drawable.default_reading_banner_image)
-            .fit()
-            .into(holder.ivBanner);
+        FrescoHelper.loadUrl(holder.sdvBanner, data.getData().getImage());
         return convertView;
     }
 
@@ -128,11 +126,11 @@ public class LoopViewPagerAdapter extends BaseLoopPagerAdapter {
 
 
     public interface ItemClickListener {
-        void itemClicked(HeadScrollItem data);
+        void itemClicked(ViewData data);
     }
 
 
     public static class ViewHolder {
-        ImageView ivBanner;
+        SimpleDraweeView sdvBanner;
     }
 }

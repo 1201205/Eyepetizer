@@ -27,9 +27,16 @@ public class WidgetHelper {
                 return ViewType.CAMPAIGN;
             case Type.BRIEF_CARD:
                 return ViewType.BRIEF_CARD;
+            case Type.HORIZONTAL_SCROLL_CARD:
+                return ViewType.HORIZONTAL_SCROLL_CARD;
+            case Type.SQUARE_CARD:
+                return ViewType.SQUARE_CARD;
+            case Type.RECTANGLE_CARD:
+                return ViewType.RECTANGLE_CARD;
         }
         return ViewType.Error;
     }
+
 
     public interface Type {
         //BLANK_FOOTER
@@ -42,9 +49,13 @@ public class WidgetHelper {
         String VIDEO_COLLECTION_WITH_TITLE = "videoCollectionWithTitle";//有标题的水平视频
         String CAMPAIGN = "campaign";//有标题的水平视频
         String NO_MORE = "noMore";
-        String BRIEF_CARD ="briefCard";
+        String BRIEF_CARD = "briefCard";
+        String HORIZONTAL_SCROLL_CARD = "horizontalScrollCard";
+        String SQUARE_CARD = "squareCard";
+        String RECTANGLE_CARD = "rectangleCard";
 
     }
+
 
     public interface ViewType {
         int Error = -1;
@@ -56,7 +67,10 @@ public class WidgetHelper {
         int VIDEO_COLLECTION_WITH_BRIEF = 6;
         int VIDEO_COLLECTION_WITH_TITLE = 7;
         int NO_MORE = 8;
-        int CAMPAIGN=9;
-        int BRIEF_CARD =10;
+        int CAMPAIGN = 9;
+        int BRIEF_CARD = 10;
+        int HORIZONTAL_SCROLL_CARD = 11;
+        int SQUARE_CARD = 12;
+        int RECTANGLE_CARD = 13;
     }
 }

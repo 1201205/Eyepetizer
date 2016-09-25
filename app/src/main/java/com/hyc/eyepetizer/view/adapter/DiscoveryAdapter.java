@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 import com.hyc.eyepetizer.model.beans.ViewData;
 import com.hyc.eyepetizer.utils.WidgetHelper;
+import com.hyc.eyepetizer.view.adapter.holder.BannerViewHolder;
 import java.util.List;
 
 /**
@@ -22,6 +23,10 @@ public class DiscoveryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
 
     @Override public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        switch (viewType) {
+            case WidgetHelper.ViewType.HORIZONTAL_SCROLL_CARD:
+                return new BannerViewHolder()
+        }
         return null;
     }
 

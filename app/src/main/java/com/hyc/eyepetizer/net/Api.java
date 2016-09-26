@@ -53,7 +53,7 @@ public interface Api {
      * http://baobab.wandoujia.com/api/v3/tabs/pgcs?udid=8954dd2dac7e41d68d967d5cc8115ced8b7af94c&vc=126&vn=2.4.1&deviceModel=Redmi%20Note%203&first_channel=eyepetizer_xiaomi_market&last_channel=eyepetizer_xiaomi_market&system_version_code=22
      * 发现：
      * http://baobab.wandoujia.com/api/v3/discovery?udid=8954dd2dac7e41d68d967d5cc8115ced8b7af94c&vc=126&vn=2.4.1&deviceModel=Redmi%20Note%203&first_channel=eyepetizer_xiaomi_market&last_channel=eyepetizer_xiaomi_market&system_version_code=22
-     *
+     *http://baobab.wandoujia.com/api/v3/discovery?udid=000000006ed9dd74ceefd9694c0d8741&vn=2.4.1&deviceModel=Redmi%20Note%203&first_channel=eyepetizer_xiaomi_market&last_channel=eyepetizer_xiaomi_market&system_version_code=22
      */
     @GET("api/v3/tabs/selected")
     Observable<Selection> getSelection();
@@ -78,7 +78,7 @@ public interface Api {
     @GET("/api/v2/feed") Observable<DailySelection> getDailySelection(
             @Query("num") int num);
 
-    @GET("/api/v3/discovery") Observable<Videos> getDiscovery();
+    @GET("/api/v3/discovery?vc=126") Observable<Videos> getDiscovery();
     /**
      * 获取指定的精选
      * @param num

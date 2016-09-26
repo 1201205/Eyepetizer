@@ -18,7 +18,7 @@ import com.hyc.eyepetizer.widget.CustomTextView;
 public class SquareCardViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.sdv_img)
     public SimpleDraweeView img;
-    @BindView(R.id.rl_flow)
+    @BindView(R.id.tv_label)
     public CustomTextView flow;
     private Animator mAnimator;
     private float mLastX;

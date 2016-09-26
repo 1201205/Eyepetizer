@@ -31,16 +31,12 @@ public class LoopViewPagerAdapter extends BaseLoopPagerAdapter {
         mDatas = new ArrayList<>();
     }
 
-
-    public void setItemClickListener(ItemClickListener itemClickListener) {
-        this.mItemClickListener = itemClickListener;
-    }
-
-
-    public void setList(List<ViewData> datas) {
+    public void setList(List<ViewData> datas){
         mDatas.clear();
         mDatas.addAll(datas);
-        notifyDataSetChanged();
+    }
+    public void setItemClickListener(ItemClickListener itemClickListener) {
+        this.mItemClickListener = itemClickListener;
     }
 
 

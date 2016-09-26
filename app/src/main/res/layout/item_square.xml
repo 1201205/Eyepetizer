@@ -12,6 +12,7 @@
         fresco:viewAspectRatio="1"/>
 
     <com.hyc.eyepetizer.widget.CustomTextView
+        android:background="@color/alpha_black"
         android:id="@+id/tv_label"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

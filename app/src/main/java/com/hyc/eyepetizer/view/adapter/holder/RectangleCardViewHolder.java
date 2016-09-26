@@ -12,7 +12,7 @@ import com.hyc.eyepetizer.R;
  */
 public class RectangleCardViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.sdv_img)
-    SimpleDraweeView sdvImage;
+    public SimpleDraweeView sdvImage;
 
 
     public RectangleCardViewHolder(View itemView) {

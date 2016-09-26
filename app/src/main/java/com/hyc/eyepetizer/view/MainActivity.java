@@ -26,6 +26,7 @@ import com.hyc.eyepetizer.utils.AppUtil;
 import com.hyc.eyepetizer.utils.FrescoHelper;
 import com.hyc.eyepetizer.utils.TypefaceHelper;
 import com.hyc.eyepetizer.view.adapter.FragmentAdapter;
+import com.hyc.eyepetizer.view.fragment.DiscoveryFragment;
 import com.hyc.eyepetizer.view.fragment.TestFragment;
 import com.hyc.eyepetizer.widget.CustomTextView;
 import com.hyc.eyepetizer.widget.MyAnimatorListener;
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.fl_all)
     FrameLayout mRlAll;
     private TestFragment mTestFragment;
+    private DiscoveryFragment mDiscoveryFragment;
     //recyclerView中video高度
     private float mItemHeight;
     private float mTitleHeight;
@@ -92,6 +94,8 @@ public class MainActivity extends AppCompatActivity {
         List<Fragment> fragments = new ArrayList<>();
         mTestFragment = new TestFragment();
         fragments.add(mTestFragment);
+        mDiscoveryFragment=new DiscoveryFragment();
+        fragments.add(mDiscoveryFragment);
         //fragments.add(new TestFragment());
         //fragments.add(new TestFragment());
         FragmentAdapter adapter = new FragmentAdapter(getSupportFragmentManager(), fragments);

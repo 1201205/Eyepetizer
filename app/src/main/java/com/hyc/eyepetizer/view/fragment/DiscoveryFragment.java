@@ -10,7 +10,9 @@ import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.base.BaseFragment;
 import com.hyc.eyepetizer.contract.DiscoveryContract;
@@ -19,12 +21,7 @@ import com.hyc.eyepetizer.presenter.DiscoveryPresenter;
 import com.hyc.eyepetizer.utils.AppUtil;
 import com.hyc.eyepetizer.utils.WidgetHelper;
 import com.hyc.eyepetizer.view.adapter.DiscoveryAdapter;
-
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 
 /**
  * Created by Administrator on 2016/9/22.
@@ -33,6 +30,8 @@ public class DiscoveryFragment extends BaseFragment<DiscoveryPresenter> implemen
     @BindView(R.id.rv_discovery)
     RecyclerView mRvDiscovery;
     private Unbinder mUnbinder;
+    private SparseArray<Integer> mPositionSparseArray;
+
 
     @Override
     protected void initPresenter() {
@@ -41,6 +40,7 @@ public class DiscoveryFragment extends BaseFragment<DiscoveryPresenter> implemen
         mPresenter.getDiscovery();
     }
 
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -48,7 +48,8 @@ public class DiscoveryFragment extends BaseFragment<DiscoveryPresenter> implemen
         mUnbinder = ButterKnife.bind(this, view);
         return view;
     }
-    private SparseArray<Integer> mPositionSparseArray;
+
+
     @Override
     public void showDiscovery(final List<ViewData> viewDatas) {
         mPositionSparseArray=new SparseArray<>();
@@ -59,7 +60,9 @@ public class DiscoveryFragment extends BaseFragment<DiscoveryPresenter> implemen
                 if (WidgetHelper.Type.SQUARE_CARD.equals(viewDatas.get(position).getType())) {
                     return  1;
                 }
-                mPositionSparseArray.put(mPositionSparseArray.size(),position+1);
+                if (mPositionSparseArray.indexOfValue(position) == -1) {
+                    mPositionSparseArray.put(mPositionSparseArray.size(), position);
+                }
                 return 2;
             }
         });
@@ -86,13 +89,15 @@ public class DiscoveryFragment extends BaseFragment<DiscoveryPresenter> implemen
 
     private boolean isTheOdd(int itemPosition) {
         int last=0;
-        for (int i=0;i<mPositionSparseArray.size();i++){
-            if (mPositionSparseArray.get(i)>itemPosition) {
-                last=mPositionSparseArray.get(i-1);
+        for (int i = mPositionSparseArray.size() - 1; i >= 0; i--) {
+            if (mPositionSparseArray.get(i) < itemPosition) {
+                last = mPositionSparseArray.get(i);
                 break;
             }
         }
-        return (itemPosition-last)%2==0;
+        Log.e("hyc-t", itemPosition + "----" + last);
+
+        return (itemPosition - last) % 2 == 1;
     }
 
     @Override

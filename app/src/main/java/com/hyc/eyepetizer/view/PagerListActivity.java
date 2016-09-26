@@ -93,15 +93,19 @@ public class PagerListActivity extends BaseActivity {
 
 
     public static void start(Context context, String title, int id, int dateType, int shareType, boolean hasMore) {
+        context.startActivity(getIntent(context, title, id, dateType, shareType, hasMore));
+    }
+
+
+    public static Intent getIntent(Context context, String title, int id, int dateType, int shareType, boolean hasMore) {
         Intent intent = new Intent(context, PagerListActivity.class);
         intent.putExtra(ID, id);
         intent.putExtra(TITLE, title);
         intent.putExtra(SHARE_TYPE, shareType);
         intent.putExtra(DATE_TYPE, dateType);
         intent.putExtra(HAS_MORE, hasMore);
-        context.startActivity(intent);
+        return intent;
     }
-
 
     @Override
     protected void handleIntent() {

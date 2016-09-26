@@ -17,6 +17,7 @@ import android.widget.RelativeLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import com.asha.md360player4android.MD360PlayerActivity;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.base.BaseActivity;
@@ -374,8 +375,13 @@ public class VideoDetailActivity2 extends BaseActivity {
                 onBackPressed();
                 break;
             case R.id.iv_play:
-                VideoActivity.startList(mFromType, this, vpVideo.getCurrentItem(), mParentIndex,
-                    true, mVideoID);
+                ItemListData itemListData = mViewDatas.get(vpVideo.getCurrentItem()).getData();
+                if ("PANORAMIC".equals(itemListData.getType())) {
+                    MD360PlayerActivity.startVideo(this, itemListData.getPlayUrl());
+                } else {
+                    VideoActivity.startList(mFromType, this, vpVideo.getCurrentItem(), mParentIndex,
+                        true, mVideoID);
+                }
                 break;
             case R.id.tv_reply_count:
                 mRlButton.setVisibility(View.GONE);

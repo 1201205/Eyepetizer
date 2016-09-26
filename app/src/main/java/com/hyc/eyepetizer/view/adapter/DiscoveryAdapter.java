@@ -2,20 +2,18 @@ package com.hyc.eyepetizer.view.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.model.beans.ItemListData;
 import com.hyc.eyepetizer.model.beans.ViewData;
+import com.hyc.eyepetizer.utils.DataHelper;
 import com.hyc.eyepetizer.utils.FrescoHelper;
 import com.hyc.eyepetizer.utils.WidgetHelper;
 import com.hyc.eyepetizer.view.adapter.holder.BannerViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.RectangleCardViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.SquareCardViewHolder;
-
 import java.util.List;
 
 /**
@@ -23,12 +21,13 @@ import java.util.List;
  */
 public class DiscoveryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<ViewData> mDatas;
-    private Context mContext;
     private LayoutInflater mLayoutInflater;
+    private Context mContext;
 
 
     public DiscoveryAdapter(Context context, List<ViewData> datas) {
         mDatas = datas;
+        mContext = context;
         mLayoutInflater=LayoutInflater.from(context);
     }
 
@@ -63,20 +62,50 @@ public class DiscoveryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             holder.vpBanner.setAdapter(adapter);
             holder.vpBanner.addOnPageChangeListener(adapter);
             adapter.notifyDataSetChanged();
+            adapter.setItemClickListener(new LoopViewPagerAdapter.ItemClickListener() {
+                @Override public void itemClicked(ViewData data) {
+                    if ("eyepetizer://recommend/".equals(data.getData().getActionUrl())) {
+                    } else {
+
+                    }
+                }
+            });
         }
     }
     private void bindView(SquareCardViewHolder holder, int position) {
-        ItemListData data=mDatas.get(position).getData();
+        final ItemListData data = mDatas.get(position).getData();
         FrescoHelper.loadUrl(holder.img,data.getImage());
         if (data.isShade()) {
             holder.flow.setVisibility(View.VISIBLE);
             holder.flow.setText(data.getTitle());
+            holder.setOnItemClickListener(new SquareCardViewHolder.ItemClickListener() {
+                @Override public void onItemClicked(int locationY, int current) {
+                    mContext.startActivity(
+                        DataHelper.getIntentByUri(mContext, data.getActionUrl()));
+                }
+            });
         } else {
             holder.flow.setVisibility(View.GONE);
+            holder.img.setOnClickListener(new View.OnClickListener() {
+                @Override public void onClick(View v) {
+                    mContext.startActivity(
+                        DataHelper.getIntentByUri(mContext, data.getActionUrl()));
+                }
+            });
         }
+
     }
+
+
+    //Error:Dependency Eyepetizer:md360:unspecified on project app resolves to an APK archive which is not supported as a compilation dependency. File: /Users/huangyichen/Downloads/Eyepetizer/md360/build/outputs/apk/md360-release-unsigned.apk
     private void bindView(RectangleCardViewHolder holder, int position) {
-        FrescoHelper.loadUrl(holder.sdvImage,mDatas.get(position).getData().getImage());
+        final ItemListData data = mDatas.get(position).getData();
+        FrescoHelper.loadUrl(holder.sdvImage, data.getImage());
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                mContext.startActivity(DataHelper.getIntentByUri(mContext, data.getActionUrl()));
+            }
+        });
     }
 
 

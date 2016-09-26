@@ -1,1 +1,1 @@
-include ':app', ':ijkplayer'
+include ':app', ':ijkplayer', ':vrlib', ':md360'

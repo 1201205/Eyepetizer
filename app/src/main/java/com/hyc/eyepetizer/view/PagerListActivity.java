@@ -107,6 +107,7 @@ public class PagerListActivity extends BaseActivity {
         return intent;
     }
 
+
     @Override
     protected void handleIntent() {
         Intent intent = getIntent();
@@ -349,7 +350,7 @@ public class PagerListActivity extends BaseActivity {
                 public void onAnimationEnd(Animator animator) {
                     mLastType = event.fromType;
                     mLastIndex = event.position;
-                    if (mLastType == FromType.TYPE_PGC_DATE) {
+                    if (mLastType % 2 == 0) {
                         mDate.setLastIndex(mLastIndex);
                     } else {
                         mShare.setLastIndex(mLastIndex);

@@ -64,6 +64,9 @@
         <activity
         android:screenOrientation="portrait"
         android:name=".view.SpecialTopicsActivity"/>
+        <activity
+            android:screenOrientation="portrait"
+            android:name=".view.LightTopicActivity"/>
     </application>
 
 </manifest>

@@ -29,6 +29,7 @@ public class ViewDataListFactory {
             case FromType.TYPE_TAG_SHARE:
             case FromType.TYPE_CATEGORY_DATE:
             case FromType.TYPE_CATEGORY_SHARE:
+            case FromType.TYPE_LIGHT_TOPIC:
                 return VideoListModel.getInstance();
         }
         return null;

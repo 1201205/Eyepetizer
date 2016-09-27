@@ -4,10 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import com.hyc.eyepetizer.model.FromType;
+import com.hyc.eyepetizer.view.LightTopicActivity;
 import com.hyc.eyepetizer.view.PagerListActivity;
 import com.hyc.eyepetizer.view.RankActivity;
 import com.hyc.eyepetizer.view.SpecialTopicsActivity;
-
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -98,7 +99,11 @@ public class DataHelper {
                 intent=new Intent(context, SpecialTopicsActivity.class);
                 break;
             case COMMON:
-                intent=new Intent(context, SpecialTopicsActivity.class);
+                String url = myUri.getQueryParameter("url");
+                List<String> list = Uri.parse(url).getPathSegments();
+                String id = (list.get(list.size() - 1)).replace("/", "");
+                intent = LightTopicActivity.getIntent(context, myUri.getQueryParameter("title"),
+                    Integer.valueOf(id));
                 break;
         }
         return intent;

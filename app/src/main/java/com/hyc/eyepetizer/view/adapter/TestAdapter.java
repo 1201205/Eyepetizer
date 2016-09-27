@@ -87,7 +87,8 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             case WidgetHelper.ViewType.BRIEF_CARD:
                 return new BriefCardViewHolder(mLayoutInflater.inflate(R.layout.item_brief_card, parent, false));
             case WidgetHelper.ViewType.BANNER2:
-                return new RectangleCardViewHolder(mLayoutInflater.inflate(R.layout.item_rectangle, parent, false));
+                return new RectangleCardViewHolder(
+                    mLayoutInflater.inflate(R.layout.item_img, parent, false));
         }
         return null;
     }

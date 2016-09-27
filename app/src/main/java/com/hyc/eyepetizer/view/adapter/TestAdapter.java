@@ -29,6 +29,7 @@ import com.hyc.eyepetizer.view.adapter.holder.CampaignViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.CoverVideoViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.ForwardViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.NoMoreViewHolder;
+import com.hyc.eyepetizer.view.adapter.holder.RectangleCardViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.TextHeaderViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.TitleVideoViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.VideoViewHolder;
@@ -85,6 +86,8 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 return new CampaignViewHolder(mLayoutInflater.inflate(R.layout.item_campaign, parent, false));
             case WidgetHelper.ViewType.BRIEF_CARD:
                 return new BriefCardViewHolder(mLayoutInflater.inflate(R.layout.item_brief_card, parent, false));
+            case WidgetHelper.ViewType.BANNER2:
+                return new RectangleCardViewHolder(mLayoutInflater.inflate(R.layout.item_rectangle, parent, false));
         }
         return null;
     }
@@ -112,6 +115,8 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             bindView((CampaignViewHolder) holder, mDatas.get(position));
         } else if (holder instanceof BriefCardViewHolder) {
             bindView((BriefCardViewHolder) holder, mDatas.get(position));
+        } else if (holder instanceof RectangleCardViewHolder) {
+            bindView((RectangleCardViewHolder) holder, mDatas.get(position));
         }
     }
 
@@ -263,7 +268,16 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         params.height = data.getData().getHeight();
         holder.space.setLayoutParams(params);
     }
+    private void bindView(RectangleCardViewHolder holder, final ViewData data) {
 
+                FrescoHelper.loadUrl(holder.sdvImage,data.getData().getImage());
+        holder.sdvImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+              context.startActivity(DataHelper.getIntentByUri(context,data.getData().getActionUrl()));
+            }
+        });
+    }
 
     private void bindView(TitleVideoViewHolder holder, final ViewData data, final int position) {
         holder.title.setTextColor(mTitleColor);

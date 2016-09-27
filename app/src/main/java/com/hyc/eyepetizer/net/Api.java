@@ -119,4 +119,14 @@ public interface Api {
 
     @GET("/api/v3/videos") Observable<Videos> getMoreCategoryByStrategy(@Query("start") int start,@Query("num") int num,
                                                                        @Query("categoryId") int categoryId, @Query("strategy") String strategy);
+
+    //http://baobab.wandoujia.com/api/v3/specialTopics?udid=8954dd2dac7e41d68d967d5cc8115ced8b7af94c&vc=126&vn=2.4.1&deviceModel=Redmi%20Note%203&first_channel=eyepetizer_yingyongbao_market&last_channel=eyepetizer_yingyongbao_market&system_version_code=22
+
+    @GET("/api/v3/specialTopics?vc=126") Observable<Videos> getSpecialTopics();
+    @GET("/api/v3/specialTopics?vc=126") Observable<Videos> getMoreSpecialTopics(@Query("start") int start,@Query("num") int num
+                                                                            );
+    //http://baobab.wandoujia.com/api/v3/lightTopics/36?udid=8954dd2dac7e41d68d967d5cc8115ced8b7af94c&vc=126&vn=2.4.1&deviceModel=Redmi%20Note%203&first_channel=eyepetizer_yingyongbao_market&last_channel=eyepetizer_yingyongbao_market&system_version_code=22
+    @GET("/api/v3/lightTopics/{id}?vc=126") Observable<Videos> getLightTopicsByID(@Path("id") int id);
+
+
 }

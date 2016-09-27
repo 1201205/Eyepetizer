@@ -87,6 +87,12 @@ public class DiscoveryFragment extends BaseFragment<DiscoveryPresenter> implemen
         });
     }
 
+    /**
+     * 根据位置判断当前position是否处于奇数
+     * 也就是当前position减去前一条一排只有一个的位置
+     * @param itemPosition
+     * @return
+     */
     private boolean isTheOdd(int itemPosition) {
         int last=0;
         for (int i = mPositionSparseArray.size() - 1; i >= 0; i--) {
@@ -95,8 +101,6 @@ public class DiscoveryFragment extends BaseFragment<DiscoveryPresenter> implemen
                 break;
             }
         }
-        Log.e("hyc-t", itemPosition + "----" + last);
-
         return (itemPosition - last) % 2 == 1;
     }
 

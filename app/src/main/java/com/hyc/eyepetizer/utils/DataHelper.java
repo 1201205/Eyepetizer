@@ -6,6 +6,8 @@ import android.net.Uri;
 import com.hyc.eyepetizer.model.FromType;
 import com.hyc.eyepetizer.view.PagerListActivity;
 import com.hyc.eyepetizer.view.RankActivity;
+import com.hyc.eyepetizer.view.SpecialTopicsActivity;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,6 +20,7 @@ public class DataHelper {
     private static final String TAG = "tag";
     private static final String CATEGORY = "category";
     private static final String CAMPAIGN = "campaign";
+    private static final String COMMON="common";
 
 
     /**
@@ -92,6 +95,10 @@ public class DataHelper {
                     FromType.TYPE_CATEGORY_SHARE, true);
                 break;
             case CAMPAIGN:
+                intent=new Intent(context, SpecialTopicsActivity.class);
+                break;
+            case COMMON:
+                intent=new Intent(context, SpecialTopicsActivity.class);
                 break;
         }
         return intent;

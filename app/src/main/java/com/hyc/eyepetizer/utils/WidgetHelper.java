@@ -33,6 +33,8 @@ public class WidgetHelper {
                 return ViewType.SQUARE_CARD;
             case Type.RECTANGLE_CARD:
                 return ViewType.RECTANGLE_CARD;
+            case Type.BANNER2:
+                return ViewType.BANNER2;
         }
         return ViewType.Error;
     }
@@ -53,6 +55,7 @@ public class WidgetHelper {
         String HORIZONTAL_SCROLL_CARD = "horizontalScrollCard";
         String SQUARE_CARD = "squareCard";
         String RECTANGLE_CARD = "rectangleCard";
+        String BANNER2 = "banner2";
 
     }
 
@@ -72,5 +75,6 @@ public class WidgetHelper {
         int HORIZONTAL_SCROLL_CARD = 11;
         int SQUARE_CARD = 12;
         int RECTANGLE_CARD = 13;
+        int BANNER2 = 14;
     }
 }

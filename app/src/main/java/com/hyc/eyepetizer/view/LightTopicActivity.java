@@ -51,7 +51,6 @@ public class LightTopicActivity extends BaseActivity<LightTopicPresenter> implem
     private boolean isAnimating;
     private float mItemHeight;
     private float mTitleHeight;
-    private float mRatio;
     private int lastY;
     private int mEndY;
     private boolean isStarting;
@@ -65,6 +64,7 @@ public class LightTopicActivity extends BaseActivity<LightTopicPresenter> implem
     private int mLastIndex;
     private int mID;
     private String mTitle;
+    private float mRatio;
 
 
     public static Intent getIntent(Context context, String title, int id) {
@@ -123,9 +123,19 @@ public class LightTopicActivity extends BaseActivity<LightTopicPresenter> implem
         EventBus.getDefault().register(this);
         ButterKnife.bind(this);
         initPresenter();
+        initView();
         mManager=new LinearLayoutManager(this);
         mManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRvVideo.setLayoutManager(mManager);
+    }
+
+
+    private void initView() {
+        mTitleHeight = AppUtil.dip2px(45);
+        mItemHeight = AppUtil.dip2px(250);
+        mRatio = AppUtil.dip2px(353) / mItemHeight;
+        mEndY = (int) (AppUtil.getScreenHeight(this) - AppUtil.getStatusBarHeight(this) -
+            mItemHeight - AppUtil.dip2px(60));
     }
 
 
@@ -138,10 +148,11 @@ public class LightTopicActivity extends BaseActivity<LightTopicPresenter> implem
 
     @Subscribe
     public void handleStartActivity(final StartVideoDetailEvent event) {
-        if (isStarting || event.fromType != FromType.TYPE_LIGHT_TOPIC) {
+        if (isAnimating || event.fromType != FromType.TYPE_LIGHT_TOPIC) {
             return;
         }
-        isStarting=true;
+        isAnimating = true;
+
         sdvAnim.setVisibility(View.VISIBLE);
         sdvAnim.setY(event.locationY - AppUtil.getStatusBarHeight(LightTopicActivity.this));
         FrescoHelper.loadUrl(sdvAnim, event.url);
@@ -153,7 +164,7 @@ public class LightTopicActivity extends BaseActivity<LightTopicPresenter> implem
             .setDuration(ANIMATION_DURATION)
                 .setListener(new MyAnimatorListener() {
                     @Override public void onAnimationEnd(Animator animator) {
-                        isStarting=false;
+                        isStarting = true;
                         Intent intent = VideoDetailActivity2.newIntent(FromType.TYPE_LIGHT_TOPIC,
                                 LightTopicActivity.this, event.index,
                             event.parentIndex, mID);
@@ -163,6 +174,13 @@ public class LightTopicActivity extends BaseActivity<LightTopicPresenter> implem
                 })
                 .setInterpolator(mInterpolator)
                 .start();
+    }
+
+
+    @Override protected void onResume() {
+        super.onResume();
+        isStarting = false;
+        isAnimating = false;
     }
 
 

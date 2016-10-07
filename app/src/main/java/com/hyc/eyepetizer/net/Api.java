@@ -1,6 +1,7 @@
 package com.hyc.eyepetizer.net;
 
 import com.hyc.eyepetizer.model.beans.DailySelection;
+import com.hyc.eyepetizer.model.beans.Recommends;
 import com.hyc.eyepetizer.model.beans.Reply;
 import com.hyc.eyepetizer.model.beans.Selection;
 import com.hyc.eyepetizer.model.beans.TagVideoList;
@@ -127,6 +128,7 @@ public interface Api {
                                                                             );
     //http://baobab.wandoujia.com/api/v3/lightTopics/36?udid=8954dd2dac7e41d68d967d5cc8115ced8b7af94c&vc=126&vn=2.4.1&deviceModel=Redmi%20Note%203&first_channel=eyepetizer_yingyongbao_market&last_channel=eyepetizer_yingyongbao_market&system_version_code=22
     @GET("/api/v3/lightTopics/{id}?vc=126") Observable<Videos> getLightTopicsByID(@Path("id") int id);
-
+    //http://baobab.wandoujia.com/api/v3/recommend?udid=8954dd2dac7e41d68d967d5cc8115ced8b7af94c&vc=126&vn=2.4.1&deviceModel=Redmi%20Note%203&first_channel=eyepetizer_yingyongbao_market&last_channel=eyepetizer_yingyongbao_market&system_version_code=22
+    @GET("/api/v3/recommend?vc=126") Observable<Recommends> getRecommends();
 
 }

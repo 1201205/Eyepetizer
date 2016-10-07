@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white">
+
+    <include layout="@layout/title_bar"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/sdv_blur"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:fadeDuration="200"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <com.hyc.eyepetizer.widget.CustomTextView
+                android:id="@+id/tv_indicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:typeface="@string/type_bold"/>
+
+            <com.hyc.eyepetizer.widget.SwipeFlingAdapterView
+                android:id="@+id/sf_recommends"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:min_adapter_stack="4"
+                app:max_visible="4"
+                app:y_offset_step="38dp"
+                android:layout_weight="1"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_action_like"
+                android:layout_marginBottom="30dp"/>
+        </LinearLayout>
+
+        <include layout="@layout/item_recommends"/>
+    </FrameLayout>
+
+</LinearLayout>

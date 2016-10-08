@@ -71,9 +71,15 @@ public class RecommendsActivity extends BaseActivity<RecommendsPresenter> implem
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Debug.startMethodTracing("tracefilename");
         // TODO: add setContentView(...) invocation
         initPresenter();
         initView();
+    }
+
+
+    @Override protected void onDestroy() {
+        super.onDestroy();
     }
 
 
@@ -162,7 +168,7 @@ public class RecommendsActivity extends BaseActivity<RecommendsPresenter> implem
         mRemoved.remove(mRemoved.size() - 1);
 
 //        sfRecommends.requestLayout();
-        //FrescoHelper.loadUrl(sdvBlur,mAdapter.getItem(0).getData().getCover().getBlurred());
+        FrescoHelper.loadUrl(sdvBlur, mAdapter.getItem(0).getData().getCover().getBlurred());
         llHint.postDelayed(new Runnable() {
             @Override
             public void run() {

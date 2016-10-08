@@ -113,6 +113,9 @@ public class RecommendsActivity extends BaseActivity<RecommendsPresenter> implem
 
     @Override public void removeFirstObjectInAdapter() {
         mAdapter.remove(0);
+        sfRecommends.setRemoveInLayout();
+        sfRecommends.removeFirst();
+
         FrescoHelper.loadUrl(sdvBlur, mAdapter.getItem(0).getData().getCover().getBlurred());
     }
 
@@ -155,12 +158,20 @@ public class RecommendsActivity extends BaseActivity<RecommendsPresenter> implem
             return;
         }
         mAdapter.reAdd(mRemoved.get(mRemoved.size() - 1));
+        sfRecommends.addFirst();
         mRemoved.remove(mRemoved.size() - 1);
-        if (mRemoved.size() > 0) {
-            setHintView(mRemoved.get(mRemoved.size() - 1).getData());
-        }
+
+//        sfRecommends.requestLayout();
         //FrescoHelper.loadUrl(sdvBlur,mAdapter.getItem(0).getData().getCover().getBlurred());
-        llHint.setVisibility(View.INVISIBLE);
+        llHint.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (mRemoved.size() > 0) {
+                    setHintView(mRemoved.get(mRemoved.size() - 1).getData());
+                }
+                llHint.setVisibility(View.INVISIBLE);
+            }
+        },16*8);
     }
 
 }

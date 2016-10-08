@@ -8,6 +8,7 @@ import android.content.res.TypedArray;
 import android.database.DataSetObserver;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -129,20 +130,84 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
     public View getSelectedView() {
         return mActiveCard;
     }
+    private boolean forAdd;
+    private boolean forRemove;
 
-
+    public void setAddInLayout(){
+        forAdd=true;
+        forRemove=false;
+    }
+    public void setRemoveInLayout(){
+        forAdd=false;
+        forRemove=true;
+    }
+    public void reset(){
+        forAdd=false;
+        forRemove=false;
+    }
     @Override
     public void requestLayout() {
         if (!mInLayout) {
-            if (getChildCount() > 0) {
-                removeAllViewsInLayout();
-            }
-
+//            if (forAdd) {
+//                FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) mAddView.getLayoutParams();
+//                addViewInLayout(mAddView, 0, lp, true);
+//            }
+////            if (forRemove) {
+////            }
+//            reset();
+//            if (getChildCount()>0) {
+//                removeAllViewsInLayout();
+//            }
+            Log.e("hyc-t","requestLayout");
             super.requestLayout();
         }
     }
 
-
+    public void removeFirst(){
+        final int adapterCount = mAdapter.getCount();
+        Log.e("hyc-p",getChildCount()+"- getChildCount--");
+        if (adapterCount == 0) {
+            //            removeAllViewsInLayout();
+            removeAndAddToCache(0);
+        } else {
+            View topCard = getChildAt(LAST_OBJECT_IN_STACK);
+            if (mActiveCard != null && topCard != null && topCard == mActiveCard) {
+                //                removeViewsInLayout(0, LAST_OBJECT_IN_STACK);
+                Log.e("hyc-p","first-layout");
+                removeAndAddToCache(1);
+                layoutChildren(1, adapterCount);
+//                layoutFirst();
+            } else {
+                Log.e("hyc-p","first-layout");
+                // Reset the UI and set top view listener
+                //                removeAllViewsInLayout();
+                removeAndAddToCache(0);
+                layoutChildren(0, adapterCount);
+                setTopView();
+            }
+        }
+        Log.e("hyc-p",getChildCount()+"- getChildCount--");
+    }
+    public void addFirst(){
+        View item = null;
+        if (cacheItems.size() > 0) {
+            item = cacheItems.get(0);
+            cacheItems.remove(item);
+        }
+        View newUnderChild = mAdapter.getView(0, item, this);
+        if (newUnderChild.getVisibility() != GONE) {
+            if (getChildCount() >= MAX_VISIBLE) {
+                removeViewInLayout(getChildAt(0));
+                makeAndAddView(newUnderChild, 0, MAX_VISIBLE - 1);
+            } else {
+                makeAndAddView(newUnderChild, 0, getChildCount());
+                if (LAST_OBJECT_IN_STACK+1<MAX_VISIBLE) {
+                    LAST_OBJECT_IN_STACK++;
+                }
+            }
+        }
+        setTopView();
+    }
     public void setAddView(View view, int hintOffset) {
         mAddView = view;
         mHintOffset = hintOffset;
@@ -156,7 +221,7 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
         if (mAdapter == null) {
             return;
         }
-
+        Log.e("hyc-t","onLayout");
         mInLayout = true;
         final int adapterCount = mAdapter.getCount();
         if (adapterCount == 0) {
@@ -166,9 +231,12 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
             View topCard = getChildAt(LAST_OBJECT_IN_STACK);
             if (mActiveCard != null && topCard != null && topCard == mActiveCard) {
                 //                removeViewsInLayout(0, LAST_OBJECT_IN_STACK);
+                Log.e("hyc-p","first-layout");
                 removeAndAddToCache(1);
                 layoutChildren(1, adapterCount);
+//                layoutFirst();
             } else {
+                Log.e("hyc-p","first-layout");
                 // Reset the UI and set top view listener
                 //                removeAllViewsInLayout();
                 removeAndAddToCache(0);
@@ -193,30 +261,75 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
 
     private void removeAndAddToCache(int remain) {
         View view;
-        for (int i = 0; i < getChildCount() - remain; ) {
-            view = getChildAt(i);
-            removeViewInLayout(view);
-            cacheItems.add(view);
-        }
-    }
 
+        if (!forRemove) {
+            for (int i = 0; i < getChildCount() - remain; ) {
+                view = getChildAt(i);
+                removeViewInLayout(view);
+                cacheItems.add(view);
+            }
+        } else {
+//            view = getChildAt(getChildCount()-1);
+//            removeViewInLayout(view);
+//            cacheItems.add(view);
+        }
+
+    }
+    private boolean first;
 
     private void layoutChildren(int startingIndex, int adapterCount) {
-        while (startingIndex < Math.min(adapterCount, MAX_VISIBLE)) {
+        if (!forRemove) {
+            while (startingIndex < Math.min(adapterCount, MAX_VISIBLE)) {
+                View item = null;
+                if (cacheItems.size() > 0) {
+                    item = cacheItems.get(0);
+                    cacheItems.remove(item);
+                }
+                Log.e("hyc-p-", System.currentTimeMillis() + "--start");
+                View newUnderChild = mAdapter.getView(startingIndex, item, this);
+                Log.e("hyc-p-", System.currentTimeMillis() + "--end");
+                if (newUnderChild.getVisibility() != GONE) {
+                    makeAndAddView(newUnderChild, startingIndex);
+                    LAST_OBJECT_IN_STACK = startingIndex;
+                    Log.e("hyc-p", "LAST_OBJECT_IN_STACK--" + LAST_OBJECT_IN_STACK);
+                }
+
+                startingIndex++;
+            }
+        } else {
+            if (adapterCount<MAX_VISIBLE) {
+                LAST_OBJECT_IN_STACK--;
+                return;
+            }
+            int x=Math.min(adapterCount, MAX_VISIBLE)-1;
             View item = null;
             if (cacheItems.size() > 0) {
                 item = cacheItems.get(0);
                 cacheItems.remove(item);
             }
-            View newUnderChild = mAdapter.getView(startingIndex, item, this);
+            Log.e("hyc-p-", System.currentTimeMillis() + "--start");
+            View newUnderChild = mAdapter.getView(x, item, this);
+            Log.e("hyc-p-", System.currentTimeMillis() + "--end");
             if (newUnderChild.getVisibility() != GONE) {
-                makeAndAddView(newUnderChild, startingIndex);
-                LAST_OBJECT_IN_STACK = startingIndex;
+                makeAndAddView(newUnderChild, x);
+                LAST_OBJECT_IN_STACK = x;
+                Log.e("hyc-p", "LAST_OBJECT_IN_STACK--" + LAST_OBJECT_IN_STACK);
             }
-            startingIndex++;
         }
+
     }
 
+    private void layoutFirst(){
+        View item = null;
+        if (cacheItems.size() > 0) {
+            item = cacheItems.get(0);
+            cacheItems.remove(item);
+        }
+        View newUnderChild = mAdapter.getView(0, item, this);
+        if (newUnderChild.getVisibility() != GONE) {
+            makeAndAddView(newUnderChild, 0);
+        }
+    }
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     private void makeAndAddView(View child, int index) {
@@ -285,7 +398,72 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
         // 缩放层叠效果
         adjustChildView(child, index);
     }
+    private void makeAndAddView(View child, int index,int position) {
 
+        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) child.getLayoutParams();
+        addViewInLayout(child, position, lp, true);
+
+        final boolean needToMeasure = child.isLayoutRequested();
+        if (needToMeasure) {
+            int childWidthSpec = getChildMeasureSpec(getWidthMeasureSpec(),
+                    getPaddingLeft() + getPaddingRight() + lp.leftMargin + lp.rightMargin,
+                    lp.width);
+            int childHeightSpec = getChildMeasureSpec(getHeightMeasureSpec(),
+                    getPaddingTop() + getPaddingBottom() + lp.topMargin + lp.bottomMargin,
+                    lp.height);
+            child.measure(childWidthSpec, childHeightSpec);
+        } else {
+            cleanupLayoutState(child);
+        }
+
+        int w = child.getMeasuredWidth();
+        int h = child.getMeasuredHeight();
+
+        int gravity = lp.gravity;
+        if (gravity == -1) {
+            gravity = Gravity.TOP | Gravity.START;
+        }
+
+        int layoutDirection = 0;
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
+            layoutDirection = getLayoutDirection();
+        }
+        final int absoluteGravity = Gravity.getAbsoluteGravity(gravity, layoutDirection);
+        final int verticalGravity = gravity & Gravity.VERTICAL_GRAVITY_MASK;
+
+        int childLeft;
+        int childTop;
+        switch (absoluteGravity & Gravity.HORIZONTAL_GRAVITY_MASK) {
+            case Gravity.CENTER_HORIZONTAL:
+                childLeft = (getWidth() + getPaddingLeft() - getPaddingRight() - w) / 2 +
+                        lp.leftMargin - lp.rightMargin;
+                break;
+            case Gravity.END:
+                childLeft = getWidth() + getPaddingRight() - w - lp.rightMargin;
+                break;
+            case Gravity.START:
+            default:
+                childLeft = getPaddingLeft() + lp.leftMargin;
+                break;
+        }
+        switch (verticalGravity) {
+            case Gravity.CENTER_VERTICAL:
+                childTop = (getHeight() + getPaddingTop() - getPaddingBottom() - h) / 2 +
+                        lp.topMargin - lp.bottomMargin;
+
+                break;
+            case Gravity.BOTTOM:
+                childTop = getHeight() - getPaddingBottom() - h - lp.bottomMargin;
+                break;
+            case Gravity.TOP:
+            default:
+                childTop = getPaddingTop() + lp.topMargin;
+                break;
+        }
+        child.layout(childLeft, childTop, childLeft + w, childTop + h);
+        // 缩放层叠效果
+        adjustChildView(child, index);
+    }
 
     private void adjustChildView(final View child, int index) {
         if (index > -1 && index < MAX_VISIBLE) {
@@ -345,7 +523,7 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
 
     private void adjustChildrenOfUnderTopView(float scrollRate) {
         int count = getChildCount();
-        if (count > 1) {
+        if (count >= 1) {
             int i;
             int multiple;
             if (count == 2) {
@@ -359,12 +537,21 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
             int j;
 
             if (forLeft) {
-                i += 1;
-                j = LAST_OBJECT_IN_STACK + 1;
+                if (count < MAX_VISIBLE) {
+                    j = LAST_OBJECT_IN_STACK + 1;
+                } else {
+                    i += 1;
+                    j = LAST_OBJECT_IN_STACK + 1;
+                }
+
             } else {
                 j = LAST_OBJECT_IN_STACK;
             }
-            for (; i < j; i++, multiple--) {
+            if (count==1) {
+                i = 0;
+                multiple = 1;
+            }
+                for (; i < j; i++, multiple--) {
                 View underTopView = getChildAt(i);
                 int offset = (int) (yOffsetStep * (multiple - rate));
                 underTopView.offsetTopAndBottom(offset - underTopView.getTop() + initTop);

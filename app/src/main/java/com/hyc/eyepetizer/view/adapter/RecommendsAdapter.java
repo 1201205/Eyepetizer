@@ -73,14 +73,14 @@ public class RecommendsAdapter extends BaseAdapter {
 
     public void reAdd(ViewData data) {
         mDatas.add(0, data);
-        notifyDataSetChanged();
+//        notifyDataSetChanged();
     }
 
 
     public void remove(int index) {
         if (index > -1 && index < mDatas.size()) {
             mDatas.remove(index);
-            notifyDataSetChanged();
+//            notifyDataSetChanged();
         }
     }
 

@@ -17,4 +17,10 @@
         android:id="@+id/rv_collection"
         android:layout_width="wrap_content"
         android:layout_height="160dp"/>
+    <View
+        android:layout_alignParentBottom="true"
+        android:background="@color/space_bg"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginTop="10dp"/>
 </LinearLayout>

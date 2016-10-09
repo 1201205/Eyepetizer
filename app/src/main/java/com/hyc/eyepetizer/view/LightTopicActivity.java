@@ -24,6 +24,7 @@ import com.hyc.eyepetizer.model.beans.ViewData;
 import com.hyc.eyepetizer.presenter.LightTopicPresenter;
 import com.hyc.eyepetizer.utils.AppUtil;
 import com.hyc.eyepetizer.utils.FrescoHelper;
+import com.hyc.eyepetizer.utils.TypefaceHelper;
 import com.hyc.eyepetizer.view.adapter.TestAdapter;
 import com.hyc.eyepetizer.widget.CustomTextView;
 import com.hyc.eyepetizer.widget.MyAnimatorListener;
@@ -46,6 +47,10 @@ public class LightTopicActivity extends BaseActivity<LightTopicPresenter> implem
     RelativeLayout mRlError;
     @BindView(R.id.sdv_anim)
     SimpleDraweeView sdvAnim;
+    @BindView(R.id.img_left)
+    ImageView imgLeft;
+    @BindView(R.id.tv_head_title)
+    CustomTextView tvHeadTitle;
     private TestAdapter mAdapter;
     private LinearLayoutManager mManager;
     private boolean isAnimating;
@@ -131,6 +136,15 @@ public class LightTopicActivity extends BaseActivity<LightTopicPresenter> implem
 
 
     private void initView() {
+        imgLeft.setVisibility(View.VISIBLE);
+        imgLeft.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        tvHeadTitle.setText(mTitle);
+        tvHeadTitle.setTypeface(TypefaceHelper.getTypeface(TypefaceHelper.BOLD));
         mTitleHeight = AppUtil.dip2px(45);
         mItemHeight = AppUtil.dip2px(250);
         mRatio = AppUtil.dip2px(353) / mItemHeight;

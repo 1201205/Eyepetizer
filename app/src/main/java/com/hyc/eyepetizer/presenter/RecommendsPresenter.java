@@ -4,6 +4,8 @@ import com.hyc.eyepetizer.base.BasePresenter;
 import com.hyc.eyepetizer.base.DefaultTransformer;
 import com.hyc.eyepetizer.base.ExceptionAction;
 import com.hyc.eyepetizer.contract.RecommendsContract;
+import com.hyc.eyepetizer.model.FromType;
+import com.hyc.eyepetizer.model.VideoListModel;
 import com.hyc.eyepetizer.model.beans.Recommends;
 import com.hyc.eyepetizer.net.Requests;
 import rx.functions.Action1;
@@ -27,6 +29,7 @@ public class RecommendsPresenter extends BasePresenter<RecommendsContract.View>
                 .subscribe(
                     new Action1<Recommends>() {
                         @Override public void call(Recommends recommends) {
+                            VideoListModel.getInstance().addVideoList(FromType.TYPE_RECOMMENDS,recommends.getItemList());
                             mView.showRecommends(recommends.getItemList());
                         }
                     }, new ExceptionAction() {

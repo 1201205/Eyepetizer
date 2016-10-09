@@ -5,18 +5,24 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import butterknife.BindView;
+
+import com.asha.md360player4android.MD360PlayerActivity;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.base.BaseActivity;
 import com.hyc.eyepetizer.contract.RecommendsContract;
+import com.hyc.eyepetizer.model.FromType;
 import com.hyc.eyepetizer.model.beans.ItemListData;
 import com.hyc.eyepetizer.model.beans.ViewData;
 import com.hyc.eyepetizer.presenter.RecommendsPresenter;
+import com.hyc.eyepetizer.utils.AppUtil;
 import com.hyc.eyepetizer.utils.DataHelper;
 import com.hyc.eyepetizer.utils.FrescoHelper;
+import com.hyc.eyepetizer.utils.TypefaceHelper;
 import com.hyc.eyepetizer.view.adapter.RecommendsAdapter;
 import com.hyc.eyepetizer.widget.CustomTextView;
 import com.hyc.eyepetizer.widget.SwipeFlingAdapterView;
@@ -40,9 +46,14 @@ public class RecommendsActivity extends BaseActivity<RecommendsPresenter> implem
     @BindView(R.id.sdv_below_blur) SimpleDraweeView sdvBelowBlur;
     @BindView(R.id.tv_des) CustomTextView tvDes;
     @BindView(R.id.ll_hint) LinearLayout llHint;
+    @BindView(R.id.img_left)
+    ImageView imgLeft;
+    @BindView(R.id.tv_head_title)
+    CustomTextView tvHeadTitle;
 
     private RecommendsAdapter mAdapter;
     private List<ViewData> mRemoved;
+    private int mCount;
 
 
     @Override protected void handleIntent() {
@@ -60,7 +71,8 @@ public class RecommendsActivity extends BaseActivity<RecommendsPresenter> implem
         mAdapter.addAll(dataList);
         setHintView(dataList.get(0).getData());
         FrescoHelper.loadUrl(sdvBlur, mAdapter.getItem(0).getData().getCover().getBlurred());
-
+        mCount=dataList.size();
+        tvIndicator.setText(String.format(AppUtil.getString(R.string.item_count),1,mCount));
     }
 
 
@@ -84,8 +96,17 @@ public class RecommendsActivity extends BaseActivity<RecommendsPresenter> implem
 
 
     private void initView() {
-
+        imgLeft.setVisibility(View.VISIBLE);
+        imgLeft.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        tvHeadTitle.setText(R.string.recommend);
+        tvHeadTitle.setTypeface(TypefaceHelper.getTypeface(TypefaceHelper.BOLD));
         sfRecommends.setFlingListener(this);
+        sfRecommends.setOnItemClickListener(this);
         sfRecommends.getViewTreeObserver()
             .addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
                 @Override
@@ -93,7 +114,6 @@ public class RecommendsActivity extends BaseActivity<RecommendsPresenter> implem
                     sfRecommends.getViewTreeObserver().removeOnPreDrawListener(this);
                     llHint.setX(-llHint.getWidth());
                     sfRecommends.setAddView(llHint, tvIndicator.getHeight());
-                    Log.e("hyc-test2--", tvIndicator.getHeight() + "");
                     //FrameLayout.LayoutParams params= (FrameLayout.LayoutParams) llHint.getLayoutParams();
                     //Log.e("hyc-p",params.height+"---"+params.width+"----"+params.topMargin+"----"+params.bottomMargin+"----"+params.leftMargin+"----"+params.rightMargin+"---")    ;
 
@@ -113,7 +133,14 @@ public class RecommendsActivity extends BaseActivity<RecommendsPresenter> implem
 
 
     @Override public void onItemClicked(MotionEvent event, View v, Object dataObject) {
-
+        ViewData data= (ViewData) dataObject;
+        ItemListData itemListData = data.getData();
+        if ("PANORAMIC".equals(itemListData.getType())) {
+            MD360PlayerActivity.startVideo(this, itemListData.getPlayUrl());
+        } else {
+            VideoActivity.startList(FromType.TYPE_RECOMMENDS, this, mRemoved.size(), 0,
+                    false, FromType.TYPE_RECOMMENDS);
+        }
     }
 
 
@@ -121,7 +148,7 @@ public class RecommendsActivity extends BaseActivity<RecommendsPresenter> implem
         mAdapter.remove(0);
         sfRecommends.setRemoveInLayout();
         sfRecommends.removeFirst();
-
+        tvIndicator.setText(String.format(AppUtil.getString(R.string.item_count),mRemoved.size()+1,mCount));
         FrescoHelper.loadUrl(sdvBlur, mAdapter.getItem(0).getData().getCover().getBlurred());
     }
 
@@ -177,7 +204,8 @@ public class RecommendsActivity extends BaseActivity<RecommendsPresenter> implem
                 }
                 llHint.setVisibility(View.INVISIBLE);
             }
-        },16*8);
+        },100);
+        tvIndicator.setText(String.format(AppUtil.getString(R.string.item_count),mRemoved.size()+1,mCount));
     }
 
 }

@@ -33,7 +33,7 @@ public class Requests {
     private static File sHttpCacheDirectory;
     private static Cache sCache;
     private static OkHttpClient sClient;
-    private static String UUID= AppUtil.getAndroidUUID();
+    private static String UUID= "8954dd2dac7e41d68d967d5cc8115ced8b7af94c";
 
     public static Api getApi() {
         synchronized (sObject) {

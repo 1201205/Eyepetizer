@@ -21,7 +21,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:screenOrientation="portrait"
-            android:name=".view.RecommendsActivity"
+            android:name=".view.MainActivity"
             android:theme="@style/AppTheme.TransparentActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -67,6 +67,9 @@
         <activity
             android:screenOrientation="portrait"
             android:name=".view.LightTopicActivity"/>
+        <activity
+            android:screenOrientation="portrait"
+            android:name=".view.RecommendsActivity"/>
     </application>
 
 </manifest>

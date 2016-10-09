@@ -35,6 +35,10 @@ public class WidgetHelper {
                 return ViewType.RECTANGLE_CARD;
             case Type.BANNER2:
                 return ViewType.BANNER2;
+            case Type.LEFT_ALIGN_TEXT_HEADER:
+                return ViewType.LEFT_ALIGN_TEXT_HEADER;
+            case Type.BLANK_CARD:
+                return ViewType.BLANK_CARD;
         }
         return ViewType.Error;
     }
@@ -56,6 +60,8 @@ public class WidgetHelper {
         String SQUARE_CARD = "squareCard";
         String RECTANGLE_CARD = "rectangleCard";
         String BANNER2 = "banner2";
+        String LEFT_ALIGN_TEXT_HEADER = "leftAlignTextHeader";
+        String BLANK_CARD = "blankCard";
 
     }
 
@@ -76,5 +82,7 @@ public class WidgetHelper {
         int SQUARE_CARD = 12;
         int RECTANGLE_CARD = 13;
         int BANNER2 = 14;
+        int LEFT_ALIGN_TEXT_HEADER = 15;
+        int BLANK_CARD = 16;
     }
 }

@@ -64,10 +64,7 @@ public class DiscoveryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             adapter.notifyDataSetChanged();
             adapter.setItemClickListener(new LoopViewPagerAdapter.ItemClickListener() {
                 @Override public void itemClicked(ViewData data) {
-                    if ("eyepetizer://recommend/".equals(data.getData().getActionUrl())) {
-                    } else {
-
-                    }
+                    mContext.startActivity(DataHelper.getIntentByUri(mContext,data.getData().getActionUrl()));
                 }
             });
         }

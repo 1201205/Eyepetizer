@@ -22,12 +22,14 @@ import com.hyc.eyepetizer.view.PagerListActivity;
 import com.hyc.eyepetizer.view.PgcActivity;
 import com.hyc.eyepetizer.view.RankActivity;
 import com.hyc.eyepetizer.view.SelectionActivity;
+import com.hyc.eyepetizer.view.adapter.holder.BlankCardViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.BlankViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.BriefCardViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.BriefVideoViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.CampaignViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.CoverVideoViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.ForwardViewHolder;
+import com.hyc.eyepetizer.view.adapter.holder.LeftTextHeaderViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.NoMoreViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.RectangleCardViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.TextHeaderViewHolder;
@@ -89,6 +91,10 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             case WidgetHelper.ViewType.BANNER2:
                 return new RectangleCardViewHolder(
                     mLayoutInflater.inflate(R.layout.item_img, parent, false));
+            case WidgetHelper.ViewType.LEFT_ALIGN_TEXT_HEADER:
+                return new LeftTextHeaderViewHolder(mLayoutInflater.inflate(R.layout.item_left_text_header, parent, false));
+            case WidgetHelper.ViewType.BLANK_CARD:
+                return new BlankCardViewHolder(mLayoutInflater.inflate(R.layout.item_blank_card, parent, false));
         }
         return null;
     }
@@ -118,6 +124,10 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             bindView((BriefCardViewHolder) holder, mDatas.get(position));
         } else if (holder instanceof RectangleCardViewHolder) {
             bindView((RectangleCardViewHolder) holder, mDatas.get(position));
+        } else if (holder instanceof LeftTextHeaderViewHolder) {
+            bindView((LeftTextHeaderViewHolder) holder, mDatas.get(position));
+        } else if (holder instanceof BlankCardViewHolder) {
+            bindView((BlankCardViewHolder) holder, mDatas.get(position));
         }
     }
 
@@ -160,7 +170,12 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private void bindView(CoverVideoViewHolder holder, final ViewData data) {
         holder.cover.setImageURI(data.getData().getHeader().getCover());
-        holder.cover.setOnClickListener(getCoveOnClickListener(data.getData().getHeader()));
+        holder.cover.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                context.startActivity(DataHelper.getIntentByUri(context,data.getData().getHeader().getActionUrl()));
+            }
+        });
         if (holder.recyclerView.getLayoutManager() == null) {
             LinearLayoutManager manager = new LinearLayoutManager(context);
             manager.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -268,6 +283,15 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) holder.space.getLayoutParams();
         params.height = data.getData().getHeight();
         holder.space.setLayoutParams(params);
+    }
+    private void bindView(BlankCardViewHolder holder, ViewData data) {
+        RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) holder.space.getLayoutParams();
+        params.height = data.getData().getHeight();
+        holder.space.setLayoutParams(params);
+    }
+    private void bindView(LeftTextHeaderViewHolder holder, ViewData data) {
+        holder.head.setText(data.getData().getText());
+        holder.head.setTypeface(TypefaceHelper.getTypeface(data.getData().getFont()));
     }
     private void bindView(RectangleCardViewHolder holder, final ViewData data) {
 

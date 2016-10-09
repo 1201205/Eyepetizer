@@ -6,6 +6,8 @@
 
 
     <color name="alpha_black">#60000000</color>
+    <color name="alpha_light_black">#30000000</color>
+
     <color name="space_bg">#EDEDED</color>
     <color name="space_line_bg">#ADADAD</color>
     <color name="title_black">#444444</color>

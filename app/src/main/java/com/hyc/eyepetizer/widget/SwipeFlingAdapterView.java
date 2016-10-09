@@ -8,6 +8,7 @@ import android.content.res.TypedArray;
 import android.database.DataSetObserver;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -702,6 +703,7 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
                 if (forLeft) {
                     backOrAdd();
                 }
+                Log.e("hyc-touch","parent-up");
                 forRight = false;
                 break;
         }

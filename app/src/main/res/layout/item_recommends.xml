@@ -4,9 +4,9 @@
     android:id="@+id/ll_hint"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="18dp"
-    android:layout_marginLeft="18dp"
-    android:layout_marginRight="18dp"
+    android:layout_marginTop="14dp"
+    android:layout_marginLeft="14dp"
+    android:layout_marginRight="14dp"
     android:layout_gravity="center_horizontal"
     android:orientation="vertical">
 
@@ -23,6 +23,7 @@
             fresco:viewAspectRatio="1"/>
 
         <RelativeLayout
+            android:background="@color/alpha_light_black"
             android:id="@+id/rl_flow"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -50,7 +51,7 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp">
+        android:layout_height="100dp">
 
         <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/sdv_below_blur"
@@ -59,10 +60,11 @@
             fresco:fadeDuration="0"/>
 
         <com.hyc.eyepetizer.widget.CustomTextView
+            android:padding="8dp"
             android:id="@+id/tv_des"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="11sp"
+            android:textSize="10sp"
             android:layout_alignParentRight="true"/>
 
     </FrameLayout>

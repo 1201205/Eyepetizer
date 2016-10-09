@@ -19,6 +19,7 @@ public interface FromType {
     int TYPE_CATEGORY_SHARE = -13;
     int TYPE_SECTION = -14;
     int TYPE_LIGHT_TOPIC = -15;
+    int TYPE_RECOMMENDS = -16;
 
     interface Tag {
         String RANK_WEEK = "weekly";

@@ -129,6 +129,13 @@ public interface Api {
     //http://baobab.wandoujia.com/api/v3/lightTopics/36?udid=8954dd2dac7e41d68d967d5cc8115ced8b7af94c&vc=126&vn=2.4.1&deviceModel=Redmi%20Note%203&first_channel=eyepetizer_yingyongbao_market&last_channel=eyepetizer_yingyongbao_market&system_version_code=22
     @GET("/api/v3/lightTopics/{id}?vc=126") Observable<Videos> getLightTopicsByID(@Path("id") int id);
     //http://baobab.wandoujia.com/api/v3/recommend?udid=8954dd2dac7e41d68d967d5cc8115ced8b7af94c&vc=126&vn=2.4.1&deviceModel=Redmi%20Note%203&first_channel=eyepetizer_yingyongbao_market&last_channel=eyepetizer_yingyongbao_market&system_version_code=22
+    //http://baobab.wandoujia.com/api/v3/recommend?udid=4572457986ed9dd74ceefd9694c0d8741da23146&vc=126&vn=2.4.1&deviceModel=Redmi%20Note%203&first_channel=eyepetizer_yingyongbao_market&last_channel=eyepetizer_yingyongbao_market&system_version_code=22
+    //http://baobab.wandoujia.com/api/v3/recommend?vc=126&udid=8954dd2dac7e41d68d967d5cc8115ced8b7af94c&vn=2.4.1&deviceModel=Redmi%20Note%203&first_channel=eyepetizer_xiaomi_market&last_channel=eyepetizer_xiaomi_market&system_version_code=22
+    //http://baobab.wandoujia.com/api/v3/recommend?vc=126&udid=a8cc4794ef5a34e990865b79757b0dcf8b7af94c&vn=2.4.1&deviceModel=Redmi%20Note%203&first_channel=eyepetizer_xiaomi_market&last_channel=eyepetizer_xiaomi_market&system_version_code=22
     @GET("/api/v3/recommend?vc=126") Observable<Recommends> getRecommends();
+    //http://baobab.wandoujia.com/api/v3/tabs/pgcs?udid=8954dd2dac7e41d68d967d5cc8115ced8b7af94c&vc=126&vn=2.4.1&deviceModel=Redmi%20Note%203&first_channel=eyepetizer_yingyongbao_market&last_channel=eyepetizer_yingyongbao_market&system_version_code=22
+    //http://baobab.wandoujia.com/api/v3/tabs/pgcs/more?start=10&num=10&udid=8954dd2dac7e41d68d967d5cc8115ced8b7af94c&vc=126&vn=2.4.1&deviceModel=Redmi%20Note%203&first_channel=eyepetizer_yingyongbao_market&last_channel=eyepetizer_yingyongbao_market&system_version_code=22
+    @GET("/api/v3/tabs/pgcs?vc=126") Observable<Videos> getPgcs();
+    @GET("/api/v3/tabs/pgcs/more?vc=126") Observable<Videos> getMorePgcs(@Query("start") int start,@Query("num") int num);
 
 }

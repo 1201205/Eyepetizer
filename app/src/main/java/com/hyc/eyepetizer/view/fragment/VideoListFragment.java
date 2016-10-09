@@ -90,7 +90,6 @@ public class VideoListFragment extends BaseFragment<VideoListPresenter>
         }
         mPresenter = VideoListPresenterGenerator.generate(mType, mTag, mID, this);
         mPresenter.attachView();
-        mPresenter.getVideoList();
     }
 
 
@@ -118,12 +117,10 @@ public class VideoListFragment extends BaseFragment<VideoListPresenter>
 
 
     public void scrollTo(int index,final int y) {
-        Log.e("hyc-po", mLastIndex + "--scrollTo--");
         if (mLastIndex == index) {
             return;
         }
         mLastIndex = index;
-        Log.e("hyc-po", mLastIndex + "--scrollTo--");
 
         mManager.scrollToPosition(mLastIndex);
         mRvVideo.postDelayed(new Runnable() {
@@ -169,6 +166,7 @@ public class VideoListFragment extends BaseFragment<VideoListPresenter>
         }
         //45+36
         mTop = (int) (AppUtil.dip2px(81) + AppUtil.getStatusBarHeight(getContext()));
+        mPresenter.getVideoList();
         return view;
     }
 

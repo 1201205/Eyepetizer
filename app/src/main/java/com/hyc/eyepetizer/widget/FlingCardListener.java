@@ -2,6 +2,7 @@ package com.hyc.eyepetizer.widget;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -172,6 +173,7 @@ public class FlingCardListener implements View.OnTouchListener {
                     aTouchUpX = event.getX(activePointerId);
                     mActivePointerId = INVALID_POINTER_ID;
                     resetCardViewOnStack(event);
+                    Log.e("hyc-touch","child-up");
                     break;
 
             }
@@ -256,6 +258,7 @@ public class FlingCardListener implements View.OnTouchListener {
             } else {
                 float absMoveXDistance = Math.abs(aPosX - objectX);
                 float absMoveYDistance = Math.abs(aPosY - objectY);
+                Log.e("hyc-touch",absMoveXDistance+"-----"+absMoveYDistance);
                 if (absMoveXDistance < 4 && absMoveYDistance < 4) {
                     mFlingListener.onClick(event, frame, dataObject);
                 } else {
@@ -323,11 +326,11 @@ public class FlingCardListener implements View.OnTouchListener {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     if (isLeft) {
-                        mFlingListener.onCardExited();
                         mFlingListener.leftExit(dataObject);
-                    } else {
                         mFlingListener.onCardExited();
+                    } else {
                         mFlingListener.rightExit(dataObject);
+                        mFlingListener.onCardExited();
                     }
                     isAnimationRunning = false;
                 }

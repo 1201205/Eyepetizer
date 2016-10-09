@@ -7,6 +7,7 @@ import com.hyc.eyepetizer.model.FromType;
 import com.hyc.eyepetizer.view.LightTopicActivity;
 import com.hyc.eyepetizer.view.PagerListActivity;
 import com.hyc.eyepetizer.view.RankActivity;
+import com.hyc.eyepetizer.view.RecommendsActivity;
 import com.hyc.eyepetizer.view.SpecialTopicsActivity;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -22,6 +23,7 @@ public class DataHelper {
     private static final String CATEGORY = "category";
     private static final String CAMPAIGN = "campaign";
     private static final String COMMON="common";
+    private static final String RECOMMEND="recommend";
 
 
     /**
@@ -104,6 +106,9 @@ public class DataHelper {
                 String id = (list.get(list.size() - 1)).replace("/", "");
                 intent = LightTopicActivity.getIntent(context, myUri.getQueryParameter("title"),
                     Integer.valueOf(id));
+                break;
+            case RECOMMEND:
+                intent=new Intent(context, RecommendsActivity.class);
                 break;
         }
         return intent;

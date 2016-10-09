@@ -122,6 +122,10 @@ public class FeedModel implements VideoListInterface {
         if (sectionList==null) {
             return null;
         }
+        //第二次不再加入新的
+        if (mViewDatas.get(parentIndex) != null) {
+            return mViewDatas.get(parentIndex);
+        }
         List<ViewData> datas = new ArrayList<>();
 
         int count=sectionList.getItemList().size();
@@ -141,9 +145,7 @@ public class FeedModel implements VideoListInterface {
                     break;
             }
         }
-        if (mViewDatas.get(parentIndex)!=null) {
-            mViewDatas.get(parentIndex).clear();
-        }
+
         mViewDatas.put(parentIndex,datas);
         return datas;
     }

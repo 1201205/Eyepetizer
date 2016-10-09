@@ -236,13 +236,21 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
     private void bindView(BriefCardViewHolder holder, final ViewData data) {
-        FrescoHelper.loadUrl(holder.ico, data.getData().getIcon());
-        holder.count.setText(data.getData().getSubTitle());
-        holder.name.setText(data.getData().getTitle());
-        holder.des.setText(data.getData().getDescription());
+        final ItemListData itemListData = data.getData();
+        FrescoHelper.loadUrl(holder.ico, itemListData.getIcon());
+        holder.count.setText(itemListData.getSubTitle());
+        holder.name.setText(itemListData.getTitle());
+        holder.des.setText(itemListData.getDescription());
         holder.count.setTextColor(mTitleColor);
         holder.name.setTextColor(mTitleColor);
         holder.des.setTextColor(mTitleColor);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                PgcActivity.start(context, itemListData.getTitle(), itemListData.getDescription(),
+                    itemListData.getIcon(),
+                    DataHelper.getID(itemListData.getActionUrl()));
+            }
+        });
     }
 
 

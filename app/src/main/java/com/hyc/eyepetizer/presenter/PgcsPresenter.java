@@ -2,22 +2,16 @@ package com.hyc.eyepetizer.presenter;
 
 import android.net.Uri;
 import android.text.TextUtils;
-
 import com.hyc.eyepetizer.base.BasePresenter;
 import com.hyc.eyepetizer.base.DefaultTransformer;
 import com.hyc.eyepetizer.base.ExceptionAction;
 import com.hyc.eyepetizer.contract.PgcContract;
-import com.hyc.eyepetizer.contract.RecommendsContract;
-import com.hyc.eyepetizer.model.FromType;
-import com.hyc.eyepetizer.model.VideoListModel;
-import com.hyc.eyepetizer.model.beans.Recommends;
+import com.hyc.eyepetizer.model.PgcModel;
 import com.hyc.eyepetizer.model.beans.Videos;
 import com.hyc.eyepetizer.model.beans.ViewData;
 import com.hyc.eyepetizer.net.Requests;
 import com.hyc.eyepetizer.utils.WidgetHelper;
-
 import java.util.List;
-
 import rx.functions.Action1;
 
 /**
@@ -42,15 +36,7 @@ public class PgcsPresenter extends BasePresenter<PgcContract.View>
                         .subscribe(
                                 new Action1<Videos>() {
                                     @Override public void call(Videos videos) {
-                                        String nextUrl=videos.getNextPageUrl();
-                                        List<ViewData> datas=videos.getItemList();
-                                        if (TextUtils.isEmpty(nextUrl)) {
-                                            mView.noMore();
-                                            datas.add(new ViewData(null, WidgetHelper.Type.NO_MORE));
-                                        } else {
-                                            getNextParameter(nextUrl);
-                                        }
-                                        mView.showPgc(datas);
+                                        showPgc(videos, true);
                                     }
                                 }, new ExceptionAction() {
                                     @Override protected void onNoNetWork() {
@@ -69,19 +55,35 @@ public class PgcsPresenter extends BasePresenter<PgcContract.View>
                         .subscribe(
                                 new Action1<Videos>() {
                                     @Override public void call(Videos videos) {
-                                        String nextUrl=videos.getNextPageUrl();
-                                        List<ViewData> datas=videos.getItemList();
-                                        if (TextUtils.isEmpty(nextUrl)) {
-                                            mView.noMore();
-                                            datas.add(new ViewData(null, WidgetHelper.Type.NO_MORE));
-                                        } else {
-                                            getNextParameter(nextUrl);
-                                        }
-                                        mView.showPgc(datas);
+                                        showPgc(videos, false);
                                     }
                                 }, new ExceptionAction())
         );
     }
+
+
+    private void showPgc(Videos videos, boolean add) {
+        String nextUrl = videos.getNextPageUrl();
+        List<ViewData> datas = videos.getItemList();
+        if (add) {
+            int count = datas.size();
+            for (int i = 0; i < count; i++) {
+                if (WidgetHelper.Type.VIDEO_COLLECTION_WITH_BRIEF.equals(datas.get(i).getType())) {
+                    PgcModel.getInstance()
+                        .putList(datas.get(i).getData().getHeader().getId(),
+                            datas.get(i).getData().getItemList());
+                }
+            }
+        }
+        if (TextUtils.isEmpty(nextUrl)) {
+            mView.noMore();
+            datas.add(new ViewData(null, WidgetHelper.Type.NO_MORE));
+        } else {
+            getNextParameter(nextUrl);
+        }
+        mView.showPgc(datas);
+    }
+
 
     private void getNextParameter(String url){
         Uri uri=Uri.parse(url);

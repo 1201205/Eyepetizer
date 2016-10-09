@@ -1,5 +1,6 @@
 package com.hyc.eyepetizer.view.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,20 +10,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-
-import com.hyc.eyepetizer.R;
-import com.hyc.eyepetizer.base.BaseFragment;
-import com.hyc.eyepetizer.contract.PgcContract;
-import com.hyc.eyepetizer.model.beans.ViewData;
-import com.hyc.eyepetizer.presenter.PgcsPresenter;
-import com.hyc.eyepetizer.view.adapter.TestAdapter;
-import com.hyc.eyepetizer.widget.CustomTextView;
-
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import com.hyc.eyepetizer.R;
+import com.hyc.eyepetizer.base.BaseFragment;
+import com.hyc.eyepetizer.contract.PgcContract;
+import com.hyc.eyepetizer.model.FromType;
+import com.hyc.eyepetizer.model.beans.ViewData;
+import com.hyc.eyepetizer.presenter.PgcsPresenter;
+import com.hyc.eyepetizer.view.VideoDetailActivity2;
+import com.hyc.eyepetizer.view.adapter.TestAdapter;
+import com.hyc.eyepetizer.widget.CustomTextView;
+import java.util.List;
 
 /**
  * Created by Administrator on 2016/10/9.
@@ -86,7 +86,15 @@ public class PgcFragment extends BaseFragment<PgcsPresenter> implements PgcContr
     public void showPgc(List<ViewData> datas) {
         mIsRequesting = false;
         if (mAdapter == null) {
-            mAdapter = new TestAdapter.Builder(getContext(), datas).build();
+            mAdapter = new TestAdapter.Builder(getContext(), datas).horizontalItemClickListener(
+                new TestAdapter.HorizontalItemClickListener() {
+                    @Override
+                    public void onItemClicked(int parentPosition, int myPosition, int position) {
+                        Intent intent = VideoDetailActivity2.newIntent(FromType.TYPE_PGC,
+                            getContext(), myPosition, parentPosition);
+                        startActivity(intent);
+                    }
+                }).build();
             rvVideo.setAdapter(mAdapter);
         } else {
             mAdapter.addData(datas);

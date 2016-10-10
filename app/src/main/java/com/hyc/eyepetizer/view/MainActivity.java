@@ -19,6 +19,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.hyc.eyepetizer.R;
+import com.hyc.eyepetizer.event.HomePageEvent;
 import com.hyc.eyepetizer.event.StartVideoDetailEvent;
 import com.hyc.eyepetizer.event.VideoDetailBackEvent;
 import com.hyc.eyepetizer.model.FromType;
@@ -214,6 +215,15 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+    @Subscribe
+    public void goToPage(HomePageEvent event) {
+        if ("pgcs".equals(event.targrt)) {
+            mPager.setCurrentItem(2, true);
+        } else if ("discovery".equals(event.targrt)) {
+            mPager.setCurrentItem(1, true);
+        }
+    }
 
     @Override
     protected void onDestroy() {

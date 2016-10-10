@@ -1,7 +1,6 @@
 package com.hyc.eyepetizer.view;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -9,7 +8,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import butterknife.BindView;
-
 import com.asha.md360player4android.MD360PlayerActivity;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.hyc.eyepetizer.R;
@@ -83,8 +81,6 @@ public class RecommendsActivity extends BaseActivity<RecommendsPresenter> implem
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //Debug.startMethodTracing("tracefilename");
-        // TODO: add setContentView(...) invocation
         initPresenter();
         initView();
     }

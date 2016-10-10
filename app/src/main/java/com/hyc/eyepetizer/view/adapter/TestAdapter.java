@@ -1,15 +1,14 @@
 package com.hyc.eyepetizer.view.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.hyc.eyepetizer.R;
+import com.hyc.eyepetizer.event.RouterWrapper;
 import com.hyc.eyepetizer.event.StartVideoDetailEvent;
-import com.hyc.eyepetizer.model.FromType;
 import com.hyc.eyepetizer.model.beans.CoverHeader;
 import com.hyc.eyepetizer.model.beans.ItemListData;
 import com.hyc.eyepetizer.model.beans.ViewData;
@@ -18,10 +17,7 @@ import com.hyc.eyepetizer.utils.DataHelper;
 import com.hyc.eyepetizer.utils.FrescoHelper;
 import com.hyc.eyepetizer.utils.TypefaceHelper;
 import com.hyc.eyepetizer.utils.WidgetHelper;
-import com.hyc.eyepetizer.view.PagerListActivity;
 import com.hyc.eyepetizer.view.PgcActivity;
-import com.hyc.eyepetizer.view.RankActivity;
-import com.hyc.eyepetizer.view.SelectionActivity;
 import com.hyc.eyepetizer.view.adapter.holder.BlankCardViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.BlankViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.BriefCardViewHolder;
@@ -173,7 +169,13 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         holder.cover.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                context.startActivity(DataHelper.getIntentByUri(context,data.getData().getHeader().getActionUrl()));
+                RouterWrapper wrapper = DataHelper.getIntentByUri(context,
+                    data.getData().getHeader().getActionUrl());
+                if (wrapper.getIntent() != null) {
+                    context.startActivity(wrapper.getIntent());
+                } else {
+                    EventBus.getDefault().post(wrapper.getEvent());
+                }
             }
         });
         if (holder.recyclerView.getLayoutManager() == null) {
@@ -261,18 +263,21 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
 
-    private void bindView(ForwardViewHolder holder, ViewData data) {
+    private void bindView(ForwardViewHolder holder, final ViewData data) {
         holder.textView.setTypeface(TypefaceHelper.getTypeface(data.getData().getFont()));
         holder.textView.setText(data.getData().getText());
-        if ("eyepetizer://feed/".equals(data.getData().getActionUrl())) {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(context, SelectionActivity.class);
-                    context.startActivity(intent);
+                @Override public void onClick(View v) {
+                    RouterWrapper wrapper = DataHelper.getIntentByUri(context,
+                        data.getData().getActionUrl());
+                    if (wrapper.getIntent() != null) {
+                        context.startActivity(wrapper.getIntent());
+                    } else {
+                        EventBus.getDefault().post(wrapper.getEvent());
+                    }
                 }
             });
-        }
+
     }
 
 
@@ -307,7 +312,13 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         holder.sdvImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-              context.startActivity(DataHelper.getIntentByUri(context,data.getData().getActionUrl()));
+                RouterWrapper wrapper = DataHelper.getIntentByUri(context,
+                    data.getData().getHeader().getActionUrl());
+                if (wrapper.getIntent() != null) {
+                    context.startActivity(wrapper.getIntent());
+                } else {
+                    EventBus.getDefault().post(wrapper.getEvent());
+                }
             }
         });
     }
@@ -315,7 +326,17 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private void bindView(TitleVideoViewHolder holder, final ViewData data, final int position) {
         holder.title.setTextColor(mTitleColor);
         holder.title.setText(data.getData().getHeader().getTitle());
-        holder.title.setOnClickListener(getCoveOnClickListener(data.getData().getHeader()));
+        holder.title.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                RouterWrapper wrapper = DataHelper.getIntentByUri(context,
+                    data.getData().getHeader().getActionUrl());
+                if (wrapper.getIntent() != null) {
+                    context.startActivity(wrapper.getIntent());
+                } else {
+                    EventBus.getDefault().post(wrapper.getEvent());
+                }
+            }
+        });
         if (holder.recyclerView.getLayoutManager() == null) {
             LinearLayoutManager manager = new LinearLayoutManager(context);
             manager.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -350,40 +371,6 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return mDatas == null ? 0 : mDatas.size();
     }
 
-
-    public ViewData getDataByIndex(int index) {
-        return mDatas.get(index);
-    }
-
-    private View.OnClickListener getCoveOnClickListener(final CoverHeader header) {
-        //// TODO: 2016/9/21   对uri进行解析
-        String url = header.getActionUrl();
-        if ("eyepetizer://ranklist/".equals(url)) {
-            return new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(context, RankActivity.class);
-                    context.startActivity(intent);
-                }
-            };
-        } else if (url.contains("eyepetizer://tag/")) {
-            return new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    PagerListActivity.start(context, header.getTitle(), header.getId(),
-                        FromType.TYPE_TAG_DATE, FromType.TYPE_TAG_SHARE, true);
-                }
-            };
-        } else if (url.contains("eyepetizer://category/")) {
-            return new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    PagerListActivity.start(context, header.getTitle(), header.getId(), FromType.TYPE_CATEGORY_DATE, FromType.TYPE_CATEGORY_SHARE, true);
-                }
-            };
-        }
-        return null;
-    }
 
     public void addData(List<ViewData> datas) {
         int count = getItemCount();

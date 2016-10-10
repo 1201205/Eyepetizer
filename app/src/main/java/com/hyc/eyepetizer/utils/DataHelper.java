@@ -3,18 +3,16 @@ package com.hyc.eyepetizer.utils;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.util.Log;
-
+import com.hyc.eyepetizer.event.HomePageEvent;
+import com.hyc.eyepetizer.event.RouterWrapper;
 import com.hyc.eyepetizer.model.FromType;
 import com.hyc.eyepetizer.view.LightTopicActivity;
 import com.hyc.eyepetizer.view.PagerListActivity;
 import com.hyc.eyepetizer.view.RankActivity;
 import com.hyc.eyepetizer.view.RecommendsActivity;
+import com.hyc.eyepetizer.view.SelectionActivity;
 import com.hyc.eyepetizer.view.SpecialTopicsActivity;
-
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,6 +28,9 @@ public class DataHelper {
     private static final String CAMPAIGN = "campaign";
     private static final String COMMON="common";
     private static final String RECOMMEND="recommend";
+    private static final String HOME_PAGE = "homepage";
+    private static final String FEED = "feed";
+
     private static final long MINUTE_TIME=60*1000;
     private static final long HOUR_TIME=60*MINUTE_TIME;
     private static final long DAY_TIME=24*HOUR_TIME;
@@ -88,83 +89,47 @@ public class DataHelper {
         return 0;
     }
     public static String getCommentTime(long commentTime){
-//        Date date=new Date();
-//        int year=date.getYear();
-//        int month=date.getMonth()+1;
-//        int currentDay=date.getDay();
-//        Date currentDate=new Date(year,month,currentDay);
         StringBuilder builder=new StringBuilder();
         long currentTime=System.currentTimeMillis();
-        long currentDay=currentTime/DAY_TIME;
-        long commentDay=commentTime/DAY_TIME;
-        if (currentDay == commentDay) {
-            Date date=new Date(commentTime);
-            int hour=date.getHours();
-            int minute=date.getMinutes();
-            if (hour==0) {
-                builder.append("00:");
-            } else if (hour < 10) {
-                builder.append("0").append(hour).append(":");
-            } else {
-                builder.append(hour).append(":");
-            }
-            if (minute==0) {
-                builder.append("00");
-            } else if (minute < 10) {
-                builder.append("0").append(minute);
-            } else {
-                builder.append(minute);
-            }
-        } else if (currentDay-commentDay>7) {
-            builder.append("1周前");
+        long time = currentTime - commentTime;
+        if (time >= WEEK_TIME) {
+            builder.append("1星期前");
+        } else if (time >= DAY_TIME) {
+            builder.append(time / DAY_TIME).append("天前");
         } else {
-            builder.append(currentDay-commentDay).append("天前");
+            Date date=new Date(commentTime);
+            Date currentDate = new Date();
+            if (currentDate.getDate() != date.getDate()) {
+                builder.append("1天前");
+            } else {
+                int hour = date.getHours();
+                int minute = date.getMinutes();
+                if (hour < 10) {
+                    builder.append("0").append(hour);
+                } else {
+                    builder.append(hour);
+                }
+                builder.append(":");
+                if (minute < 10) {
+                    builder.append("0").append(minute);
+                } else {
+                    builder.append(minute);
+                }
+            }
         }
-//        Date date=new Date(commentTime);
-//        Date current=new Date();
-//        StringBuilder builder=new StringBuilder();
-//        if (date.getYear() == current.getYear()) {
-//            if (date.getm) {
-//            }
-//        } else {
-//            builder.append("1周前");
-//        }
-//
-//        Calendar calendar=Calendar.getInstance();
-//        calendar.setTime(date);
-//       int comment= calendar.get(Calendar.DAY_OF_MONTH);
-//        calendar.setTime(current);
-//        int currentDay=calendar.get(Calendar.DAY_OF_MONTH);
-//        int day=currentDay-comment;
-//        if (day==0) {
-//            int hour=date.getHours();
-//            int minute=date.getMinutes();
-//            if (hour==0) {
-//                builder.append("00:");
-//            } else if (hour < 10) {
-//                builder.append("0").append(hour).append(":");
-//            } else {
-//                builder.append(hour).append(":");
-//            }
-//            if (minute==0) {
-//                builder.append("00");
-//            } else if (minute < 10) {
-//                builder.append("0").append(minute);
-//            } else {
-//                builder.append(minute);
-//            }
-//        } else if (day >= 7) {
-//            builder.append("1周前");
-//        } else {
-//            builder.append(day).append("天前");
-//        }
         return builder.toString();
     }
 
-    public static Intent getIntentByUri(Context context, String uri) {
+
+    /**
+     * 不想再次解析uri  所以把两个包裹在一起
+     */
+    public static RouterWrapper getIntentByUri(Context context, String uri) {
         Uri myUri = Uri.parse(uri);
         String authority = myUri.getAuthority();
+        RouterWrapper wrapper=new RouterWrapper(null,null);
         Intent intent = null;
+        HomePageEvent event=null;
         switch (authority) {
             case RANK_LIST:
                 intent = new Intent(context, RankActivity.class);
@@ -192,8 +157,15 @@ public class DataHelper {
             case RECOMMEND:
                 intent=new Intent(context, RecommendsActivity.class);
                 break;
+            case FEED:
+                intent = new Intent(context, SelectionActivity.class);
+            case HOME_PAGE:
+                event = new HomePageEvent(myUri.getPath().replace("/", ""));
+                break;
         }
-        return intent;
+        wrapper.setIntent(intent);
+        wrapper.setEvent(event);
+        return wrapper;
     }
 
 }

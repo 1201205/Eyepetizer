@@ -64,7 +64,9 @@ public class DiscoveryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             adapter.notifyDataSetChanged();
             adapter.setItemClickListener(new LoopViewPagerAdapter.ItemClickListener() {
                 @Override public void itemClicked(ViewData data) {
-                    mContext.startActivity(DataHelper.getIntentByUri(mContext,data.getData().getActionUrl()));
+                    mContext.startActivity(
+                        DataHelper.getIntentByUri(mContext, data.getData().getActionUrl())
+                            .getIntent());
                 }
             });
         }
@@ -78,7 +80,7 @@ public class DiscoveryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             holder.setOnItemClickListener(new SquareCardViewHolder.ItemClickListener() {
                 @Override public void onItemClicked(int locationY, int current) {
                     mContext.startActivity(
-                        DataHelper.getIntentByUri(mContext, data.getActionUrl()));
+                        DataHelper.getIntentByUri(mContext, data.getActionUrl()).getIntent());
                 }
             });
         } else {
@@ -86,7 +88,7 @@ public class DiscoveryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             holder.img.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
                     mContext.startActivity(
-                        DataHelper.getIntentByUri(mContext, data.getActionUrl()));
+                        DataHelper.getIntentByUri(mContext, data.getActionUrl()).getIntent());
                 }
             });
         }
@@ -100,7 +102,8 @@ public class DiscoveryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         FrescoHelper.loadUrl(holder.sdvImage, data.getImage());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
-                mContext.startActivity(DataHelper.getIntentByUri(mContext, data.getActionUrl()));
+                mContext.startActivity(
+                    DataHelper.getIntentByUri(mContext, data.getActionUrl()).getIntent());
             }
         });
     }

@@ -11,7 +11,7 @@ import android.util.AttributeSet;
  */
 public class AnimateTextView extends CustomTextView {
 
-    private static final int TIME = 500;
+    private static final int TIME = 300;
     private static final int START_ANIM = 2;
     private float mCurrentIndex;
     private CharSequence mCharSequence;
@@ -82,9 +82,9 @@ public class AnimateTextView extends CustomTextView {
             return;
         } else {
             int length = text.length();
-            if (TIME / length < 16) {
-                addtionCount = length / (TIME * 1f / 16);
-                delayTime = 16;
+            if (TIME / length < 8) {
+                addtionCount = length / (TIME * 1f / 8);
+                delayTime = 8;
             } else {
                 delayTime = TIME / length;
                 addtionCount = 1;

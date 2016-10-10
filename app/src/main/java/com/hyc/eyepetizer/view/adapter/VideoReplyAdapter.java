@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.model.beans.VideoReply;
+import com.hyc.eyepetizer.utils.DataHelper;
 import com.hyc.eyepetizer.utils.FrescoHelper;
 import com.hyc.eyepetizer.view.adapter.holder.NoMoreViewHolder;
 import com.hyc.eyepetizer.view.adapter.holder.VideoReplyViewHolder;
@@ -62,8 +63,7 @@ public class VideoReplyAdapter extends RecyclerView.Adapter {
     private void bindHolder(VideoReplyViewHolder holder, VideoReply reply) {
         FrescoHelper.loadUrl(holder.sdvIcon, reply.getUser().getAvatar());
         holder.tvContent.setText(reply.getMessage());
-        //// TODO: 2016/9/8 转换
-        holder.tvTime.setText(reply.getCreateTime() + "");
+        holder.tvTime.setText(DataHelper.getCommentTime(reply.getCreateTime()));
         if (reply.getHot()) {
             holder.tvHot.setVisibility(View.VISIBLE);
         } else {

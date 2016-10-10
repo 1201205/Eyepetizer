@@ -369,7 +369,7 @@ public class VideoDetailActivity2 extends BaseActivity {
     }
 
 
-    @OnClick({ R.id.iv_back, R.id.iv_play, R.id.tv_reply_count, R.id.iv_more })
+    @OnClick({ R.id.iv_back, R.id.iv_play, R.id.tv_reply_count, R.id.iv_more ,R.id.rl_author})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_back:
@@ -391,10 +391,10 @@ public class VideoDetailActivity2 extends BaseActivity {
                     data.getTitle(), data.getCover().getBlurred());
                 break;
             case R.id.iv_more:
+            case R.id.rl_author:
                 ItemListData data2 = mViewDatas.get(vpVideo.getCurrentItem()).getData();
                 VideoRelateActivity.start(this, data2.getId(), data2.getTitle(),
-                    data2.getCover().getBlurred());
-                break;
+                        data2.getCover().getBlurred());
             default:
                 break;
         }

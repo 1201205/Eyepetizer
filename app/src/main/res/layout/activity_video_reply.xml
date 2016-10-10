@@ -35,7 +35,7 @@
             android:layout_below="@id/tv_title"
             android:layout_centerInParent="true"
             android:layout_marginTop="10dp"
-            android:textColor="@color/space_line_bg"
+            android:textColor="@color/white"
             android:textSize="11sp"/>
 
         <com.hyc.eyepetizer.widget.CustomTextView

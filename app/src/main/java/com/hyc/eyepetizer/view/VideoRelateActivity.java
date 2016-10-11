@@ -60,6 +60,21 @@ public class VideoRelateActivity extends BaseActivity<VideoRelatePresenter>
         return R.layout.activity_video_relate;
     }
 
+    @Override
+    protected void initPresenterAndData() {
+        mPresenter = new VideoRelatePresenter(this);
+        mPresenter.getRelate(mID);
+    }
+
+    @Override
+    protected void initView() {
+        FrescoHelper.loadUrl(sdvBlur, mUrl);
+        mManager = new LinearLayoutManager(this);
+        mManager.setOrientation(LinearLayoutManager.VERTICAL);
+        rvRelate.setLayoutManager(mManager);
+        tvTitle.setText(mTitle);
+    }
+
 
     @Override public void showView(List<ViewData> datas) {
         if (datas == null) {
@@ -79,25 +94,5 @@ public class VideoRelateActivity extends BaseActivity<VideoRelatePresenter>
                 })
             .build();
         rvRelate.setAdapter(mAdapter);
-    }
-
-
-    @Override protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        ButterKnife.bind(this);
-        FrescoHelper.loadUrl(sdvBlur, mUrl);
-        mPresenter = new VideoRelatePresenter(this);
-        mPresenter.attachView();
-        mManager = new LinearLayoutManager(this);
-        mManager.setOrientation(LinearLayoutManager.VERTICAL);
-        rvRelate.setLayoutManager(mManager);
-        tvTitle.setText(mTitle);
-        mPresenter.getRelate(mID);
-    }
-
-
-    @Override protected void onDestroy() {
-        mPresenter.detachView();
-        super.onDestroy();
     }
 }

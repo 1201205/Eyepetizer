@@ -126,16 +126,10 @@ public class LightTopicActivity extends BaseActivity<LightTopicPresenter> implem
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
-        ButterKnife.bind(this);
-        initPresenter();
-        initView();
-        mManager=new LinearLayoutManager(this);
-        mManager.setOrientation(LinearLayoutManager.VERTICAL);
-        mRvVideo.setLayoutManager(mManager);
     }
 
-
-    private void initView() {
+    @Override
+    protected void initView() {
         imgLeft.setVisibility(View.VISIBLE);
         imgLeft.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -150,10 +144,13 @@ public class LightTopicActivity extends BaseActivity<LightTopicPresenter> implem
         mRatio = AppUtil.dip2px(353) / mItemHeight;
         mEndY = (int) (AppUtil.getScreenHeight(this) - AppUtil.getStatusBarHeight(this) -
             mItemHeight - AppUtil.dip2px(60));
+        mManager=new LinearLayoutManager(this);
+        mManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mRvVideo.setLayoutManager(mManager);
     }
 
-
-    private void initPresenter() {
+    @Override
+    protected void initPresenterAndData() {
         mPresenter=new LightTopicPresenter(this,mID);
         mPresenter.attachView();
         mPresenter.getVideoList();

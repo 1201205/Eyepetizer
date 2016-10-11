@@ -183,13 +183,14 @@ public class VideoDetailActivity2 extends BaseActivity {
         return R.layout.activity_video_detail;
     }
 
-
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        ButterKnife.bind(this);
+    protected void initPresenterAndData() {
         initData();
         launchData(mIndex);
+    }
+
+    @Override
+    protected void initView() {
         initViewPager();
         mAnimator = ValueAnimator.ofFloat(1f, 1.2f);
         mAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -208,6 +209,13 @@ public class VideoDetailActivity2 extends BaseActivity {
         mAnimator.setDuration(5000);
         mAnimator.setRepeatCount(ValueAnimator.INFINITE);
         mAnimator.setRepeatMode(ValueAnimator.REVERSE);
+    }
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        ButterKnife.bind(this);
     }
 
 
@@ -339,6 +347,9 @@ public class VideoDetailActivity2 extends BaseActivity {
 
 
     private void resetIndicator() {
+        if (mViewDatas.size()==1) {
+            llPart.setVisibility(View.GONE);
+        }
         mIndicatorScroll = (AppUtil.getScreenWidth(VideoDetailActivity2.this) - mIndicatorWidth) /
             (mViewDatas.size() - 1);
         llPart.setX(vpVideo.getCurrentItem() * mIndicatorScroll);

@@ -133,17 +133,21 @@ public class PgcActivity extends BaseActivity {
         return R.layout.activity_pgc;
     }
 
+    @Override
+    protected void initPresenterAndData() {
+
+    }
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
         initBar();
-        initView();
     }
 
-
-    private void initView() {
+    @Override
+    protected void initView() {
         mIndicatorY = new int[3];
         mTitleHeight = AppUtil.dip2px(81);
         mItemHeight = AppUtil.dip2px(250);

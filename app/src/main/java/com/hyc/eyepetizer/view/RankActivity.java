@@ -97,19 +97,20 @@ public class RankActivity extends BaseActivity {
         return R.layout.activity_rank;
     }
 
+    @Override
+    protected void initPresenterAndData() {
+
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
-        ButterKnife.bind(this);
-        initTitleBar();
-        initView();
-        initViewPager();
     }
 
-
-    private void initView() {
+    @Override
+    protected void initView() {
         mIndicatorY = new int[3];
         mTitleHeight = AppUtil.dip2px(81);
         mItemHeight = AppUtil.dip2px(250);
@@ -133,6 +134,8 @@ public class RankActivity extends BaseActivity {
                     return true;
                 }
             });
+        initTitleBar();
+        initViewPager();
     }
 
 

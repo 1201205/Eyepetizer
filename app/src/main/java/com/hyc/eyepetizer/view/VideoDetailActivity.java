@@ -71,38 +71,45 @@ public class VideoDetailActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mIndexMap=new SparseArray<>();
-        getWindow().setSharedElementEnterTransition(
-            DraweeTransition.createTransitionSet(ScalingUtils.ScaleType.CENTER_CROP,
-                ScalingUtils.ScaleType.CENTER_CROP));
-        getWindow().setSharedElementReturnTransition(
-            DraweeTransition.createTransitionSet(ScalingUtils.ScaleType.CENTER_CROP,
-                ScalingUtils.ScaleType.CENTER_CROP));
-        mViewDatas = FeedModel.getInstance().getVideoListByIndex(mParentIndex,mIndexMap);
-        mdata = mViewDatas.get(mIndex).getData();
-        FrescoHelper.loadUrl(mImg, mdata.getCover().getDetail());
-        FrescoHelper.loadUrl(sdvBlur, mdata.getCover().getBlurred());
-        tvTitle.setAnimText(mdata.getTitle());
-        tvCategory.setAnimText(
-            DataHelper.getCategoryAndDuration(mdata.getCategory(), mdata.getDuration()));
-        tvDes.setAnimText(mdata.getDescription());
-        tvDes.getViewTreeObserver().addOnPreDrawListener(
-            new ViewTreeObserver.OnPreDrawListener() {
-                @Override public boolean onPreDraw() {
-                    tvDes.getViewTreeObserver().removeOnPreDrawListener(this);
-                    tvTitle.animateChar(100);
-                    tvCategory.animateChar(100);
-                    tvDes.animateChar(100);
-                    return true;
-                }
-            });
+        initData();
         //ViewCompat.setTransitionName(mImg, SHARE_PICTURE);
 
+    }
+
+    private void initData() {
+        mIndexMap=new SparseArray<>();
+        mViewDatas = FeedModel.getInstance().getVideoListByIndex(mParentIndex,mIndexMap);
+        mdata = mViewDatas.get(mIndex).getData();
     }
 
 
     @Override
     protected int getLayoutID() {
         return R.layout.item_video_detail;
+    }
+
+    @Override
+    protected void initPresenterAndData() {
+
+    }
+
+    @Override
+    protected void initView() {
+        FrescoHelper.loadUrl(mImg, mdata.getCover().getDetail());
+        FrescoHelper.loadUrl(sdvBlur, mdata.getCover().getBlurred());
+        tvTitle.setAnimText(mdata.getTitle());
+        tvCategory.setAnimText(
+                DataHelper.getCategoryAndDuration(mdata.getCategory(), mdata.getDuration()));
+        tvDes.setAnimText(mdata.getDescription());
+        tvDes.getViewTreeObserver().addOnPreDrawListener(
+                new ViewTreeObserver.OnPreDrawListener() {
+                    @Override public boolean onPreDraw() {
+                        tvDes.getViewTreeObserver().removeOnPreDrawListener(this);
+                        tvTitle.animateChar(100);
+                        tvCategory.animateChar(100);
+                        tvDes.animateChar(100);
+                        return true;
+                    }
+                });
     }
 }

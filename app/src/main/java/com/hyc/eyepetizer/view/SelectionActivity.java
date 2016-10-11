@@ -149,10 +149,7 @@ public class SelectionActivity extends BaseActivity<DailySelectionPresenter> imp
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ButterKnife.bind(this);
         EventBus.getDefault().register(this);
-        initPresenter();
-        initView();
     }
 
     @OnClick({R.id.img_left,R.id.rl_error})
@@ -166,14 +163,13 @@ public class SelectionActivity extends BaseActivity<DailySelectionPresenter> imp
                 break;
         }
     }
-
-    private void initView() {
+    @Override
+    protected void initView() {
         tvTitle.setTypeface(TypefaceHelper.getTypeface(TypefaceHelper.BOLD));
         tvTitle.setText(R.string.selection);
         ivLeft.setVisibility(View.VISIBLE);
         tvRight.setVisibility(View.VISIBLE);
         tvRight.setText(R.string.today);
-
         mTitleHeight = AppUtil.dip2px(45);
         mItemHeight = AppUtil.dip2px(250);
         mRatio = AppUtil.dip2px(353) / mItemHeight;
@@ -216,8 +212,8 @@ public class SelectionActivity extends BaseActivity<DailySelectionPresenter> imp
         }
         tvRight.setText(DailySelectionModel.getInstance().getDates().get(mDatePosition));
     }
-
-    private void initPresenter() {
+    @Override
+    protected void initPresenterAndData() {
         mPresenter = new DailySelectionPresenter(this);
         mPresenter.attachView();
         mPresenter.getDailySelection();

@@ -196,19 +196,10 @@ public class VideoActivity extends BaseActivity implements
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
-        mModel = ViewDataListFactory.getModel(mFromType);
-        mViewDatas=mModel.getVideoList(mVideoID,mParentIndex,new SparseArray<Integer>());
-//        if (formRelate) {
-//            mViewDatas=FeedModel.getInstance().getRelate(mVideoID,mParentIndex);
-//        } else {
-//            mViewDatas = FeedModel.getInstance().getVideoListByIndex(mParentIndex);
-//        }
-        mCurrentData=mViewDatas.get(mIndex).getData();
-        initView();
     }
 
-
-    private void initView(){
+    @Override
+    protected void initView(){
 
         mTitleText.setText(mCurrentData.getTitle());
         mUrl=mCurrentData.getPlayUrl();
@@ -253,6 +244,13 @@ public class VideoActivity extends BaseActivity implements
     @Override
     protected int getLayoutID() {
         return R.layout.activity_video;
+    }
+
+    @Override
+    protected void initPresenterAndData() {
+        mModel = ViewDataListFactory.getModel(mFromType);
+        mViewDatas=mModel.getVideoList(mVideoID,mParentIndex,new SparseArray<Integer>());
+        mCurrentData=mViewDatas.get(mIndex).getData();
     }
 
 

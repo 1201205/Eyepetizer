@@ -75,23 +75,11 @@ public class RecommendsActivity extends BaseActivity<RecommendsPresenter> implem
 
 
     @Override public void showError() {
-
     }
 
 
-    @Override protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        initPresenter();
-        initView();
-    }
-
-
-    @Override protected void onDestroy() {
-        super.onDestroy();
-    }
-
-
-    private void initView() {
+    @Override
+    protected void initView() {
         imgLeft.setVisibility(View.VISIBLE);
         imgLeft.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,8 +108,8 @@ public class RecommendsActivity extends BaseActivity<RecommendsPresenter> implem
         sfRecommends.setAdapter(mAdapter);
     }
 
-
-    private void initPresenter() {
+    @Override
+    protected void initPresenterAndData() {
         mPresenter = new RecommendsPresenter(this);
         mPresenter.attachView();
         mPresenter.getRecommends();

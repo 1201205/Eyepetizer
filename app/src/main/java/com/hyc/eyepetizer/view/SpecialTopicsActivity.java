@@ -76,10 +76,7 @@ public class SpecialTopicsActivity extends BaseActivity<SpecialTopicsPresenter> 
     private boolean mIsRequesting;
     private RecyclerView.OnScrollListener mOnScrollListener;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        ButterKnife.bind(this);
-        initPresenter();
+    protected void initView(){
         mManager=new LinearLayoutManager(this);
         mManager.setOrientation(LinearLayoutManager.VERTICAL);
         mOnScrollListener = new RecyclerView.OnScrollListener() {
@@ -100,8 +97,8 @@ public class SpecialTopicsActivity extends BaseActivity<SpecialTopicsPresenter> 
         mRvVideo.setLayoutManager(mManager);
         mRvVideo.addOnScrollListener(mOnScrollListener);
     }
-
-    private void initPresenter() {
+    @Override
+    protected void initPresenterAndData() {
         mPresenter=new SpecialTopicsPresenter(this);
         mPresenter.attachView();
         mPresenter.getVideoList();

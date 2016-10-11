@@ -702,8 +702,11 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
             case MotionEvent.ACTION_UP:
                 if (forLeft) {
                     backOrAdd();
+                    return true;
                 }
-                Log.e("hyc-touch","parent-up");
+                if (removeCount == 0) {
+                    return  true;
+                }
                 forRight = false;
                 break;
         }

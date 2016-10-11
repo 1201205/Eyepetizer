@@ -110,27 +110,18 @@ public class VideoReplyActivity extends BaseActivity<VideoReplyPresenter> implem
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        ButterKnife.bind(this);
-        initPresenter();
-        initView();
-    }
-
-    @Override
     protected void onDestroy() {
-        super.onDestroy();
-        mPresenter.detachView();
         mRvReply.clearOnScrollListeners();
+        super.onDestroy();
     }
-
-    private void initPresenter() {
+    @Override
+    protected void initPresenterAndData() {
         mPresenter = new VideoReplyPresenter(this);
         mPresenter.attachView();
         mPresenter.getReply(mID);
     }
-
-    private void initView() {
+    @Override
+    protected void initView() {
         FrescoHelper.loadUrl(mSdvBlur, mUrl);
         mManager = new LinearLayoutManager(this);
         mManager.setOrientation(LinearLayoutManager.VERTICAL);

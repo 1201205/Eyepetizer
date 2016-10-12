@@ -12,11 +12,12 @@ public class BasePresenter<T extends BaseView> {
 
     public BasePresenter(T view) {
         this.mView = view;
+        mCompositeSubscription = new CompositeSubscription();
     }
 
 
     public void attachView() {
-        mCompositeSubscription = new CompositeSubscription();
+
     }
 
 

@@ -38,8 +38,7 @@ import org.greenrobot.eventbus.Subscribe;
 /**
  * Created by Administrator on 2016/9/9.
  */
-public class RankActivity extends BaseActivity {
-    private static final long ANIMATION_DURATION = 350;
+public class RankActivity extends AnimateActivity {
     @BindView(R.id.tv_week)
     CustomTextView tvWeek;
     @BindView(R.id.tv_month)
@@ -50,8 +49,6 @@ public class RankActivity extends BaseActivity {
     LinearLayout llRankBar;
     @BindView(R.id.vp_video)
     ViewPager vpVideo;
-    @BindView(R.id.sdv_anim)
-    SimpleDraweeView sdvAnim;
     @BindView(R.id.fl_all)
     FrameLayout flAll;
     @BindView(R.id.indicator)
@@ -65,24 +62,10 @@ public class RankActivity extends BaseActivity {
     private VideoListFragment mHistory;
     private FragmentAdapter mAdapter;
     private List<VideoListFragment> mFragments;
-    private boolean isAnimating;
-    private float mItemHeight;
-    private float mTitleHeight;
-    private float mRatio;
-    private int lastY;
-    private int mEndY;
     private int[] mIndicatorY;
-    private AccelerateDecelerateInterpolator mInterpolator = new AccelerateDecelerateInterpolator();
-    private MyAnimatorListener mListener = new MyAnimatorListener() {
-        @Override
-        public void onAnimationEnd(Animator animator) {
-            sdvAnim.setVisibility(View.GONE);
-        }
-    };
     private int mLastIndex;
     private int preIndex;
     private int mIndicatorScroll;
-    private boolean isStarting;
     private int mLastType;
 
 
@@ -104,19 +87,48 @@ public class RankActivity extends BaseActivity {
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
+    protected boolean canDeal(int type) {
+        return type == FromType.TYPE_HISTORY || type == FromType.TYPE_MONTH ||
+                type == FromType.TYPE_WEEK;
+    }
+
+    @Override
+    protected void onStartAnimEnd(StartVideoDetailEvent event) {
+        Intent intent = VideoDetailActivity2.newIntent(event.fromType,
+                RankActivity.this, event.position,
+                event.parentIndex, event.fromType);
+        startActivity(intent);
+        overridePendingTransition(0, 0);
+    }
+
+    @Override
+    protected void onStartResumeAnim(VideoDetailBackEvent event) {
+        if (mLastType != event.fromType || mLastIndex != event.position) {
+            FrescoHelper.loadUrl(sdvAnim, event.url);
+        }
+        mLastType = event.fromType;
+        mLastIndex = event.position;
+    }
+
+    @Override
+    protected boolean hasIndicator() {
+        return true;
+    }
+
+    @Override
+    protected int getStartY(int y) {
+        return y - AppUtil.getStatusBarHeight(this);
+    }
+
+    @Override
+    protected void initEndY() {
+        mEndY = (int) (AppUtil.getScreenHeight(this) - getStatusBarHeight() -
+                mItemHeight - getResources().getDimensionPixelSize(R.dimen.no_more_height));
     }
 
     @Override
     protected void initView() {
         mIndicatorY = new int[3];
-        mTitleHeight = AppUtil.dip2px(81);
-        mItemHeight = AppUtil.dip2px(250);
-        mRatio = AppUtil.dip2px(353) / mItemHeight;
-        mEndY = (int) (AppUtil.getScreenHeight(this) - AppUtil.getStatusBarHeight(this) -
-            mItemHeight - AppUtil.dip2px(60));
         indicator.getViewTreeObserver()
             .addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
                 @Override
@@ -203,117 +215,10 @@ public class RankActivity extends BaseActivity {
         }
     }
 
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (isAnimating || isStarting) {
-            Log.e("dispatchTouchEvent", "dispatchTouchEvent");
-            return true;
-        }
-        return super.dispatchTouchEvent(ev);
-    }
-
-
-    @Subscribe
-    public void handleStartActivity(final StartVideoDetailEvent event) {
-        if (isAnimating) {
-            return;
-        }
-        if (event.fromType == FromType.TYPE_HISTORY || event.fromType == FromType.TYPE_MONTH ||
-            event.fromType == FromType.TYPE_WEEK) {
-
-            isAnimating = true;
-            //EventBus.getDefault().post(new VideoSelectEvent(FromType.TYPE_DAILY,DailySelectionModel.getInstance().getMap().indexOfValue(event.position)));
-            sdvAnim.setVisibility(View.VISIBLE);
-            sdvAnim.setY(event.locationY - AppUtil.getStatusBarHeight(this));
-            FrescoHelper.loadUrl(sdvAnim, event.url);
-            lastY = event.locationY;
-            sdvAnim.animate()
-                .scaleX(mRatio)
-                .scaleY(mRatio)
-                .y((mItemHeight * (mRatio - 1) / 2))
-                .setDuration(ANIMATION_DURATION)
-                .setListener(new MyAnimatorListener() {
-                    @Override
-                    public void onAnimationEnd(Animator animator) {
-                        Intent intent = VideoDetailActivity2.newIntent(event.fromType,
-                            RankActivity.this, event.position,
-                            event.parentIndex, event.fromType);
-                        isStarting = true;
-                        startActivity(intent);
-                        overridePendingTransition(0, 0);
-                    }
-                })
-                .setInterpolator(mInterpolator)
-                .start();
-        }
-    }
-
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        isStarting = false;
-        isAnimating = false;
-    }
-
-
-    @Subscribe
-    public void handleResumeAnim(final VideoDetailBackEvent event) {
-        if (event.fromType == FromType.TYPE_HISTORY ||
-            event.fromType == FromType.TYPE_MONTH ||
-            event.fromType == FromType.TYPE_WEEK) {
-            if (mLastType != event.fromType || mLastIndex != event.position) {
-                FrescoHelper.loadUrl(sdvAnim, event.url);
-            }
-            mLastType = event.fromType;
-            mLastIndex = event.position;
-
-            if (event.hasScrolled) {
-                if (event.theLast) {
-                    sdvAnim.animate()
-                        .scaleX(1)
-                        .setInterpolator(mInterpolator)
-                        .scaleY(1)
-                        .y(mEndY)
-                        .setListener(mListener)
-                        .setDuration(ANIMATION_DURATION)
-                        .start();
-                } else {
-                    sdvAnim.animate()
-                        .scaleX(1)
-                        .setInterpolator(mInterpolator)
-                        .scaleY(1)
-                        .y(mTitleHeight)
-                        .setListener(mListener)
-                        .setDuration(ANIMATION_DURATION)
-                        .start();
-                }
-            } else {
-                int[] l = new int[2];
-                sdvAnim.getLocationInWindow(l);
-                sdvAnim.animate()
-                    .scaleX(1)
-                    .scaleY(1)
-                    .y(lastY - l[1])
-                    .setListener(mListener)
-                    .setDuration(ANIMATION_DURATION)
-                    .setInterpolator(mInterpolator)
-                    .start();
-            }
-        }
-
-    }
-
-
     @Subscribe
     public void handleSelectEvent(VideoSelectEvent event) {
         if (mLastType != event.fromType || mLastIndex != event.position) {
-            sdvAnim.setImageURI(VideoListModel.getInstance()
-                .getVideo(event.fromType, event.position)
-                .getData()
-                .getCover()
-                .getDetail());
+            FrescoHelper.loadUrl(sdvAnim,event.url);
             switch (event.fromType) {
                 case FromType.TYPE_HISTORY:
                     mHistory.scrollTo(event.position);
@@ -328,11 +233,5 @@ public class RankActivity extends BaseActivity {
             mLastType = event.fromType;
             mLastIndex = event.position;
         }
-    }
-
-
-    @Override protected void onDestroy() {
-        super.onDestroy();
-        EventBus.getDefault().unregister(this);
     }
 }

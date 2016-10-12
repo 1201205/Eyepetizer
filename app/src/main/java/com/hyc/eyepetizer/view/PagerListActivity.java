@@ -113,7 +113,6 @@ public class PagerListActivity extends AnimateActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
         initBar();
     }
 
@@ -214,11 +213,7 @@ public class PagerListActivity extends AnimateActivity {
         //                    appbar.setExpanded(false);
         //                }
         //            },0);
-        sdvAnim.setImageURI(VideoListModel.getInstance()
-            .getVideo(event.fromType, event.position)
-            .getData()
-            .getCover()
-            .getDetail());
+        FrescoHelper.loadUrl(sdvAnim,event.url);
         if (event.fromType % 2 == 0) {
             mDate.scrollTo(event.position);
         } else {
@@ -289,13 +284,7 @@ public class PagerListActivity extends AnimateActivity {
 
     @Override
     protected int getStartY(int y) {
-        return y - AppUtil.getStatusBarHeight(this);
+        return y - getStatusBarHeight();
     }
 
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        EventBus.getDefault().unregister(this);
-    }
 }

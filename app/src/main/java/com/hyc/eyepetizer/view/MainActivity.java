@@ -37,7 +37,7 @@ import java.util.List;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AnimateActivity {
     private static final long ANIMTION_DURATION = 350;
     @BindView(R.id.test1)
     ViewPager mPager;
@@ -71,11 +71,62 @@ public class MainActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_test_main);
-        EventBus.getDefault().register(this);
-        ButterKnife.bind(this);
+    protected boolean canDeal(int type) {
+        return type == FromType.TYPE_MAIN;
+    }
+
+    @Override
+    protected boolean isLoading() {
+        return mTestFragment.isLoading();
+    }
+
+    @Override
+    protected void onStartAnimEnd(StartVideoDetailEvent event) {
+        Intent intent = VideoDetailActivity2.newIntent(FromType.TYPE_MAIN,
+                MainActivity.this, event.index,
+                event.parentIndex);
+        startActivity(intent);
+        overridePendingTransition(0, 0);
+    }
+
+    @Override
+    protected void onStartResumeAnim(VideoDetailBackEvent event) {
+        FrescoHelper.loadUrl(sdvAnim, event.url);
+    }
+
+    @Override
+    protected boolean hasIndicator() {
+        return false;
+    }
+
+    @Override
+    protected int getStartY(int y) {
+        return y - getStatusBarHeight();
+    }
+
+    @Override
+    protected void initEndY() {
+
+    }
+
+
+    @Override
+    protected void handleIntent() {
+
+    }
+
+    @Override
+    protected int getLayoutID() {
+        return R.layout.activity_test_main;
+    }
+
+    @Override
+    protected void initPresenterAndData() {
+
+    }
+
+    @Override
+    protected void initView() {
         mRlAll.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
@@ -84,14 +135,6 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-        mTitleHeight = AppUtil.dip2px(45);
-        mItemHeight = AppUtil.dip2px(250);
-        mRatio = AppUtil.dip2px(353) / mItemHeight;
-        Log.e("hyc_i",AppUtil.getScreenHeight(this)+"--");
-        //getWindow().setSharedElementEnterTransition(DraweeTransition.createTransitionSet(ScalingUtils.ScaleType.CENTER_CROP,
-        //    ScalingUtils.ScaleType.CENTER_CROP));
-        //getWindow().setSharedElementReturnTransition(DraweeTransition.createTransitionSet(ScalingUtils.ScaleType.CENTER_CROP,
-        //    ScalingUtils.ScaleType.CENTER_CROP));
         mTitle.setTypeface(TypefaceHelper.getTypeface(TypefaceHelper.LOBSTER));
         mTitle.setText(R.string.app_name);
         List<Fragment> fragments = new ArrayList<>();
@@ -101,8 +144,6 @@ public class MainActivity extends AppCompatActivity {
         fragments.add(mDiscoveryFragment);
         mPgcFragment=new PgcFragment();
         fragments.add(mPgcFragment);
-        //fragments.add(new TestFragment());
-        //fragments.add(new TestFragment());
         FragmentAdapter adapter = new FragmentAdapter(getSupportFragmentManager(), fragments);
         mPager.setAdapter(adapter);
         for (int i = 0; i < mTab.getChildCount(); i++) {
@@ -136,85 +177,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
     }
-
-
-    @Subscribe
-    public void handleStartActivity(final StartVideoDetailEvent event) {
-        if (isStarting||event.fromType != FromType.TYPE_MAIN) {
-            return;
-        }
-        if (mTestFragment.isLoading()) {
-            return;
-        }
-        isStarting=true;
-        sdvAnim.setVisibility(View.VISIBLE);
-        sdvAnim.setY(event.locationY - getStatusBarHeight());
-        FrescoHelper.loadUrl(sdvAnim, event.url);
-        lastY = event.locationY;
-        mTestFragment.setStartPosition(event.position - event.index);
-        sdvAnim.animate()
-            .scaleX(mRatio)
-            .scaleY(mRatio)
-            .y((mItemHeight * (mRatio - 1) / 2))
-            .setDuration(ANIMTION_DURATION)
-            .setListener(new MyAnimatorListener() {
-                @Override public void onAnimationEnd(Animator animator) {
-                    isStarting=false;
-                    Intent intent = VideoDetailActivity2.newIntent(FromType.TYPE_MAIN,
-                        MainActivity.this, event.index,
-                        event.parentIndex);
-                    startActivity(intent);
-                    overridePendingTransition(0, 0);
-                }
-            })
-            .setInterpolator(mInterpolator)
-            .start();
-    }
-
-
-    @Subscribe
-    public void handleResumeAnim(VideoDetailBackEvent event) {
-        if (event.fromType != FromType.TYPE_MAIN) {
-            return;
-        }
-        FrescoHelper.loadUrl(sdvAnim, event.url);
-        if (event.hasScrolled) {
-            if (event.theLast) {
-                sdvAnim.animate()
-                        .scaleX(1)
-                        .setInterpolator(mInterpolator)
-                        .scaleY(1)
-                        .y(mEndY)
-                        .setListener(mListener)
-                        .setDuration(ANIMTION_DURATION)
-                        .start();
-            } else {
-                sdvAnim.animate()
-                        .scaleX(1)
-                        .setInterpolator(mInterpolator)
-                        .scaleY(1)
-                        .y(mTitleHeight)
-                        .setListener(mListener)
-                        .setDuration(ANIMTION_DURATION)
-                        .start();
-            }
-        } else {
-            int[] l = new int[2];
-            sdvAnim.getLocationInWindow(l);
-            sdvAnim.animate()
-                .scaleX(1)
-                .scaleY(1)
-                .y(lastY - l[1])
-                .setListener(mListener)
-                .setDuration(ANIMTION_DURATION)
-                .setInterpolator(mInterpolator)
-                .start();
-        }
-
-    }
-
 
     @Subscribe
     public void goToPage(HomePageEvent event) {
@@ -225,17 +188,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        EventBus.getDefault().unregister(this);
-        super.onDestroy();
-    }
 
 
-    private int getStatusBarHeight() {
-        if (mStatusBarHeight == 0) {
-            mStatusBarHeight = AppUtil.getStatusBarHeight(this);
-        }
-        return mStatusBarHeight;
-    }
 }

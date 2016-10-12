@@ -42,7 +42,7 @@ import org.greenrobot.eventbus.Subscribe;
  * todo 还有一个界面也是类似的 重复代码过多 需要进行重构
  * Created by Administrator on 2016/9/8.
  */
-public class SelectionActivity extends BaseActivity<DailySelectionPresenter> implements
+public class SelectionActivity extends AnimateActivity<DailySelectionPresenter> implements
         DailySelectionContract.View {
     private static final long ANIMATION_DURATION = 350;
     @BindView(R.id.tv_remain)
@@ -147,9 +147,40 @@ public class SelectionActivity extends BaseActivity<DailySelectionPresenter> imp
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
+    protected boolean canDeal(int type) {
+        return !(type != FromType.TYPE_DAILY || isStarting || loading.isLoading());
+    }
+
+    @Override
+    protected void onStartAnimEnd(StartVideoDetailEvent event) {
+        Intent intent = VideoDetailActivity2.newIntent(FromType.TYPE_DAILY,
+                SelectionActivity.this, event.index,
+                event.parentIndex);
+        startActivity(intent);
+        overridePendingTransition(0, 0);
+    }
+
+    @Override
+    protected void onStartResumeAnim(VideoDetailBackEvent event) {
+        if (mLastIndex != event.position) {
+            FrescoHelper.loadUrl(sdvAnim, event.url);
+        }
+        mLastIndex = event.position;
+    }
+
+    @Override
+    protected boolean hasIndicator() {
+        return false;
+    }
+
+    @Override
+    protected int getStartY(int y) {
+        return y - getStatusBarHeight();
+    }
+
+    @Override
+    protected void initEndY() {
+        mEndY = (int) (AppUtil.getScreenHeight(this) - getStatusBarHeight() - mItemHeight);
     }
 
     @OnClick({R.id.img_left,R.id.rl_error})
@@ -173,7 +204,6 @@ public class SelectionActivity extends BaseActivity<DailySelectionPresenter> imp
         mTitleHeight = AppUtil.dip2px(45);
         mItemHeight = AppUtil.dip2px(250);
         mRatio = AppUtil.dip2px(353) / mItemHeight;
-        mEndY = (int) (AppUtil.getScreenHeight(this) - getStatusBarHeight() - mItemHeight);
         mManager = new LinearLayoutManager(this);
         mManager.setOrientation(LinearLayoutManager.VERTICAL);
         mOnScrollListener = new RecyclerView.OnScrollListener() {
@@ -220,99 +250,5 @@ public class SelectionActivity extends BaseActivity<DailySelectionPresenter> imp
 
     }
 
-    @Subscribe
-    public void handleStartActivity(final StartVideoDetailEvent event) {
-        if (event.fromType != FromType.TYPE_DAILY || isStarting || loading.isLoading()) {
-            return;
-        }
-        isStarting = true;
-        //EventBus.getDefault().post(new VideoSelectEvent(FromType.TYPE_DAILY,DailySelectionModel.getInstance().getMap().indexOfValue(event.position)));
-        sdvAnim.setVisibility(View.VISIBLE);
-        sdvAnim.setY(event.locationY - getStatusBarHeight());
-        FrescoHelper.loadUrl(sdvAnim, event.url);
-        lastY = event.locationY;
-        sdvAnim.animate()
-                .scaleX(mRatio)
-                .scaleY(mRatio)
-                .y((mItemHeight * (mRatio - 1) / 2))
-                .setDuration(ANIMATION_DURATION)
-                .setListener(new MyAnimatorListener() {
-                    @Override
-                    public void onAnimationEnd(Animator animator) {
-                        isStarting = false;
-                        Intent intent = VideoDetailActivity2.newIntent(FromType.TYPE_DAILY,
-                                SelectionActivity.this, event.index,
-                                event.parentIndex);
-                        startActivity(intent);
-                        overridePendingTransition(0, 0);
-                    }
-                })
-                .setInterpolator(mInterpolator)
-                .start();
-    }
-
-
-    @Subscribe
-    public void handleResumeAnim(VideoDetailBackEvent event) {
-
-        if (event.fromType != FromType.TYPE_DAILY) {
-            return;
-        }
-        //只有第一次会重复设置url
-        if (mLastIndex != event.position) {
-            FrescoHelper.loadUrl(sdvAnim, event.url);
-        }
-        mLastIndex = event.position;
-
-        if (event.hasScrolled) {
-            if (event.theLast) {
-                sdvAnim.animate()
-                        .scaleX(1)
-                        .setInterpolator(mInterpolator)
-                        .scaleY(1)
-                        .y(mEndY)
-                        .setListener(mListener)
-                        .setDuration(ANIMATION_DURATION)
-                        .start();
-            } else {
-                sdvAnim.animate()
-                        .scaleX(1)
-                        .setInterpolator(mInterpolator)
-                        .scaleY(1)
-                        .y(mTitleHeight)
-                        .setListener(mListener)
-                        .setDuration(ANIMATION_DURATION)
-                        .start();
-            }
-        } else {
-            int[] l = new int[2];
-            sdvAnim.getLocationInWindow(l);
-            sdvAnim.animate()
-                    .scaleX(1)
-                    .scaleY(1)
-                    .y(lastY - l[1])
-                    .setListener(mListener)
-                    .setDuration(ANIMATION_DURATION)
-                    .setInterpolator(mInterpolator)
-                    .start();
-        }
-
-    }
-
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        EventBus.getDefault().unregister(this);
-        mPresenter.detachView();
-    }
-
-
-    private int getStatusBarHeight() {
-        if (mStatusBarHeight == 0) {
-            mStatusBarHeight = AppUtil.getStatusBarHeight(this);
-        }
-        return mStatusBarHeight;
-    }
 
 }

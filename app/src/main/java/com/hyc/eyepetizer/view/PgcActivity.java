@@ -42,12 +42,11 @@ import org.greenrobot.eventbus.Subscribe;
  * Created by ray on 16/9/13.
  */
 
-public class PgcActivity extends BaseActivity {
+public class PgcActivity extends AnimateActivity {
     private static final String TITLE = "title";
     private static final String DES = "des";
     private static final String ID = "id";
     private static final String URL = "url";
-    private static final long ANIMATION_DURATION = 350;
     @BindView(R.id.vp_target)
     ViewPager vpVideo;
     @BindView(R.id.img_left)
@@ -76,8 +75,6 @@ public class PgcActivity extends BaseActivity {
     CoordinatorLayout clMain;
     @BindView(R.id.main_content)
     LinearLayout mainContent;
-    @BindView(R.id.sdv_anim)
-    SimpleDraweeView sdvAnim;
     private String mTitle;
     private String mDes;
     private String mIcoUrl;
@@ -86,26 +83,11 @@ public class PgcActivity extends BaseActivity {
     private VideoListFragment mShare;
     private FragmentAdapter mAdapter;
     private List<VideoListFragment> mFragments;
-    private boolean isAnimating;
-    private float mItemHeight;
-    private float mTitleHeight;
-    private float mRatio;
-    private int lastY;
-    private int mEndY;
     private int[] mIndicatorY;
-    private AccelerateDecelerateInterpolator mInterpolator = new AccelerateDecelerateInterpolator();
-    private MyAnimatorListener mListener = new MyAnimatorListener() {
-        @Override
-        public void onAnimationEnd(Animator animator) {
-            sdvAnim.setVisibility(View.GONE);
-        }
-    };
     private int mLastIndex;
     private int preIndex;
     private int mIndicatorScroll;
-    private boolean isStarting;
     private int mLastType;
-    private int i = 1;
 
 
     public static void start(Context context, String title, String des, String url, int id) {
@@ -140,20 +122,62 @@ public class PgcActivity extends BaseActivity {
 
 
     @Override
+    protected boolean canDeal(int type) {
+        return type == FromType.TYPE_PGC_DATE ||
+                type == FromType.TYPE_PGC_SHARE;
+    }
+
+    @Override
+    protected void onStartAnimEnd(StartVideoDetailEvent event) {
+        mLastType = event.fromType;
+        mLastIndex = event.position;
+        if (mLastType == FromType.TYPE_PGC_DATE) {
+            mDate.setLastIndex(mLastIndex);
+        } else {
+            mShare.setLastIndex(mLastIndex);
+        }
+        Intent intent = VideoDetailActivity2.newIntent(event.fromType,
+                PgcActivity.this, event.position,
+                event.parentIndex, event.fromType);
+        startActivity(intent);
+        overridePendingTransition(0, 0);
+    }
+
+    @Override
+    protected void onStartResumeAnim(VideoDetailBackEvent event) {
+        if (mLastType != event.fromType || mLastIndex != event.position) {
+            FrescoHelper.loadUrl(sdvAnim, event.url);
+        }
+        mLastType = event.fromType;
+        mLastIndex = event.position;
+    }
+
+    @Override
+    protected boolean hasIndicator() {
+        return true;
+    }
+
+    @Override
+    protected int getStartY(int y) {
+        return y - getStatusBarHeight();
+    }
+
+    @Override
+    protected void initEndY() {
+        mEndY = (int) (AppUtil.getScreenHeight(this) - getStatusBarHeight() -
+                mItemHeight - mTitleHeight);
+    }
+
+    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
         initBar();
     }
 
     @Override
     protected void initView() {
         mIndicatorY = new int[3];
-        mTitleHeight = AppUtil.dip2px(81);
-        mItemHeight = AppUtil.dip2px(250);
-        mRatio = AppUtil.dip2px(353) / mItemHeight;
-        mEndY = (int) (AppUtil.getScreenHeight(this) - AppUtil.getStatusBarHeight(this) -
-            mItemHeight - AppUtil.dip2px(60));
+
         indicator.getViewTreeObserver()
             .addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
                 @Override
@@ -228,65 +252,6 @@ public class PgcActivity extends BaseActivity {
     }
 
 
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (isAnimating || isStarting) {
-            Log.e("dispatchTouchEvent", "dispatchTouchEvent");
-            return true;
-        }
-        return super.dispatchTouchEvent(ev);
-    }
-
-
-    @Subscribe
-    public void handleResumeAnim(final VideoDetailBackEvent event) {
-        Log.e("hyc-po", event.position + "--VideoDetailBackEvent--");
-        if (event.fromType == FromType.TYPE_PGC_DATE ||
-            event.fromType == FromType.TYPE_PGC_SHARE) {
-            if (mLastType != event.fromType || mLastIndex != event.position) {
-                FrescoHelper.loadUrl(sdvAnim, event.url);
-            }
-            //Log.e("hyc-po", event.position + "--VideoDetailBackEvent--");
-            mLastType = event.fromType;
-            mLastIndex = event.position;
-
-            if (event.hasScrolled) {
-                appbar.setExpanded(false);
-                if (event.theLast) {
-                    sdvAnim.animate()
-                        .scaleX(1)
-                        .setInterpolator(mInterpolator)
-                        .scaleY(1)
-                        .y(mEndY)
-                        .setListener(mListener)
-                        .setDuration(ANIMATION_DURATION)
-                        .start();
-                } else {
-                    sdvAnim.animate()
-                        .scaleX(1)
-                        .setInterpolator(mInterpolator)
-                        .scaleY(1)
-                        .y(mTitleHeight)
-                        .setListener(mListener)
-                        .setDuration(ANIMATION_DURATION)
-                        .start();
-                }
-            } else {
-                int[] l = new int[2];
-                sdvAnim.getLocationInWindow(l);
-                sdvAnim.animate()
-                    .scaleX(1)
-                    .scaleY(1)
-                    .y(lastY - l[1])
-                    .setListener(mListener)
-                    .setDuration(ANIMATION_DURATION)
-                    .setInterpolator(mInterpolator)
-                    .start();
-            }
-        }
-
-    }
-
 
     @Subscribe
     public void handleSelectEvent(final VideoSelectEvent event) {
@@ -299,11 +264,7 @@ public class PgcActivity extends BaseActivity {
             //                }
             //            },0);
             appbar.setExpanded(false);
-            sdvAnim.setImageURI(VideoListModel.getInstance()
-                .getVideo(event.fromType, event.position)
-                .getData()
-                .getCover()
-                .getDetail());
+            FrescoHelper.loadUrl(sdvAnim,event.url);
             int[] l = new int[2];
             rlIndicator.getLocationInWindow(l);
             switch (event.fromType) {
@@ -322,15 +283,6 @@ public class PgcActivity extends BaseActivity {
         }
     }
 
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        isStarting = false;
-        isAnimating = false;
-    }
-
-
     @OnClick({ R.id.img_left, R.id.tv_time, R.id.tv_share })
     public void onClick(View view) {
         switch (view.getId()) {
@@ -346,53 +298,4 @@ public class PgcActivity extends BaseActivity {
         }
     }
 
-
-    @Subscribe
-    public void handleStartActivity(final StartVideoDetailEvent event) {
-        if (isAnimating) {
-            return;
-        }
-        if (event.fromType == FromType.TYPE_PGC_DATE ||
-            event.fromType == FromType.TYPE_PGC_SHARE) {
-
-            isAnimating = true;
-            //EventBus.getDefault().post(new VideoSelectEvent(FromType.TYPE_DAILY,DailySelectionModel.getInstance().getMap().indexOfValue(event.position)));
-            sdvAnim.setVisibility(View.VISIBLE);
-            sdvAnim.setY(event.locationY - AppUtil.getStatusBarHeight(this));
-            FrescoHelper.loadUrl(sdvAnim, event.url);
-            lastY = event.locationY;
-            sdvAnim.animate()
-                .scaleX(mRatio)
-                .scaleY(mRatio)
-                .y((mItemHeight * (mRatio - 1) / 2))
-                .setDuration(ANIMATION_DURATION)
-                .setListener(new MyAnimatorListener() {
-                    @Override
-                    public void onAnimationEnd(Animator animator) {
-                        mLastType = event.fromType;
-                        mLastIndex = event.position;
-                        if (mLastType == FromType.TYPE_PGC_DATE) {
-                            mDate.setLastIndex(mLastIndex);
-                        } else {
-                            mShare.setLastIndex(mLastIndex);
-                        }
-                        Intent intent = VideoDetailActivity2.newIntent(event.fromType,
-                            PgcActivity.this, event.position,
-                            event.parentIndex, event.fromType);
-                        isStarting = true;
-                        startActivity(intent);
-                        overridePendingTransition(0, 0);
-                    }
-                })
-                .setInterpolator(mInterpolator)
-                .start();
-        }
-    }
-
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        EventBus.getDefault().unregister(this);
-    }
 }

@@ -20,6 +20,7 @@ import com.hyc.eyepetizer.event.StartVideoDetailEvent;
 import com.hyc.eyepetizer.event.VideoDetailBackEvent;
 import com.hyc.eyepetizer.event.VideoSelectEvent;
 import com.hyc.eyepetizer.model.FromType;
+import com.hyc.eyepetizer.model.VideoListModel;
 import com.hyc.eyepetizer.model.beans.ViewData;
 import com.hyc.eyepetizer.presenter.LightTopicPresenter;
 import com.hyc.eyepetizer.utils.AppUtil;
@@ -35,8 +36,7 @@ import org.greenrobot.eventbus.Subscribe;
 /**
  * Created by Administrator on 2016/9/27.
  */
-public class LightTopicActivity extends BaseActivity<LightTopicPresenter> implements VideoListContract.View{
-    private static final long ANIMATION_DURATION = 350;
+public class LightTopicActivity extends AnimateActivity<LightTopicPresenter> implements VideoListContract.View{
     @BindView(R.id.rv_video)
     RecyclerView mRvVideo;
     @BindView(R.id.iv_error)
@@ -45,31 +45,15 @@ public class LightTopicActivity extends BaseActivity<LightTopicPresenter> implem
     CustomTextView mTvError;
     @BindView(R.id.rl_error)
     RelativeLayout mRlError;
-    @BindView(R.id.sdv_anim)
-    SimpleDraweeView sdvAnim;
     @BindView(R.id.img_left)
     ImageView imgLeft;
     @BindView(R.id.tv_head_title)
     CustomTextView tvHeadTitle;
     private TestAdapter mAdapter;
     private LinearLayoutManager mManager;
-    private boolean isAnimating;
-    private float mItemHeight;
-    private float mTitleHeight;
-    private int lastY;
-    private int mEndY;
-    private boolean isStarting;
-    private AccelerateDecelerateInterpolator mInterpolator = new AccelerateDecelerateInterpolator();
-    private MyAnimatorListener mListener = new MyAnimatorListener() {
-        @Override
-        public void onAnimationEnd(Animator animator) {
-            sdvAnim.setVisibility(View.GONE);
-        }
-    };
     private int mLastIndex;
     private int mID;
     private String mTitle;
-    private float mRatio;
 
 
     public static Intent getIntent(Context context, String title, int id) {
@@ -123,9 +107,41 @@ public class LightTopicActivity extends BaseActivity<LightTopicPresenter> implem
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
+    protected boolean canDeal(int type) {
+        return type == FromType.TYPE_LIGHT_TOPIC;
+    }
+
+    @Override
+    protected void onStartAnimEnd(StartVideoDetailEvent event) {
+        Intent intent = VideoDetailActivity2.newIntent(FromType.TYPE_LIGHT_TOPIC,
+                LightTopicActivity.this, event.position,
+                event.parentIndex, mID);
+        mLastIndex=event.position;
+        startActivity(intent);
+        overridePendingTransition(0, 0);
+    }
+
+    @Override
+    protected void onStartResumeAnim(VideoDetailBackEvent event) {
+        if (event.position!=mLastIndex) {
+            FrescoHelper.loadUrl(sdvAnim, event.url);
+        }
+    }
+
+    @Override
+    protected boolean hasIndicator() {
+        return false;
+    }
+
+    @Override
+    protected int getStartY(int y) {
+        return y - getStatusBarHeight();
+    }
+
+    @Override
+    protected void initEndY() {
+        mEndY = (int) (AppUtil.getScreenHeight(this) - getStatusBarHeight() -
+                mItemHeight - getResources().getDimensionPixelSize(R.dimen.no_more_height));
     }
 
     @Override
@@ -139,11 +155,6 @@ public class LightTopicActivity extends BaseActivity<LightTopicPresenter> implem
         });
         tvHeadTitle.setText(mTitle);
         tvHeadTitle.setTypeface(TypefaceHelper.getTypeface(TypefaceHelper.BOLD));
-        mTitleHeight = AppUtil.dip2px(45);
-        mItemHeight = AppUtil.dip2px(250);
-        mRatio = AppUtil.dip2px(353) / mItemHeight;
-        mEndY = (int) (AppUtil.getScreenHeight(this) - AppUtil.getStatusBarHeight(this) -
-            mItemHeight - AppUtil.dip2px(60));
         mManager=new LinearLayoutManager(this);
         mManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRvVideo.setLayoutManager(mManager);
@@ -152,103 +163,15 @@ public class LightTopicActivity extends BaseActivity<LightTopicPresenter> implem
     @Override
     protected void initPresenterAndData() {
         mPresenter=new LightTopicPresenter(this,mID);
-        mPresenter.attachView();
         mPresenter.getVideoList();
     }
 
-
-    @Subscribe
-    public void handleStartActivity(final StartVideoDetailEvent event) {
-        if (isAnimating || event.fromType != FromType.TYPE_LIGHT_TOPIC) {
-            return;
-        }
-        isAnimating = true;
-
-        sdvAnim.setVisibility(View.VISIBLE);
-        sdvAnim.setY(event.locationY - AppUtil.getStatusBarHeight(LightTopicActivity.this));
-        FrescoHelper.loadUrl(sdvAnim, event.url);
-        lastY = event.locationY;
-        sdvAnim.animate()
-                .scaleX(mRatio)
-                .scaleY(mRatio)
-                .y((mItemHeight * (mRatio - 1) / 2))
-            .setDuration(ANIMATION_DURATION)
-                .setListener(new MyAnimatorListener() {
-                    @Override public void onAnimationEnd(Animator animator) {
-                        isStarting = true;
-                        Intent intent = VideoDetailActivity2.newIntent(FromType.TYPE_LIGHT_TOPIC,
-                                LightTopicActivity.this, event.index,
-                            event.parentIndex, mID);
-                        startActivity(intent);
-                        overridePendingTransition(0, 0);
-                    }
-                })
-                .setInterpolator(mInterpolator)
-                .start();
-    }
-
-
-    @Override protected void onResume() {
-        super.onResume();
-        isStarting = false;
-        isAnimating = false;
-    }
-
-
-    @Override protected void onDestroy() {
-        super.onDestroy();
-        mPresenter.detachView();
-        EventBus.getDefault().unregister(this);
-    }
-
-
-    @Subscribe
-    public void handleResumeAnim(VideoDetailBackEvent event) {
-        if (event.fromType != FromType.TYPE_LIGHT_TOPIC) {
-            return;
-        }
-        FrescoHelper.loadUrl(sdvAnim, event.url);
-        if (event.hasScrolled) {
-            if (event.theLast) {
-                sdvAnim.animate()
-                        .scaleX(1)
-                        .setInterpolator(mInterpolator)
-                        .scaleY(1)
-                        .y(mEndY)
-                        .setListener(mListener)
-                    .setDuration(ANIMATION_DURATION)
-                        .start();
-            } else {
-                sdvAnim.animate()
-                        .scaleX(1)
-                        .setInterpolator(mInterpolator)
-                        .scaleY(1)
-                        .y(mTitleHeight)
-                        .setListener(mListener)
-                    .setDuration(ANIMATION_DURATION)
-                        .start();
-            }
-        } else {
-            int[] l = new int[2];
-            sdvAnim.getLocationInWindow(l);
-            sdvAnim.animate()
-                    .scaleX(1)
-                    .scaleY(1)
-                    .y(lastY - l[1])
-                    .setListener(mListener)
-                .setDuration(ANIMATION_DURATION)
-                    .setInterpolator(mInterpolator)
-                    .start();
-        }
-
-    }
-
-
     @Subscribe
     public void handleSelectEvent(VideoSelectEvent event) {
-        if (event.fromType != FromType.TYPE_MAIN || mLastIndex == event.position) {
+        if (event.fromType != FromType.TYPE_LIGHT_TOPIC || mLastIndex == event.position) {
             return;
         }
+        FrescoHelper.loadUrl(sdvAnim,event.url);
         mLastIndex=event.position;
         mManager.scrollToPosition(mLastIndex);
         mRvVideo.postDelayed(new Runnable() {
@@ -257,7 +180,7 @@ public class LightTopicActivity extends BaseActivity<LightTopicPresenter> implem
                 View v = mRvVideo.getChildAt(mLastIndex - mManager.findFirstVisibleItemPosition());
                 final int[] l=new int[2];
                 v.getLocationInWindow(l);
-                mRvVideo.scrollBy(0, l[1] - AppUtil.getStatusBarHeight(LightTopicActivity.this));
+                mRvVideo.scrollBy(0, (int) (l[1]-mTitleHeight-getStatusBarHeight()));
             }
         }, 5);
     }

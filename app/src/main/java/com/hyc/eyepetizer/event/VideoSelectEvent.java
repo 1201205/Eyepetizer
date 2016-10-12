@@ -7,10 +7,12 @@ public class VideoSelectEvent {
 
     public int position;
     public int fromType;
+    public String url;
 
 
-    public VideoSelectEvent(int fromType, int position) {
+    public VideoSelectEvent(int fromType, int position,String url) {
         this.fromType = fromType;
         this.position = position;
+        this.url = url;
     }
 }

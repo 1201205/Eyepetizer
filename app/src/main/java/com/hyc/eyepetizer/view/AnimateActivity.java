@@ -15,8 +15,11 @@ import com.hyc.eyepetizer.base.BaseActivity;
 import com.hyc.eyepetizer.base.BasePresenter;
 import com.hyc.eyepetizer.event.StartVideoDetailEvent;
 import com.hyc.eyepetizer.event.VideoDetailBackEvent;
+import com.hyc.eyepetizer.utils.AppUtil;
 import com.hyc.eyepetizer.utils.FrescoHelper;
 import com.hyc.eyepetizer.widget.MyAnimatorListener;
+
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 /**
@@ -47,9 +50,13 @@ public abstract class AnimateActivity<E extends BasePresenter> extends BaseActiv
     protected abstract int getStartY(int y);
     protected abstract void initEndY();
 
+    protected boolean isLoading(){
+        return false;
+    }
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
         initParameter();
     }
 
@@ -123,7 +130,7 @@ public abstract class AnimateActivity<E extends BasePresenter> extends BaseActiv
     }
     @Subscribe
     public void handleStartActivity(final StartVideoDetailEvent event) {
-        if (isAnimating) {
+        if (isAnimating||isLoading()) {
             return;
         }
         if (!canDeal(event.fromType)) {
@@ -149,5 +156,17 @@ public abstract class AnimateActivity<E extends BasePresenter> extends BaseActiv
                 })
                 .setInterpolator(mInterpolator)
                 .start();
+    }
+    protected int mStatusBarHeight;
+    protected int getStatusBarHeight() {
+        if (mStatusBarHeight == 0) {
+            mStatusBarHeight = AppUtil.getStatusBarHeight(this);
+        }
+        return mStatusBarHeight;
+    }
+    @Override
+    protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
     }
 }

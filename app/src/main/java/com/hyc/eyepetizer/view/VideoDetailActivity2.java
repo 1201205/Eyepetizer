@@ -535,6 +535,7 @@ public class VideoDetailActivity2 extends BaseActivity {
     private void sendSelectMessage() {
         //// TODO: 16/9/8   更换计算方式
         int index = 0;
+        String url =mViewDatas.get(vpVideo.getCurrentItem()).getData().getCover().getDetail();;
         switch (mFromType) {
             case FromType.TYPE_DAILY:
             case FromType.TYPE_HISTORY:
@@ -546,6 +547,7 @@ public class VideoDetailActivity2 extends BaseActivity {
             case FromType.TYPE_TAG_SHARE:
             case FromType.TYPE_CATEGORY_DATE:
             case FromType.TYPE_CATEGORY_SHARE:
+            case FromType.TYPE_LIGHT_TOPIC:
                 index = vpVideo.getCurrentItem();
                 break;
             case FromType.TYPE_MAIN:
@@ -554,6 +556,6 @@ public class VideoDetailActivity2 extends BaseActivity {
                 break;
 
         }
-        EventBus.getDefault().post(new VideoSelectEvent(mFromType, index));
+        EventBus.getDefault().post(new VideoSelectEvent(mFromType, index,url));
     }
 }

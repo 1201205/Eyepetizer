@@ -55,7 +55,7 @@ public class VideoListModel implements VideoListInterface {
     }
 
     @Override
-    public List<ViewData> getVideoList(int videoID, int parentIndex, SparseArray<Integer> array) {
+    public List<ViewData> getVideoList(int videoID, int parentIndex) {
         if (mList.get(videoID) != null) {
             return mList.get(videoID);
         }

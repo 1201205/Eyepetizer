@@ -41,7 +41,7 @@ public class VideoRelateModel implements VideoListInterface {
 
 
     @Override
-    public List<ViewData> getVideoList(int videoID, int parentIndex, SparseArray<Integer> array) {
+    public List<ViewData> getVideoList(int videoID, int parentIndex) {
         if (mRelate.get(videoID) != null) {
             return mRelate.get(videoID).get(parentIndex);
         }

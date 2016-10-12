@@ -1,23 +1,18 @@
 package com.hyc.eyepetizer.view;
 
-import android.animation.Animator;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.hyc.eyepetizer.R;
-import com.hyc.eyepetizer.base.BaseActivity;
 import com.hyc.eyepetizer.contract.DailySelectionContract;
 import com.hyc.eyepetizer.event.StartVideoDetailEvent;
 import com.hyc.eyepetizer.event.VideoDetailBackEvent;
@@ -32,10 +27,8 @@ import com.hyc.eyepetizer.utils.TypefaceHelper;
 import com.hyc.eyepetizer.view.adapter.TestAdapter;
 import com.hyc.eyepetizer.widget.CustomTextView;
 import com.hyc.eyepetizer.widget.LoadingAnimView;
-import com.hyc.eyepetizer.widget.MyAnimatorListener;
 import com.hyc.eyepetizer.widget.PullToRefreshView;
 import java.util.List;
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 /**
@@ -44,7 +37,6 @@ import org.greenrobot.eventbus.Subscribe;
  */
 public class SelectionActivity extends AnimateActivity<DailySelectionPresenter> implements
         DailySelectionContract.View {
-    private static final long ANIMATION_DURATION = 350;
     @BindView(R.id.tv_remain)
     CustomTextView tvRemain;
     @BindView(R.id.loading)
@@ -71,24 +63,10 @@ public class SelectionActivity extends AnimateActivity<DailySelectionPresenter> 
     private RecyclerView.OnScrollListener mOnScrollListener;
     private boolean hasMore = true;
     private boolean isRequesting;
-    private float mItemHeight;
-    private float mTitleHeight;
-    private float mRatio;
-    private int lastY;
-    private int mEndY;
-    private AccelerateDecelerateInterpolator mInterpolator = new AccelerateDecelerateInterpolator();
-    private MyAnimatorListener mListener = new MyAnimatorListener() {
-        @Override
-        public void onAnimationEnd(Animator animator) {
-            sdvAnim.setVisibility(View.GONE);
-        }
-    };
     private int mLastIndex;
     private SparseArray<Integer> mMap;
     private LinearLayoutManager mManager;
-    private int mStatusBarHeight;
     private int mDatePosition;
-    private boolean isStarting;
 
     @Override
     protected void handleIntent() {
@@ -125,7 +103,7 @@ public class SelectionActivity extends AnimateActivity<DailySelectionPresenter> 
             return;
         }
         if (mLastIndex != event.position) {
-            FrescoHelper.loadUrl(sdvAnim, DailySelectionModel.getInstance().getVideoList(0, 0, null).get(event.position).getData().getCover().getDetail());
+            FrescoHelper.loadUrl(sdvAnim, event.url);
         }
         mLastIndex = event.position;
         mManager.scrollToPosition(p);

@@ -39,10 +39,6 @@
 
         <activity
             android:screenOrientation="portrait"
-            android:name=".view.VideoDetailActivity"
-            android:theme="@style/AppTheme.TransparentActivity"/>
-        <activity
-            android:screenOrientation="portrait"
             android:name=".view.VideoRelateActivity"/>
         <activity
             android:screenOrientation="portrait"

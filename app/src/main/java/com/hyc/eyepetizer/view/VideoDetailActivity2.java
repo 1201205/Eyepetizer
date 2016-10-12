@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
@@ -104,7 +103,6 @@ public class VideoDetailActivity2 extends BaseActivity {
     private boolean hasScrolled;
     private VideoDetailAdapter mAdapter;
     private int preIndex;
-    private SparseArray<Integer> mIndexMap;
     private Subscription mEventSubscription;
     private int mIndicatorScroll;
     private int mVideoID;
@@ -292,9 +290,8 @@ public class VideoDetailActivity2 extends BaseActivity {
 
 
     private void initData() {
-        mIndexMap = new SparseArray<>();
         mModel = ViewDataListFactory.getModel(mFromType);
-        mViewDatas = mModel.getVideoList(mVideoID, mParentIndex, mIndexMap);
+        mViewDatas = mModel.getVideoList(mVideoID, mParentIndex);
         switch (mFromType) {
             case FromType.TYPE_MAIN:
                 fromTheLast = FeedModel.getInstance().isTheLastSelection(mParentIndex);
@@ -533,29 +530,9 @@ public class VideoDetailActivity2 extends BaseActivity {
 
 
     private void sendSelectMessage() {
-        //// TODO: 16/9/8   更换计算方式
-        int index = 0;
-        String url =mViewDatas.get(vpVideo.getCurrentItem()).getData().getCover().getDetail();;
-        switch (mFromType) {
-            case FromType.TYPE_DAILY:
-            case FromType.TYPE_HISTORY:
-            case FromType.TYPE_MONTH:
-            case FromType.TYPE_WEEK:
-            case FromType.TYPE_PGC_DATE:
-            case FromType.TYPE_PGC_SHARE:
-            case FromType.TYPE_TAG_DATE:
-            case FromType.TYPE_TAG_SHARE:
-            case FromType.TYPE_CATEGORY_DATE:
-            case FromType.TYPE_CATEGORY_SHARE:
-            case FromType.TYPE_LIGHT_TOPIC:
-                index = vpVideo.getCurrentItem();
-                break;
-            case FromType.TYPE_MAIN:
-                index = mIndexMap.get(vpVideo.getCurrentItem()) -
-                    (mIndexMap.get(mIndex) - mIndex);
-                break;
-
-        }
+        int index = vpVideo.getCurrentItem();
+        String url = mViewDatas.get(index).getData().getCover().getDetail();
+        ;
         EventBus.getDefault().post(new VideoSelectEvent(mFromType, index,url));
     }
 }

@@ -12,7 +12,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -251,7 +250,7 @@ public class VideoActivity extends BaseActivity implements
     @Override
     protected void initPresenterAndData() {
         mModel = ViewDataListFactory.getModel(mFromType);
-        mViewDatas=mModel.getVideoList(mVideoID,mParentIndex,new SparseArray<Integer>());
+        mViewDatas = mModel.getVideoList(mVideoID, mParentIndex);
         mCurrentData=mViewDatas.get(mIndex).getData();
     }
 

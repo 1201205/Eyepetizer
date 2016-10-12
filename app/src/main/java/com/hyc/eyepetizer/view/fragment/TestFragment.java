@@ -15,9 +15,7 @@ import butterknife.Unbinder;
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.base.BaseFragment;
 import com.hyc.eyepetizer.contract.SelectionContract;
-import com.hyc.eyepetizer.event.VideoSelectEvent;
 import com.hyc.eyepetizer.model.FromType;
-import com.hyc.eyepetizer.model.SectionModel;
 import com.hyc.eyepetizer.model.beans.ViewData;
 import com.hyc.eyepetizer.presenter.SelectionPresenter;
 import com.hyc.eyepetizer.view.VideoDetailActivity2;
@@ -25,8 +23,6 @@ import com.hyc.eyepetizer.view.adapter.TestAdapter;
 import com.hyc.eyepetizer.widget.LoadingAnimView;
 import com.hyc.eyepetizer.widget.PullToRefreshView;
 import java.util.List;
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 
 /**
  * Created by Administrator on 2016/8/30.
@@ -83,25 +79,19 @@ public class TestFragment extends BaseFragment<SelectionPresenter>
     }
 
 
-    @Subscribe
-    public void handleSelectEvent(VideoSelectEvent event) {
-        if (event.fromType != FromType.TYPE_MAIN || mLastIndex == event.position) {
-            return;
-        }
-        mLastIndex=event.position;
-        final int p=event.position+mStartPosition;
-        mManager.scrollToPosition(p);
+    public void scrollToPosition(final int position) {
+        mManager.scrollToPosition(position);
         mRecyclerView.postDelayed(new Runnable() {
             @Override
             public void run() {
-                View v=mRecyclerView.getChildAt(p-mManager.findFirstVisibleItemPosition());
+                View v = mRecyclerView.getChildAt(
+                    position - mManager.findFirstVisibleItemPosition());
                 final int[] l=new int[2];
                 v.getLocationInWindow(l);
                 mRecyclerView.scrollBy(0,l[1]-getTitleHeight());
             }
         }, 5);
     }
-
 
     private int getTitleHeight(){
         if (mTitleHeight==0) {
@@ -110,13 +100,6 @@ public class TestFragment extends BaseFragment<SelectionPresenter>
             mTitleHeight = l[1];
         }
         return mTitleHeight;
-    }
-
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
     }
 
 
@@ -136,7 +119,6 @@ public class TestFragment extends BaseFragment<SelectionPresenter>
 
     @Override
     public void onDestroy() {
-        EventBus.getDefault().unregister(this);
         super.onDestroy();
         mRecyclerView.clearOnScrollListeners();
         mUnbinder.unbind();

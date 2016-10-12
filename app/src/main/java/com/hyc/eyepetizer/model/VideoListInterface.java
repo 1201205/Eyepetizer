@@ -1,7 +1,5 @@
 package com.hyc.eyepetizer.model;
 
-import android.util.SparseArray;
-
 import com.hyc.eyepetizer.model.beans.ViewData;
 import java.util.List;
 
@@ -9,5 +7,5 @@ import java.util.List;
  * Created by ray on 16/9/7.
  */
 public interface VideoListInterface {
-    List<ViewData> getVideoList(int videoID, int parentIndex, SparseArray<Integer> array);
+    List<ViewData> getVideoList(int videoID, int parentIndex);
 }

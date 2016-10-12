@@ -2,9 +2,7 @@ package com.hyc.eyepetizer.model;
 
 import android.util.Log;
 import android.util.SparseArray;
-
 import com.hyc.eyepetizer.model.beans.ViewData;
-
 import java.util.List;
 
 /**
@@ -13,6 +11,13 @@ import java.util.List;
 public class SectionModel implements VideoListInterface {
     private static SectionModel sModel;
     private SparseArray<List<ViewData>> mSection;
+
+
+    private SectionModel() {
+        mSection = new SparseArray<>();
+    }
+
+
     public static SectionModel getInstance() {
 
         if (sModel == null) {
@@ -24,16 +29,15 @@ public class SectionModel implements VideoListInterface {
         }
         return sModel;
     }
-    private SectionModel(){
-        mSection=new SparseArray<>();
-    }
+
+
     public void putList(int key,List<ViewData> values){
         Log.e("datgetTypea",key+"-----"+values.size());
         mSection.put(key,values);
     }
 
     @Override
-    public List<ViewData> getVideoList(int videoID, int parentIndex, SparseArray<Integer> array) {
+    public List<ViewData> getVideoList(int videoID, int parentIndex) {
         if (mSection.get(parentIndex)!=null) {
             return mSection.get(parentIndex);
         }

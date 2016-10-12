@@ -36,7 +36,7 @@ public class PgcModel implements VideoListInterface {
 
 
     @Override
-    public List<ViewData> getVideoList(int videoID, int parentIndex, SparseArray<Integer> array) {
+    public List<ViewData> getVideoList(int videoID, int parentIndex) {
         if (mSection.get(parentIndex) != null) {
             return mSection.get(parentIndex);
         }

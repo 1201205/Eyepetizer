@@ -41,6 +41,10 @@ public class FeedModel implements VideoListInterface {
     }
 
 
+    public void addViewDatas(int key, List<ViewData> datas) {
+        mViewDatas.put(key, datas);
+    }
+
     public void addSection(SectionList data) {
         mSectionListSparseArray.put(data.getId(),data);
     }
@@ -117,36 +121,10 @@ public class FeedModel implements VideoListInterface {
     }
 
     @Override
-    public List<ViewData> getVideoList(int videoID, int parentIndex, SparseArray<Integer> array) {
-        SectionList sectionList=mSectionListSparseArray.get(parentIndex);
-        if (sectionList==null) {
-            return null;
-        }
-        //第二次不再加入新的
+    public List<ViewData> getVideoList(int videoID, int parentIndex) {
         if (mViewDatas.get(parentIndex) != null) {
             return mViewDatas.get(parentIndex);
         }
-        List<ViewData> datas = new ArrayList<>();
-
-        int count=sectionList.getItemList().size();
-        int j=0;
-        for (int i=0;i<count;i++) {
-            ViewData data=sectionList.getItemList().get(i);
-            switch (data.getType()){
-                case WidgetHelper.Type.VIDEO:
-                    datas.add(data);
-                    array.put(j,i);
-                    j++;
-                    break;
-                case  WidgetHelper.Type.VIDEO_COLLECTION_WITH_BRIEF:
-                case  WidgetHelper.Type.VIDEO_COLLECTION_WITH_TITLE:
-                case  WidgetHelper.Type.VIDEO_COLLECTION_WITH_COVER:
-                    SectionModel.getInstance().putList(data.getData().getHeader().getId(),data.getData().getItemList());
-                    break;
-            }
-        }
-
-        mViewDatas.put(parentIndex,datas);
-        return datas;
+        return null;
     }
 }

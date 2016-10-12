@@ -2,7 +2,6 @@ package com.hyc.eyepetizer.presenter;
 
 import android.text.TextUtils;
 import android.util.Log;
-
 import com.hyc.eyepetizer.base.BasePresenter;
 import com.hyc.eyepetizer.contract.SelectionContract;
 import com.hyc.eyepetizer.model.FeedModel;
@@ -40,6 +39,7 @@ public class SelectionPresenter extends BasePresenter<SelectionContract.View>
                 }
                 int count = bean.getItemList().size();
                 int temp = 0;
+                List<ViewData> videos = new ArrayList<>();
                 for (int c = 0; c < count; c++) {
                     ViewData data = bean.getItemList().get(c);
                     Log.e("datgetTypea",data.getType());
@@ -47,6 +47,7 @@ public class SelectionPresenter extends BasePresenter<SelectionContract.View>
                         case WidgetHelper.Type.VIDEO:
                             bean.getItemList().get(c).setIndex(temp);
                             temp++;
+                            videos.add(data);
                             break;
                         case  WidgetHelper.Type.VIDEO_COLLECTION_WITH_BRIEF:
                         case  WidgetHelper.Type.VIDEO_COLLECTION_WITH_TITLE:
@@ -55,6 +56,9 @@ public class SelectionPresenter extends BasePresenter<SelectionContract.View>
                             break;
                     }
                     bean.getItemList().get(c).setParentIndex(bean.getId());
+                }
+                if (videos.size() > 0) {
+                    mModel.addViewDatas(bean.getId(), videos);
                 }
                 datas.addAll(bean.getItemList());
                 if (bean.getFooter() != null) {

@@ -1,6 +1,5 @@
 package com.hyc.eyepetizer.view;
 
-import android.animation.ValueAnimator;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.media.AudioManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -118,6 +116,15 @@ public class VideoActivity extends BaseActivity implements
     private int count = 0;
     private int mParentIndex;
     private int mIndex;
+    private String mUrl;
+    private String mTitle;
+    private List<ViewData> mViewDatas;
+    private ItemListData mCurrentData;
+    private boolean formRelate;
+    private int mVideoID;
+    private VideoListInterface mModel;
+    private int mFromType;
+    private int time = 250;
     @SuppressWarnings("HandlerLeak")
     private Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -153,14 +160,6 @@ public class VideoActivity extends BaseActivity implements
             }
         }
     };
-    private String mUrl;
-    private String mTitle;
-    private List<ViewData> mViewDatas;
-    private ItemListData mCurrentData;
-    private boolean formRelate;
-    private int mVideoID;
-    private VideoListInterface mModel;
-    private int mFromType;
 
 
     public static void startList(int type, Context context, int index, int parentIndex) {
@@ -197,6 +196,7 @@ public class VideoActivity extends BaseActivity implements
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
     }
+
 
     @Override
     protected void initView(){
@@ -241,10 +241,12 @@ public class VideoActivity extends BaseActivity implements
         mVideoID=intent.getIntExtra(VIDEO_ID,-1);
     }
 
+
     @Override
     protected int getLayoutID() {
         return R.layout.activity_video;
     }
+
 
     @Override
     protected void initPresenterAndData() {
@@ -339,10 +341,12 @@ public class VideoActivity extends BaseActivity implements
 
     }
 
+
     @OnClick(R.id.iv_back)
     protected void back() {
         finish();
     }
+
 
     @OnClick(R.id.iv_start_pause)
     protected void playOrPause() {
@@ -354,6 +358,7 @@ public class VideoActivity extends BaseActivity implements
         updatePausePlay();
     }
 
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -364,18 +369,6 @@ public class VideoActivity extends BaseActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (mBackPressed || !mVideoView.isBackgroundPlayEnabled()) {
-            mVideoView.stopPlayback();
-            mVideoView.release(true);
-            mVideoView.stopBackgroundPlay();
-        } else {
-            mVideoView.enterBackground();
-        }
     }
 
 //
@@ -439,6 +432,19 @@ public class VideoActivity extends BaseActivity implements
 
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        if (mBackPressed || !mVideoView.isBackgroundPlayEnabled()) {
+            mVideoView.stopPlayback();
+            mVideoView.release(true);
+            mVideoView.stopBackgroundPlay();
+        } else {
+            mVideoView.enterBackground();
+        }
+    }
+
+
+    @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
         if (!fromUser) {
@@ -487,6 +493,7 @@ public class VideoActivity extends BaseActivity implements
         return position;
     }
 
+
     /**
      * 改变播放、暂停的按钮
      */
@@ -511,6 +518,7 @@ public class VideoActivity extends BaseActivity implements
 
     private void showAll(int timeout) {
         if (!isToolbarShow) {
+            Log.e("hyc-test1", System.currentTimeMillis() + "--start");
 //            getWindow().getDecorView().setSystemUiVisibility(View.VISIBLE);
             showToolbar(mTitleRL);
             showFloor(mFloor);
@@ -520,83 +528,30 @@ public class VideoActivity extends BaseActivity implements
             if (timeout != 0) {
                 handler.sendMessageDelayed(handler.obtainMessage(MESSAGE_FADE_OUT), timeout);
             }
+            Log.e("hyc-test1", System.currentTimeMillis() + "--end");
+
         }
     }
 
 
     public void hideFloor(final View v) {
-        ValueAnimator animator;
-        if (Build.VERSION.SDK_INT >= 19) {
-            animator = ValueAnimator.ofFloat(0,
-                    (AppUtil.dip2px(55) + AppUtil.getStatusHeight(this)));
-        } else {
-            animator = ValueAnimator.ofFloat(0, AppUtil.dip2px(55));
-        }
-        animator.setTarget(v);
-        animator.setDuration(400).start();
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                v.setTranslationY((Float) animation.getAnimatedValue());
-            }
-        });
+        v.animate().y(AppUtil.getScreenHeight(this)).setDuration(time).start();
     }
 
 
     public void showFloor(final View v) {
-        ValueAnimator animator;
-        if (Build.VERSION.SDK_INT >= 19) {
-            animator = ValueAnimator.ofFloat(
-                    (AppUtil.dip2px(55) + AppUtil.getStatusHeight(this)), 0);
-        } else {
-            animator = ValueAnimator.ofFloat(AppUtil.dip2px(55), 0);
-        }
-        animator.setTarget(v);
-        animator.setDuration(400).start();
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                v.setTranslationY((Float) animation.getAnimatedValue());
-            }
-        });
+        v.animate().y(AppUtil.getScreenHeight(this) - v.getHeight()).setDuration(time).start();
+
     }
 
 
     public void hideToolbar(final View v) {
-        ValueAnimator animator;
-        if (Build.VERSION.SDK_INT >= 19) {
-            animator = ValueAnimator.ofFloat(0,
-                    -(AppUtil.dip2px(55) + AppUtil.getStatusHeight(this)));
-        } else {
-            animator = ValueAnimator.ofFloat(0, -AppUtil.dip2px(55));
-        }
-        animator.setTarget(v);
-        animator.setDuration(400).start();
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                v.setTranslationY((Float) animation.getAnimatedValue());
-            }
-        });
+        v.animate().y(-v.getHeight()).setDuration(time).start();
     }
 
 
     public void showToolbar(final View v) {
-        ValueAnimator animator;
-        if (Build.VERSION.SDK_INT >= 19) {
-            animator = ValueAnimator.ofFloat(
-                    -(AppUtil.dip2px(55) + AppUtil.getStatusHeight(this)), 0);
-        } else {
-            animator = ValueAnimator.ofFloat(-AppUtil.dip2px(55), 0);
-        }
-        animator.setTarget(v);
-        animator.setDuration(500).start();
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                v.setTranslationY((Float) animation.getAnimatedValue());
-            }
-        });
+        v.animate().y(0).setDuration(time).start();
     }
 
 

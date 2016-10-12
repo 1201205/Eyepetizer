@@ -1,23 +1,19 @@
 package com.hyc.eyepetizer.view;
 
-import android.animation.Animator;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import butterknife.BindView;
 import butterknife.OnClick;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.hyc.eyepetizer.R;
-import com.hyc.eyepetizer.base.BaseActivity;
 import com.hyc.eyepetizer.event.StartVideoDetailEvent;
 import com.hyc.eyepetizer.event.VideoDetailBackEvent;
 import com.hyc.eyepetizer.event.VideoSelectEvent;
@@ -29,7 +25,6 @@ import com.hyc.eyepetizer.utils.TypefaceHelper;
 import com.hyc.eyepetizer.view.adapter.FragmentAdapter;
 import com.hyc.eyepetizer.view.fragment.VideoListFragment;
 import com.hyc.eyepetizer.widget.CustomTextView;
-import com.hyc.eyepetizer.widget.MyAnimatorListener;
 import java.util.ArrayList;
 import java.util.List;
 import org.greenrobot.eventbus.EventBus;
@@ -45,7 +40,6 @@ public class PagerListActivity extends AnimateActivity {
     private static final String DATE_TYPE = "date_type";
     private static final String SHARE_TYPE = "share_type";
     private static final String HAS_MORE = "has_more";
-    private static final long ANIMATION_DURATION = 350;
     @BindView(R.id.vp_video)
     ViewPager vpVideo;
     @BindView(R.id.img_left)
@@ -67,24 +61,10 @@ public class PagerListActivity extends AnimateActivity {
     private VideoListFragment mShare;
     private FragmentAdapter mAdapter;
     private List<VideoListFragment> mFragments;
-    private boolean isAnimating;
-    private float mItemHeight;
-    private float mTitleHeight;
-    private float mRatio;
-    private int lastY;
-    private int mEndY;
     private int[] mIndicatorY;
-    private AccelerateDecelerateInterpolator mInterpolator = new AccelerateDecelerateInterpolator();
-    private MyAnimatorListener mListener = new MyAnimatorListener() {
-        @Override
-        public void onAnimationEnd(Animator animator) {
-            sdvAnim.setVisibility(View.GONE);
-        }
-    };
     private int mLastIndex;
     private int preIndex;
     private int mIndicatorScroll;
-    private boolean isStarting;
     private int mLastType;
     private String mTitle;
     private int mShareType;
@@ -137,11 +117,16 @@ public class PagerListActivity extends AnimateActivity {
         initBar();
     }
 
+
+    @Override protected void initEndY() {
+        mEndY = (int) (AppUtil.getScreenHeight(this) - AppUtil.getStatusBarHeight(this) -
+            mItemHeight - getResources().getDimensionPixelSize(R.dimen.no_more_height));
+    }
+
+
     @Override
     protected void initView() {
         mIndicatorY = new int[2];
-        mEndY = (int) (AppUtil.getScreenHeight(this) - AppUtil.getStatusBarHeight(this) -
-            mItemHeight - AppUtil.dip2px(60));
         indicator.getViewTreeObserver()
             .addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
                 @Override
@@ -214,14 +199,6 @@ public class PagerListActivity extends AnimateActivity {
     }
 
 
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (isAnimating || isStarting) {
-            Log.e("dispatchTouchEvent", "dispatchTouchEvent");
-            return true;
-        }
-        return super.dispatchTouchEvent(ev);
-    }
     //eyepetizer://tag
 
     @Subscribe
@@ -252,13 +229,6 @@ public class PagerListActivity extends AnimateActivity {
 
     }
 
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        isStarting = false;
-        isAnimating = false;
-    }
 
 
     @OnClick({ R.id.img_left, R.id.tv_time, R.id.tv_share })
@@ -298,7 +268,6 @@ public class PagerListActivity extends AnimateActivity {
         Intent intent = VideoDetailActivity2.newIntent(event.fromType,
                 PagerListActivity.this, event.position,
                 event.parentIndex, event.fromType);
-        isStarting = true;
         startActivity(intent);
         overridePendingTransition(0, 0);
     }
@@ -311,6 +280,12 @@ public class PagerListActivity extends AnimateActivity {
         mLastType = event.fromType;
         mLastIndex = event.position;
     }
+
+
+    @Override protected boolean hasIndicator() {
+        return true;
+    }
+
 
     @Override
     protected int getStartY(int y) {

@@ -1,29 +1,23 @@
 package com.hyc.eyepetizer.view;
 
 import android.animation.Animator;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
-
+import butterknife.BindView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.base.BaseActivity;
 import com.hyc.eyepetizer.base.BasePresenter;
 import com.hyc.eyepetizer.event.StartVideoDetailEvent;
 import com.hyc.eyepetizer.event.VideoDetailBackEvent;
-import com.hyc.eyepetizer.utils.AppUtil;
 import com.hyc.eyepetizer.utils.FrescoHelper;
 import com.hyc.eyepetizer.widget.MyAnimatorListener;
-
 import org.greenrobot.eventbus.Subscribe;
-
-import java.util.List;
-
-import butterknife.BindView;
 
 /**
  * Created by hyc on 2016/10/11.
@@ -38,6 +32,7 @@ public abstract class AnimateActivity<E extends BasePresenter> extends BaseActiv
     protected float mRatio;
     protected int lastY;
     protected int mEndY;
+    protected boolean isStarting;
     protected AccelerateDecelerateInterpolator mInterpolator = new AccelerateDecelerateInterpolator();
     protected MyAnimatorListener mListener = new MyAnimatorListener() {
         @Override
@@ -50,6 +45,7 @@ public abstract class AnimateActivity<E extends BasePresenter> extends BaseActiv
     protected abstract void onStartResumeAnim(VideoDetailBackEvent event);
     protected abstract boolean hasIndicator();
     protected abstract int getStartY(int y);
+    protected abstract void initEndY();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,10 +60,27 @@ public abstract class AnimateActivity<E extends BasePresenter> extends BaseActiv
             mTitleHeight+=resources.getDimension(R.dimen.indicator_height);
         }
         mItemHeight = resources.getDimension(R.dimen.home_img_height);
-        mRatio = resources.getDimension(R.dimen.detail_img_height);
-        mRatio=
+        mRatio = resources.getDimension(R.dimen.detail_img_height) / mItemHeight;
+        initEndY();
     }
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isStarting = false;
+        isAnimating = false;
+    }
+
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (isAnimating || isStarting) {
+            Log.e("dispatchTouchEvent", "dispatchTouchEvent");
+            return true;
+        }
+        return super.dispatchTouchEvent(ev);
+    }
     @Subscribe
     public void handleResumeAnim(final VideoDetailBackEvent event) {
         if (!canDeal(event.fromType)) {
@@ -131,6 +144,7 @@ public abstract class AnimateActivity<E extends BasePresenter> extends BaseActiv
                     @Override
                     public void onAnimationEnd(Animator animator) {
                         onStartAnimEnd(event);
+                        isStarting = true;
                     }
                 })
                 .setInterpolator(mInterpolator)

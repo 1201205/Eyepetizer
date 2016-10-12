@@ -22,10 +22,10 @@
             android:src="@drawable/ic_action_detail_back"/>
 
         <ImageView
-            android:clickable="true"
             android:id="@+id/iv_play"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:clickable="true"
             android:layout_centerInParent="true"
             android:src="@drawable/ic_action_play"/>
     </RelativeLayout>
@@ -115,6 +115,7 @@
                 android:textSize="10sp"/>
 
             <ImageView
+                android:id="@+id/iv_left_more"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
@@ -184,25 +185,25 @@
     </RelativeLayout>
 
     <LinearLayout
-        android:layout_gravity="center"
-        android:gravity="center"
         android:id="@+id/ll_part"
         android:layout_width="80dp"
         android:layout_height="20dp"
+        android:layout_gravity="center"
+        android:gravity="center"
         android:layout_alignParentBottom="true"
         android:orientation="vertical">
 
         <com.hyc.eyepetizer.widget.CustomTextView
-            app:typeface="@string/type_lobster"
             android:id="@+id/tv_part"
-            android:textSize="10sp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            app:typeface="@string/type_lobster"
+            android:textSize="10sp"/>
 
         <View
-            android:background="@color/white"
             android:layout_width="wrap_content"
             android:layout_height="1dp"
+            android:background="@color/white"
             android:layout_alignParentBottom="true"/>
     </LinearLayout>
 </RelativeLayout>

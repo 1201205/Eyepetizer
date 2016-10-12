@@ -183,11 +183,13 @@ public class VideoDetailActivity2 extends BaseActivity {
         return R.layout.activity_video_detail;
     }
 
+
     @Override
     protected void initPresenterAndData() {
         initData();
         launchData(mIndex);
     }
+
 
     @Override
     protected void initView() {
@@ -347,7 +349,7 @@ public class VideoDetailActivity2 extends BaseActivity {
 
 
     private void resetIndicator() {
-        if (mViewDatas.size()==1) {
+        if (mViewDatas.size() == 1) {
             llPart.setVisibility(View.GONE);
         }
         mIndicatorScroll = (AppUtil.getScreenWidth(VideoDetailActivity2.this) - mIndicatorWidth) /
@@ -380,7 +382,8 @@ public class VideoDetailActivity2 extends BaseActivity {
     }
 
 
-    @OnClick({ R.id.iv_back, R.id.iv_play, R.id.tv_reply_count, R.id.iv_more ,R.id.rl_author})
+    @OnClick({ R.id.iv_back, R.id.iv_play, R.id.tv_reply_count, R.id.iv_more, R.id.sdv_icon,
+                 R.id.iv_left_more })
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_back:
@@ -402,10 +405,11 @@ public class VideoDetailActivity2 extends BaseActivity {
                     data.getTitle(), data.getCover().getBlurred());
                 break;
             case R.id.iv_more:
-            case R.id.rl_author:
+            case R.id.sdv_icon:
+            case R.id.iv_left_more:
                 ItemListData data2 = mViewDatas.get(vpVideo.getCurrentItem()).getData();
                 VideoRelateActivity.start(this, data2.getId(), data2.getTitle(),
-                        data2.getCover().getBlurred());
+                    data2.getCover().getBlurred());
             default:
                 break;
         }
@@ -501,7 +505,6 @@ public class VideoDetailActivity2 extends BaseActivity {
                     hasScrolled, theLast));
         }
         super.onBackPressed();
-        Log.e("time--3", System.currentTimeMillis() + "");
     }
 
 

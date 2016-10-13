@@ -645,12 +645,13 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
             }
         }
     }
-
+    private boolean intercept;
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         float x = ev.getRawX();
         float y = ev.getRawY();
+        Log.e("hyc-touch","parent-----"+ev.toString());
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 lastX = ev.getRawX();
@@ -660,13 +661,15 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
                 if (x - lastX == 0 && y - lastY == 0) {
                     return super.dispatchTouchEvent(ev);
                 }
+                if (intercept) {
+                    return true;
+                }
                 if (forLeft) {
                     if (removeCount == 0) {
                         return true;
                     }
                     mAddViewY += (y - lastY);
                     mAddViewX += (x - lastX);
-                    ;
                     mAddView.setX(mAddViewX);
                     mAddView.setY(mAddViewY);
                     adjustChildrenOfUnderTopView(getScrollProgress(ev));
@@ -680,6 +683,7 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
                 }
                 if (Math.abs(x - lastX) > Math.abs(y - lastY) && x - lastX > 0) {
                     if (removeCount == 0) {
+                        intercept=true;
                         return true;
                     }
                     forLeft = true;
@@ -700,12 +704,13 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
                     return super.dispatchTouchEvent(ev);
                 }
             case MotionEvent.ACTION_UP:
+                if (intercept) {
+                    intercept=false;
+                    return true;
+                }
                 if (forLeft) {
                     backOrAdd();
                     return true;
-                }
-                if (removeCount == 0) {
-                    return  true;
                 }
                 forRight = false;
                 break;

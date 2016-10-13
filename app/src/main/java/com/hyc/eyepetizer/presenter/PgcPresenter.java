@@ -21,7 +21,6 @@ public class PgcPresenter extends VideoListPresenter {
     private VideoListModel mModel;
     private int mTypeID;
     private int mID;
-    private int mCount;
 
 
     public PgcPresenter(VideoListContract.View view) {
@@ -47,16 +46,7 @@ public class PgcPresenter extends VideoListPresenter {
                 .subscribe(new Action1<Videos>() {
                     @Override
                     public void call(Videos videos) {
-                        mModel.addVideoList(mTypeID, videos.getItemList());
-                        List<ViewData> list = new ArrayList<ViewData>();
-                        list.addAll(videos.getItemList());
-                        if (TextUtils.isEmpty(videos.getNextPageUrl())) {
-                            list.add(new ViewData(null, WidgetHelper.Type.NO_MORE));
-                            mView.noMore();
-                        } else {
-                            mCount=list.size();
-                        }
-                        mView.showList(list);
+                        showList(videos);
                     }
                 }, new ExceptionAction() {
                     @Override
@@ -71,26 +61,29 @@ public class PgcPresenter extends VideoListPresenter {
     public void getMore() {
         mCompositeSubscription.add(
                 Requests.getApi()
-                        .getMorePgcByStrategy(mCount,10,mID, mTag)
+                        .getMorePgcByStrategy(mCount,mNum,mID, mTag)
                         .compose(new DefaultTransformer<Videos>())
                         .subscribe(new Action1<Videos>() {
                             @Override
                             public void call(Videos videos) {
-                                mModel.addMore(mTypeID, videos.getItemList());
-                                List<ViewData> list = new ArrayList<ViewData>();
-                                list.addAll(videos.getItemList());
-                                if (TextUtils.isEmpty(videos.getNextPageUrl())) {
-                                    list.add(new ViewData(null, WidgetHelper.Type.NO_MORE));
-                                    mView.noMore();
-                                } else {
-                                    mCount+=list.size();
-                                }
-                                mView.showList(list);
+                                showList(videos);
                             }
                         }, new ExceptionAction())
         );
     }
 
+    private void showList(Videos videos){
+        mModel.addMore(mTypeID, videos.getItemList());
+        List<ViewData> list = new ArrayList<ViewData>();
+        list.addAll(videos.getItemList());
+        if (TextUtils.isEmpty(videos.getNextPageUrl())) {
+            list.add(new ViewData(null, WidgetHelper.Type.NO_MORE));
+            mView.noMore();
+        } else {
+            getNextParameter(videos.getNextPageUrl());
+        }
+        mView.showList(list);
+    }
 
     @Override public void detachView() {
         super.detachView();

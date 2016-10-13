@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,7 @@ import com.hyc.eyepetizer.model.beans.ViewData;
 import com.hyc.eyepetizer.presenter.VideoListPresenter;
 import com.hyc.eyepetizer.presenter.VideoListPresenterGenerator;
 import com.hyc.eyepetizer.utils.AppUtil;
-import com.hyc.eyepetizer.view.adapter.TestAdapter;
+import com.hyc.eyepetizer.view.adapter.ViewAdapter;
 import com.hyc.eyepetizer.widget.CustomTextView;
 import java.util.List;
 
@@ -46,7 +45,7 @@ public class VideoListFragment extends BaseFragment<VideoListPresenter>
     private String mTag;
     private boolean mHasMore;
     private LinearLayoutManager mManager;
-    private TestAdapter mAdapter;
+    private ViewAdapter mAdapter;
     private Unbinder mUnBinder;
     private int mTop;
     private int mLastIndex;
@@ -184,7 +183,7 @@ public class VideoListFragment extends BaseFragment<VideoListPresenter>
         mIsRequesting=false;
         if (mAdapter == null) {
             mRlError.setVisibility(View.GONE);
-            mAdapter = new TestAdapter.Builder(getContext(), datas).formRank().type(mType).build();
+            mAdapter = new ViewAdapter.Builder(getContext(), datas).formRank().type(mType).build();
             mRvVideo.setAdapter(mAdapter);
         } else {
             mAdapter.addData(datas);

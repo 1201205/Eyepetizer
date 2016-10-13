@@ -24,7 +24,7 @@ import com.hyc.eyepetizer.presenter.DailySelectionPresenter;
 import com.hyc.eyepetizer.utils.AppUtil;
 import com.hyc.eyepetizer.utils.FrescoHelper;
 import com.hyc.eyepetizer.utils.TypefaceHelper;
-import com.hyc.eyepetizer.view.adapter.TestAdapter;
+import com.hyc.eyepetizer.view.adapter.ViewAdapter;
 import com.hyc.eyepetizer.widget.CustomTextView;
 import com.hyc.eyepetizer.widget.LoadingAnimView;
 import com.hyc.eyepetizer.widget.PullToRefreshView;
@@ -59,7 +59,7 @@ public class SelectionActivity extends AnimateActivity<DailySelectionPresenter> 
     CustomTextView tvTitle;
     @BindView(R.id.rl_error)
     RelativeLayout rlError;
-    private TestAdapter mAdapter;
+    private ViewAdapter mAdapter;
     private RecyclerView.OnScrollListener mOnScrollListener;
     private boolean hasMore = true;
     private boolean isRequesting;
@@ -83,7 +83,7 @@ public class SelectionActivity extends AnimateActivity<DailySelectionPresenter> 
             ptrfMain.setVisibility(View.VISIBLE);
             rlError.setVisibility(View.GONE);
             mMap = DailySelectionModel.getInstance().getMap();
-            TestAdapter.Builder builder = new TestAdapter.Builder(this);
+            ViewAdapter.Builder builder = new ViewAdapter.Builder(this);
             mAdapter = builder.type(FromType.TYPE_DAILY).build();
             target.setAdapter(mAdapter);
         }

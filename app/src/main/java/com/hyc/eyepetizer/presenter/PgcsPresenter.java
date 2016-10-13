@@ -20,8 +20,6 @@ import rx.functions.Action1;
 
 public class PgcsPresenter extends BasePresenter<PgcContract.View>
     implements PgcContract.Presenter {
-    private int mCount;
-    private int mNum;
     public PgcsPresenter(PgcContract.View view) {
         super(view);
     }
@@ -82,12 +80,5 @@ public class PgcsPresenter extends BasePresenter<PgcContract.View>
             getNextParameter(nextUrl);
         }
         mView.showPgc(datas);
-    }
-
-
-    private void getNextParameter(String url){
-        Uri uri=Uri.parse(url);
-        mCount= Integer.valueOf(uri.getQueryParameter("start"));
-        mNum= Integer.valueOf(uri.getQueryParameter("num"));
     }
 }

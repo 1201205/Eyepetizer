@@ -7,7 +7,7 @@ import android.view.View;
 /**
  * Created by Administrator on 2016/9/6.
  */
-public class DepthPageTransformer implements ViewPager.PageTransformer {
+public class ScrollPageTransformer implements ViewPager.PageTransformer {
 
     @Override
     public void transformPage(View view, float position) {

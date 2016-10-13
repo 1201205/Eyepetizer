@@ -17,7 +17,7 @@
             android:id="@+id/sdv_blur"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:fadeDuration="200"/>
+            app:fadeDuration="500"/>
         <View
             android:background="@color/alpha_black"
             android:layout_width="match_parent"

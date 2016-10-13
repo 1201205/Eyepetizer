@@ -39,7 +39,7 @@ import org.greenrobot.eventbus.EventBus;
 /**
  * Created by Administrator on 2016/8/26.
  */
-public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private LayoutInflater mLayoutInflater;
     private Context context;
     private List<ViewData> mDatas;
@@ -52,7 +52,7 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private boolean formRank;
 
 
-    private TestAdapter(Context context, List<ViewData> datas) {
+    private ViewAdapter(Context context, List<ViewData> datas) {
         this.context = context;
         mDatas = datas;
         mLayoutInflater = LayoutInflater.from(context);
@@ -287,8 +287,20 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
 
-    private void bindView(CampaignViewHolder holder, ViewData data) {
+    private void bindView(CampaignViewHolder holder,final ViewData data) {
         FrescoHelper.loadUrl(holder.campaign, data.getData().getImage());
+        holder.campaign.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                RouterWrapper wrapper =  DataHelper.getIntentByUri(context,data.getData().getActionUrl());
+                if (wrapper.getIntent()!=null) {
+                    context.startActivity(wrapper.getIntent());
+                } else if (wrapper.getEvent()!=null) {
+                    EventBus.getDefault().post(wrapper.getEvent());
+                }
+
+            }
+        });
     }
 
 
@@ -312,8 +324,14 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         holder.sdvImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RouterWrapper wrapper = DataHelper.getIntentByUri(context,
-                    data.getData().getHeader().getActionUrl());
+                RouterWrapper wrapper;
+                if (data.getData().getHeader() != null) {
+                    wrapper = DataHelper.getIntentByUri(context,
+                            data.getData().getHeader().getActionUrl());
+                } else {
+                    wrapper = DataHelper.getIntentByUri(context,
+                            data.getData().getActionUrl());
+                }
                 if (wrapper.getIntent() != null) {
                     context.startActivity(wrapper.getIntent());
                 } else {
@@ -391,16 +409,16 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
     public static class Builder {
-        private TestAdapter adapter;
+        private ViewAdapter adapter;
 
 
         public Builder(Context context, List<ViewData> datas) {
-            adapter = new TestAdapter(context, datas);
+            adapter = new ViewAdapter(context, datas);
         }
 
 
         public Builder(Context context) {
-            adapter = new TestAdapter(context, new ArrayList<ViewData>());
+            adapter = new ViewAdapter(context, new ArrayList<ViewData>());
         }
 
         public Builder setTitleTextColor(int color) {
@@ -424,7 +442,7 @@ public class TestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             return this;
         }
 
-        public TestAdapter build() {
+        public ViewAdapter build() {
             return adapter;
         }
     }

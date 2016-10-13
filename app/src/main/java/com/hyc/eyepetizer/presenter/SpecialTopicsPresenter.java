@@ -18,7 +18,6 @@ import rx.functions.Action1;
  * Created by Administrator on 2016/9/27.
  */
 public class SpecialTopicsPresenter extends VideoListPresenter {
-    private int mIndex;
 
     public SpecialTopicsPresenter(VideoListContract.View view) {
         super(view);
@@ -44,7 +43,7 @@ public class SpecialTopicsPresenter extends VideoListPresenter {
     @Override
     public void getMore() {
         mCompositeSubscription.add(
-                Requests.getApi().getMoreSpecialTopics(mIndex, 10).compose(new DefaultTransformer<Videos>()).subscribe(new Action1<Videos>() {
+                Requests.getApi().getMoreSpecialTopics(mCount, mNum).compose(new DefaultTransformer<Videos>()).subscribe(new Action1<Videos>() {
                     @Override
                     public void call(Videos videos) {
                         showList(videos);
@@ -59,7 +58,7 @@ public class SpecialTopicsPresenter extends VideoListPresenter {
             mView.noMore();
             datas.add(new ViewData(null, WidgetHelper.Type.NO_MORE));
         } else {
-            mIndex += datas.size();
+            getNextParameter(videos.getNextPageUrl());
         }
         mView.showList(videos.getItemList());
     }

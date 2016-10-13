@@ -3,12 +3,11 @@ package com.hyc.eyepetizer.view;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.ImageView;
 import butterknife.BindView;
-import butterknife.ButterKnife;
+
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.base.BaseActivity;
@@ -17,7 +16,7 @@ import com.hyc.eyepetizer.model.FromType;
 import com.hyc.eyepetizer.model.beans.ViewData;
 import com.hyc.eyepetizer.presenter.VideoRelatePresenter;
 import com.hyc.eyepetizer.utils.FrescoHelper;
-import com.hyc.eyepetizer.view.adapter.TestAdapter;
+import com.hyc.eyepetizer.view.adapter.ViewAdapter;
 import com.hyc.eyepetizer.widget.CustomTextView;
 import java.util.List;
 
@@ -34,7 +33,7 @@ public class VideoRelateActivity extends BaseActivity<VideoRelatePresenter>
     @BindView(R.id.rv_relate) RecyclerView rvRelate;
     @BindView(R.id.sdv_blur) SimpleDraweeView sdvBlur;
     private LinearLayoutManager mManager;
-    private TestAdapter mAdapter;
+    private ViewAdapter mAdapter;
     private int mID;
     private String mTitle;
     private String mUrl;
@@ -80,9 +79,9 @@ public class VideoRelateActivity extends BaseActivity<VideoRelatePresenter>
         if (datas == null) {
             return;
         }
-        mAdapter = new TestAdapter.Builder(this, datas).setTitleTextColor(Color.WHITE)
+        mAdapter = new ViewAdapter.Builder(this, datas).setTitleTextColor(Color.WHITE)
             .horizontalItemClickListener(
-                new TestAdapter.HorizontalItemClickListener() {
+                new ViewAdapter.HorizontalItemClickListener() {
                     @Override
                     public void onItemClicked(int parentPosition, int myPosition, int position) {
                         Intent intent =

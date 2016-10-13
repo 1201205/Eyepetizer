@@ -1,6 +1,5 @@
 package com.hyc.eyepetizer.view;
 
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -9,17 +8,15 @@ import android.widget.RelativeLayout;
 
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.base.BaseActivity;
-import com.hyc.eyepetizer.contract.SpecialTopicsContract;
 import com.hyc.eyepetizer.contract.VideoListContract;
 import com.hyc.eyepetizer.model.beans.ViewData;
 import com.hyc.eyepetizer.presenter.SpecialTopicsPresenter;
-import com.hyc.eyepetizer.view.adapter.TestAdapter;
+import com.hyc.eyepetizer.view.adapter.ViewAdapter;
 import com.hyc.eyepetizer.widget.CustomTextView;
 
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by Administrator on 2016/9/27.
@@ -33,7 +30,7 @@ public class SpecialTopicsActivity extends BaseActivity<SpecialTopicsPresenter> 
     CustomTextView mTvError;
     @BindView(R.id.rl_error)
     RelativeLayout mRlError;
-    private TestAdapter mAdapter;
+    private ViewAdapter mAdapter;
     private LinearLayoutManager mManager;
 
     @Override
@@ -54,7 +51,7 @@ public class SpecialTopicsActivity extends BaseActivity<SpecialTopicsPresenter> 
                 mRvVideo.setVisibility(View.VISIBLE);
                 mRlError.setVisibility(View.GONE);
             }
-            mAdapter = new TestAdapter.Builder(this, datas).build();
+            mAdapter = new ViewAdapter.Builder(this, datas).build();
             mRvVideo.setAdapter(mAdapter);
 
         } else {

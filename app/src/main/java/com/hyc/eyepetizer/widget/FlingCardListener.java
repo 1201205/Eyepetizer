@@ -88,7 +88,7 @@ public class FlingCardListener implements View.OnTouchListener {
 
     @Override
     public boolean onTouch(View view, MotionEvent event) {
-
+        Log.e("hyc-touch","onTouch-----"+event.toString());
         try {
             switch (event.getAction() & MotionEvent.ACTION_MASK) {
                 case MotionEvent.ACTION_DOWN:
@@ -166,14 +166,12 @@ public class FlingCardListener implements View.OnTouchListener {
                     break;
 
                 case MotionEvent.ACTION_UP:
-                case MotionEvent.ACTION_CANCEL:
                     //mActivePointerId = INVALID_POINTER_ID;
                     int pointerCount = event.getPointerCount();
                     int activePointerId = Math.min(mActivePointerId, pointerCount - 1);
                     aTouchUpX = event.getX(activePointerId);
                     mActivePointerId = INVALID_POINTER_ID;
                     resetCardViewOnStack(event);
-                    Log.e("hyc-touch","child-up");
                     break;
 
             }

@@ -66,6 +66,9 @@
         <activity
             android:screenOrientation="portrait"
             android:name=".view.RecommendsActivity"/>
+        <activity
+            android:screenOrientation="portrait"
+            android:name=".view.WebViewActivity"/>
     </application>
 
 </manifest>

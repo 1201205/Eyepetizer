@@ -1,36 +1,30 @@
 package com.hyc.eyepetizer.view;
 
-import android.animation.Animator;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import butterknife.BindView;
-import butterknife.ButterKnife;
-import com.facebook.drawee.view.SimpleDraweeView;
+
 import com.hyc.eyepetizer.R;
-import com.hyc.eyepetizer.base.BaseActivity;
 import com.hyc.eyepetizer.contract.VideoListContract;
 import com.hyc.eyepetizer.event.StartVideoDetailEvent;
 import com.hyc.eyepetizer.event.VideoDetailBackEvent;
 import com.hyc.eyepetizer.event.VideoSelectEvent;
 import com.hyc.eyepetizer.model.FromType;
-import com.hyc.eyepetizer.model.VideoListModel;
 import com.hyc.eyepetizer.model.beans.ViewData;
 import com.hyc.eyepetizer.presenter.LightTopicPresenter;
 import com.hyc.eyepetizer.utils.AppUtil;
 import com.hyc.eyepetizer.utils.FrescoHelper;
 import com.hyc.eyepetizer.utils.TypefaceHelper;
-import com.hyc.eyepetizer.view.adapter.TestAdapter;
+import com.hyc.eyepetizer.view.adapter.ViewAdapter;
 import com.hyc.eyepetizer.widget.CustomTextView;
-import com.hyc.eyepetizer.widget.MyAnimatorListener;
+
 import java.util.List;
-import org.greenrobot.eventbus.EventBus;
+
 import org.greenrobot.eventbus.Subscribe;
 
 /**
@@ -49,7 +43,7 @@ public class LightTopicActivity extends AnimateActivity<LightTopicPresenter> imp
     ImageView imgLeft;
     @BindView(R.id.tv_head_title)
     CustomTextView tvHeadTitle;
-    private TestAdapter mAdapter;
+    private ViewAdapter mAdapter;
     private LinearLayoutManager mManager;
     private int mLastIndex;
     private int mID;
@@ -85,7 +79,7 @@ public class LightTopicActivity extends AnimateActivity<LightTopicPresenter> imp
                 mRvVideo.setVisibility(View.VISIBLE);
                 mRlError.setVisibility(View.GONE);
             }
-            mAdapter = new TestAdapter.Builder(this, datas).type(FromType.TYPE_LIGHT_TOPIC).build();
+            mAdapter = new ViewAdapter.Builder(this, datas).type(FromType.TYPE_LIGHT_TOPIC).build();
             mRvVideo.setAdapter(mAdapter);
 
         } else {

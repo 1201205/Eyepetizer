@@ -20,7 +20,7 @@ import com.hyc.eyepetizer.model.FromType;
 import com.hyc.eyepetizer.model.beans.ViewData;
 import com.hyc.eyepetizer.presenter.PgcsPresenter;
 import com.hyc.eyepetizer.view.VideoDetailActivity2;
-import com.hyc.eyepetizer.view.adapter.TestAdapter;
+import com.hyc.eyepetizer.view.adapter.ViewAdapter;
 import com.hyc.eyepetizer.widget.CustomTextView;
 import java.util.List;
 
@@ -37,7 +37,7 @@ public class PgcFragment extends BaseFragment<PgcsPresenter> implements PgcContr
     CustomTextView tvError;
     @BindView(R.id.rl_error)
     RelativeLayout rlError;
-    private TestAdapter mAdapter;
+    private ViewAdapter mAdapter;
 
     private LinearLayoutManager mManager;
     private Unbinder mUnbinder;
@@ -86,8 +86,8 @@ public class PgcFragment extends BaseFragment<PgcsPresenter> implements PgcContr
     public void showPgc(List<ViewData> datas) {
         mIsRequesting = false;
         if (mAdapter == null) {
-            mAdapter = new TestAdapter.Builder(getContext(), datas).horizontalItemClickListener(
-                new TestAdapter.HorizontalItemClickListener() {
+            mAdapter = new ViewAdapter.Builder(getContext(), datas).horizontalItemClickListener(
+                new ViewAdapter.HorizontalItemClickListener() {
                     @Override
                     public void onItemClicked(int parentPosition, int myPosition, int position) {
                         Intent intent = VideoDetailActivity2.newIntent(FromType.TYPE_PGC,

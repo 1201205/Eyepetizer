@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
@@ -37,7 +36,7 @@ import com.hyc.eyepetizer.utils.FrescoHelper;
 import com.hyc.eyepetizer.view.adapter.VideoDetailAdapter;
 import com.hyc.eyepetizer.widget.AnimateTextView;
 import com.hyc.eyepetizer.widget.CustomTextView;
-import com.hyc.eyepetizer.widget.DepthPageTransformer;
+import com.hyc.eyepetizer.widget.ScrollPageTransformer;
 import java.util.List;
 import org.greenrobot.eventbus.EventBus;
 import rx.Subscription;
@@ -272,7 +271,7 @@ public class VideoDetailActivity2 extends BaseActivity {
                 }
             }
         });
-        vpVideo.setPageTransformer(true, new DepthPageTransformer());
+        vpVideo.setPageTransformer(true, new ScrollPageTransformer());
         vpVideo.getViewTreeObserver().addOnPreDrawListener(
             new ViewTreeObserver.OnPreDrawListener() {
                 @Override
@@ -484,7 +483,6 @@ public class VideoDetailActivity2 extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        Log.e("time--3", System.currentTimeMillis() + "");
         boolean theLast = false;
         stopAnimChar();
         if (fromTheLast) {
@@ -495,7 +493,6 @@ public class VideoDetailActivity2 extends BaseActivity {
             if (hasScrolled) {
                 sendSelectMessage();
             }
-            Log.e("hyc-po", vpVideo.getCurrentItem() + "--back--");
             EventBus.getDefault()
                 .post(new VideoDetailBackEvent(mFromType, vpVideo.getCurrentItem(),
                     mViewDatas.get(vpVideo.getCurrentItem()).getData().getCover().getDetail(),
@@ -532,7 +529,6 @@ public class VideoDetailActivity2 extends BaseActivity {
     private void sendSelectMessage() {
         int index = vpVideo.getCurrentItem();
         String url = mViewDatas.get(index).getData().getCover().getDetail();
-        ;
         EventBus.getDefault().post(new VideoSelectEvent(mFromType, index,url));
     }
 }

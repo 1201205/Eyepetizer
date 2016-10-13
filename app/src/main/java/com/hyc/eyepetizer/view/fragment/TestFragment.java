@@ -19,7 +19,7 @@ import com.hyc.eyepetizer.model.FromType;
 import com.hyc.eyepetizer.model.beans.ViewData;
 import com.hyc.eyepetizer.presenter.SelectionPresenter;
 import com.hyc.eyepetizer.view.VideoDetailActivity2;
-import com.hyc.eyepetizer.view.adapter.TestAdapter;
+import com.hyc.eyepetizer.view.adapter.ViewAdapter;
 import com.hyc.eyepetizer.widget.LoadingAnimView;
 import com.hyc.eyepetizer.widget.PullToRefreshView;
 import java.util.List;
@@ -36,7 +36,7 @@ public class TestFragment extends BaseFragment<SelectionPresenter>
     @BindView(R.id.loading)
     LoadingAnimView mLoadingView;
     private Unbinder mUnbinder;
-    private TestAdapter mAdapter;
+    private ViewAdapter mAdapter;
     private RecyclerView.OnScrollListener mOnScrollListener;
     private LinearLayoutManager mManager;
     private boolean mIsRequesting;
@@ -128,9 +128,9 @@ public class TestFragment extends BaseFragment<SelectionPresenter>
 
     @Override
     public void showSelection(List<ViewData> datas) {
-        mAdapter = new TestAdapter.Builder(getContext(), datas).type(FromType.TYPE_MAIN)
+        mAdapter = new ViewAdapter.Builder(getContext(), datas).type(FromType.TYPE_MAIN)
             .horizontalItemClickListener(
-            new TestAdapter.HorizontalItemClickListener() {
+            new ViewAdapter.HorizontalItemClickListener() {
                 @Override
                 public void onItemClicked(int parentPosition, int myPosition, int position) {
                     Log.e("datgetTypea",parentPosition+"----"+myPosition);

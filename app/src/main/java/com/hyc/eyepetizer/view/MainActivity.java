@@ -105,7 +105,14 @@ public class MainActivity extends AnimateActivity {
 
     @Override
     protected void initEndY() {
-
+        mRlAll.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                mRlAll.getViewTreeObserver().removeOnPreDrawListener(this);
+                mEndY = (int) (mRlAll.getHeight() - AppUtil.dip2px(370));
+                return true;
+            }
+        });
     }
 
 
@@ -129,14 +136,7 @@ public class MainActivity extends AnimateActivity {
 
     @Override
     protected void initView() {
-        mRlAll.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-            @Override
-            public boolean onPreDraw() {
-                mRlAll.getViewTreeObserver().removeOnPreDrawListener(this);
-                mEndY = (int) (mRlAll.getHeight() - AppUtil.dip2px(350));
-                return true;
-            }
-        });
+
         mTitle.setTypeface(TypefaceHelper.getTypeface(TypefaceHelper.LOBSTER));
         mTitle.setText(R.string.app_name);
         List<Fragment> fragments = new ArrayList<>();

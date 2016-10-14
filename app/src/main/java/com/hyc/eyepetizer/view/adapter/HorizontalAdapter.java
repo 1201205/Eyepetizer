@@ -9,7 +9,6 @@ import com.hyc.eyepetizer.model.beans.ItemListData;
 import com.hyc.eyepetizer.model.beans.ViewData;
 import com.hyc.eyepetizer.utils.DataHelper;
 import com.hyc.eyepetizer.view.adapter.holder.HorizontalVideoViewHolder;
-import com.hyc.eyepetizer.view.adapter.holder.VideoViewHolder;
 import java.util.List;
 
 /**

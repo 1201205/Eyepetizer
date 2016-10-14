@@ -22,8 +22,8 @@ import com.hyc.eyepetizer.utils.FrescoHelper;
 import com.hyc.eyepetizer.utils.TypefaceHelper;
 import com.hyc.eyepetizer.view.adapter.FragmentAdapter;
 import com.hyc.eyepetizer.view.fragment.DiscoveryFragment;
+import com.hyc.eyepetizer.view.fragment.FeedFragment;
 import com.hyc.eyepetizer.view.fragment.PgcFragment;
-import com.hyc.eyepetizer.view.fragment.TestFragment;
 import com.hyc.eyepetizer.widget.CustomTextView;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +42,7 @@ public class MainActivity extends AnimateActivity {
     RelativeLayout rlTitle;
     @BindView(R.id.fl_all)
     FrameLayout mRlAll;
-    private TestFragment mTestFragment;
+    private FeedFragment mTestFragment;
     private DiscoveryFragment mDiscoveryFragment;
     private PgcFragment mPgcFragment;
     //recyclerView中video高度
@@ -140,7 +140,7 @@ public class MainActivity extends AnimateActivity {
         mTitle.setTypeface(TypefaceHelper.getTypeface(TypefaceHelper.LOBSTER));
         mTitle.setText(R.string.app_name);
         List<Fragment> fragments = new ArrayList<>();
-        mTestFragment = new TestFragment();
+        mTestFragment = new FeedFragment();
         fragments.add(mTestFragment);
         mDiscoveryFragment = new DiscoveryFragment();
         fragments.add(mDiscoveryFragment);

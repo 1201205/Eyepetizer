@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.hyc.eyepetizer.view.adapter.holder.ViewModelPool;
 
 /**
  * Created by Administrator on 2016/8/16.
@@ -17,6 +18,7 @@ public class MainApplication extends Application {
         super.onCreate();
         sContext=this;
         Fresco.initialize(this);
+        ViewModelPool.getInstance().init();
     }
 
     public static Context getApplication() {

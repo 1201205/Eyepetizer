@@ -27,7 +27,7 @@ import java.util.List;
 /**
  * Created by Administrator on 2016/8/30.
  */
-public class TestFragment extends BaseFragment<SelectionPresenter>
+public class FeedFragment extends BaseFragment<SelectionPresenter>
         implements SelectionContract.View {
     @BindView(R.id.target)
     RecyclerView mRecyclerView;
@@ -42,8 +42,6 @@ public class TestFragment extends BaseFragment<SelectionPresenter>
     private boolean mIsRequesting;
     private boolean mHasMore = true;
     private int mTitleHeight;
-    private int mStartPosition;
-    private int mLastIndex;
 
 
     @Nullable
@@ -166,10 +164,6 @@ public class TestFragment extends BaseFragment<SelectionPresenter>
     @Override
     public void setNextPushTime(long time) {
         mRefreshView.setNextPushTime(time);
-    }
-
-    public void setStartPosition(int p){
-        mStartPosition=p;
     }
 
 

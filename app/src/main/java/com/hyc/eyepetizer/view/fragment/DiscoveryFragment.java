@@ -20,7 +20,8 @@ import com.hyc.eyepetizer.model.beans.ViewData;
 import com.hyc.eyepetizer.presenter.DiscoveryPresenter;
 import com.hyc.eyepetizer.utils.AppUtil;
 import com.hyc.eyepetizer.utils.WidgetHelper;
-import com.hyc.eyepetizer.view.adapter.DiscoveryAdapter;
+import com.hyc.eyepetizer.view.adapter.ViewAdapter;
+
 import java.util.List;
 
 /**
@@ -48,7 +49,7 @@ public class DiscoveryFragment extends BaseFragment<DiscoveryPresenter> implemen
         mUnbinder = ButterKnife.bind(this, view);
         return view;
     }
-
+    private ViewAdapter mViewAdapter;
 
     @Override
     public void showDiscovery(final List<ViewData> viewDatas) {
@@ -66,8 +67,9 @@ public class DiscoveryFragment extends BaseFragment<DiscoveryPresenter> implemen
                 return 2;
             }
         });
+        mViewAdapter=new ViewAdapter.Builder(getContext(),viewDatas).build();
         mRvDiscovery.setLayoutManager(layoutManager);
-        mRvDiscovery.setAdapter(new DiscoveryAdapter(getContext(),viewDatas));
+        mRvDiscovery.setAdapter(mViewAdapter);
         mRvDiscovery.addItemDecoration(new RecyclerView.ItemDecoration() {
             @Override
             public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {

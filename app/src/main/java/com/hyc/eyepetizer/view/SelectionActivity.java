@@ -36,7 +36,7 @@ import org.greenrobot.eventbus.Subscribe;
  * Created by Administrator on 2016/9/8.
  */
 public class SelectionActivity extends AnimateActivity<DailySelectionPresenter> implements
-        DailySelectionContract.View {
+    DailySelectionContract.View {
     @BindView(R.id.tv_remain)
     CustomTextView tvRemain;
     @BindView(R.id.loading)
@@ -68,14 +68,17 @@ public class SelectionActivity extends AnimateActivity<DailySelectionPresenter> 
     private LinearLayoutManager mManager;
     private int mDatePosition;
 
+
     @Override
     protected void handleIntent() {
     }
+
 
     @Override
     protected int getLayoutID() {
         return R.layout.activity_daily_selection;
     }
+
 
     @Override
     public void showSelection(List<ViewData> datas, boolean hasMore) {
@@ -91,15 +94,18 @@ public class SelectionActivity extends AnimateActivity<DailySelectionPresenter> 
         mAdapter.addData(datas);
     }
 
+
     @Override
     public void setRefreshTime(long time) {
         ptrfMain.setNextPushTime(time);
     }
 
+
     @Subscribe
     public void handleSelectEvent(VideoSelectEvent event) {
         final int p = mMap.get(event.position);
-        if (event.fromType != FromType.TYPE_DAILY || mManager.findFirstCompletelyVisibleItemPosition() == p) {
+        if (event.fromType != FromType.TYPE_DAILY ||
+            mManager.findFirstCompletelyVisibleItemPosition() == p) {
             return;
         }
         if (mLastIndex != event.position) {
@@ -118,25 +124,41 @@ public class SelectionActivity extends AnimateActivity<DailySelectionPresenter> 
         }, 5);
     }
 
+
     @Override
     public void showError() {
         ptrfMain.setVisibility(View.GONE);
         rlError.setVisibility(View.VISIBLE);
     }
 
+
     @Override
     protected boolean canDeal(int type) {
-        return !(type != FromType.TYPE_DAILY || isStarting || loading.isLoading());
+        if (type != FromType.TYPE_DAILY) {
+            return false;
+        }
+        if (loading.isLoading()) {
+            return false;
+        }
+        if (isAnimating) {
+            if (isStarting) {
+                return true;
+            }
+            return false;
+        }
+        return true;
     }
+
 
     @Override
     protected void onStartAnimEnd(StartVideoDetailEvent event) {
         Intent intent = VideoDetailActivity2.newIntent(FromType.TYPE_DAILY,
-                SelectionActivity.this, event.index,
-                event.parentIndex);
+            SelectionActivity.this, event.index,
+            event.parentIndex);
         startActivity(intent);
         overridePendingTransition(0, 0);
     }
+
 
     @Override
     protected void onStartResumeAnim(VideoDetailBackEvent event) {
@@ -146,24 +168,28 @@ public class SelectionActivity extends AnimateActivity<DailySelectionPresenter> 
         mLastIndex = event.position;
     }
 
+
     @Override
     protected boolean hasIndicator() {
         return false;
     }
+
 
     @Override
     protected int getStartY(int y) {
         return y - getStatusBarHeight();
     }
 
+
     @Override
     protected void initEndY() {
         mEndY = (int) (AppUtil.getScreenHeight(this) - getStatusBarHeight() - mItemHeight);
     }
 
-    @OnClick({R.id.img_left,R.id.rl_error})
+
+    @OnClick({ R.id.img_left, R.id.rl_error })
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.img_left:
                 finish();
                 break;
@@ -172,6 +198,8 @@ public class SelectionActivity extends AnimateActivity<DailySelectionPresenter> 
                 break;
         }
     }
+
+
     @Override
     protected void initView() {
         tvTitle.setTypeface(TypefaceHelper.getTypeface(TypefaceHelper.BOLD));
@@ -193,7 +221,7 @@ public class SelectionActivity extends AnimateActivity<DailySelectionPresenter> 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 if (hasMore && !isRequesting &&
-                        mManager.findLastVisibleItemPosition() >= mAdapter.getItemCount() - 6) {
+                    mManager.findLastVisibleItemPosition() >= mAdapter.getItemCount() - 6) {
                     mPresenter.getMoreDailySelection();
                     isRequesting = true;
                 }
@@ -203,6 +231,7 @@ public class SelectionActivity extends AnimateActivity<DailySelectionPresenter> 
         target.setLayoutManager(mManager);
         target.addOnScrollListener(mOnScrollListener);
     }
+
 
     private void setDate() {
         SparseArray<Integer> s = DailySelectionModel.getInstance().getSection();
@@ -220,6 +249,8 @@ public class SelectionActivity extends AnimateActivity<DailySelectionPresenter> 
         }
         tvRight.setText(DailySelectionModel.getInstance().getDates().get(mDatePosition));
     }
+
+
     @Override
     protected void initPresenterAndData() {
         mPresenter = new DailySelectionPresenter(this);
@@ -227,6 +258,5 @@ public class SelectionActivity extends AnimateActivity<DailySelectionPresenter> 
         mPresenter.getDailySelection();
 
     }
-
 
 }

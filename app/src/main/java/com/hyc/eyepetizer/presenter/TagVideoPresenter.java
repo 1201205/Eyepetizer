@@ -38,6 +38,7 @@ public class TagVideoPresenter extends VideoListPresenter {
                 Requests.getApi().getTagVideoByStragtegy(mID,mStragtegy).compose(new DefaultTransformer<TagVideoList>()).subscribe(new Action1<TagVideoList>() {
                     @Override
                     public void call(TagVideoList tagVideoList) {
+                        mModel.addVideoList(mTypeID, tagVideoList.getItemList());
                         showList(tagVideoList);
                     }
                 },new ExceptionAction(){
@@ -58,14 +59,14 @@ public class TagVideoPresenter extends VideoListPresenter {
                 .subscribe(new Action1<TagVideoList>() {
                     @Override
                     public void call(TagVideoList videos) {
-                       showList(videos);
+                        mModel.addMore(mTypeID, videos.getItemList());
+                        showList(videos);
                     }
                 }, new ExceptionAction())
         );
     }
 
     private void showList(TagVideoList videos){
-        mModel.addMore(mTypeID, videos.getItemList());
         List<ViewData> list = new ArrayList<ViewData>();
         list.addAll(videos.getItemList());
         if (TextUtils.isEmpty(videos.getNextPageUrl())) {

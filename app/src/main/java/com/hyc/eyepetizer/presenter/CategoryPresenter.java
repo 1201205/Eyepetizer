@@ -46,6 +46,7 @@ public class CategoryPresenter extends VideoListPresenter {
                         .subscribe(new Action1<Videos>() {
                             @Override
                             public void call(Videos videos) {
+                                mModel.addVideoList(mTypeID, videos.getItemList());
                                 showList(videos);
                             }
                         }, new ExceptionAction() {
@@ -66,6 +67,7 @@ public class CategoryPresenter extends VideoListPresenter {
                         .subscribe(new Action1<Videos>() {
                             @Override
                             public void call(Videos videos) {
+                                mModel.addMore(mTypeID, videos.getItemList());
                               showList(videos);
                             }
                         }, new ExceptionAction())
@@ -73,7 +75,7 @@ public class CategoryPresenter extends VideoListPresenter {
     }
 
     private void showList(Videos videos){
-        mModel.addMore(mTypeID, videos.getItemList());
+
         List<ViewData> list = new ArrayList<ViewData>();
         list.addAll(videos.getItemList());
         if (TextUtils.isEmpty(videos.getNextPageUrl())) {

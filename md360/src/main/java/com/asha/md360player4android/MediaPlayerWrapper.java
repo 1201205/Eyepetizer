@@ -2,6 +2,8 @@ package com.asha.md360player4android;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.media.AudioManager;
+
 import java.io.IOException;
 import java.io.InputStream;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
@@ -31,13 +33,7 @@ public class MediaPlayerWrapper implements IMediaPlayer.OnPreparedListener {
         mStatus = STATUS_IDLE;
         mPlayer = new IjkMediaPlayer();
         mPlayer.setOnPreparedListener(this);
-        mPlayer.setOnInfoListener(new IMediaPlayer.OnInfoListener() {
-            @Override
-            public boolean onInfo(IMediaPlayer mp, int what, int extra) {
-                return false;
-            }
-        });
-
+        mPlayer.setOnBufferingUpdateListener(mBufferingUpdateListener);
         enableHardwareDecoding();
     }
 
@@ -110,7 +106,7 @@ public class MediaPlayerWrapper implements IMediaPlayer.OnPreparedListener {
 
 
     public void seekTo(int time) {
-        mPlayer.seekTo(30);
+        mPlayer.seekTo(time);
     }
 
 
@@ -173,4 +169,64 @@ public class MediaPlayerWrapper implements IMediaPlayer.OnPreparedListener {
         }
         mPlayer = null;
     }
+
+    public boolean isPlaying(){
+        if (mPlayer!=null) {
+            return mPlayer.isPlaying();
+        }
+        return false;
+    }
+
+    public long getDuration(){
+        if (mPlayer!=null) {
+            return mPlayer.getDuration();
+        }
+        return 0;
+    }
+    public void release(){
+        if (mPlayer!=null) {
+            mPlayer.release();
+        }
+    }
+    public void stopPlayback() {
+        if (mPlayer != null) {
+            mPlayer.stop();
+            mPlayer.release();
+            mPlayer = null;
+            mStatus = STATUS_IDLE;
+            AudioManager am = (AudioManager) mAppContext.getSystemService(Context.AUDIO_SERVICE);
+            am.abandonAudioFocus(null);
+        }
+    }
+    private Context mAppContext;
+    public MediaPlayerWrapper(Context context){
+        mAppContext=context;
+    }
+    public MediaPlayerWrapper(){
+    }
+    public int getCurrentPosition() {
+        if (isInPlaybackState()) {
+            return (int) mPlayer.getCurrentPosition();
+        }
+        return 0;
+    }
+    private boolean isInPlaybackState() {
+        return (mPlayer != null &&
+                mStatus != STATUS_IDLE &&
+                mStatus != STATUS_PREPARING);
+    }
+    private int mCurrentBufferPercentage;
+    public int getBufferPercentage() {
+        if (mPlayer != null) {
+            return mCurrentBufferPercentage;
+        }
+        return 0;
+    }
+    private IMediaPlayer.OnBufferingUpdateListener mBufferingUpdateListener =
+            new IMediaPlayer.OnBufferingUpdateListener() {
+                public void onBufferingUpdate(IMediaPlayer mp, int percent) {
+                    mCurrentBufferPercentage = percent;
+                }
+            };
+
 }

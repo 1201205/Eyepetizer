@@ -3,6 +3,7 @@ package com.asha.md360player4android;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -89,7 +91,6 @@ public abstract class MD360PlayerActivity extends Activity {
             MDPosition.newInstance().setZ(-3.0f).setYaw(0.0f).setAngleX(90),
     };
 
-
     public static void startVideo(Context context, Uri uri) {
         start(context, uri, VideoPlayerActivity.class);
     }
@@ -118,6 +119,7 @@ public abstract class MD360PlayerActivity extends Activity {
 
         // no title
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         // full screen
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -131,15 +133,13 @@ public abstract class MD360PlayerActivity extends Activity {
         final List<View> hotspotPoints = new LinkedList<>();
         hotspotPoints.add(findViewById(R.id.hotspot_point1));
         hotspotPoints.add(findViewById(R.id.hotspot_point2));
-        final TextView hotspotText = (TextView) findViewById(R.id.hotspot_text);
         getVRLibrary().setEyePickChangedListener(new MDVRLibrary.IEyePickListener() {
             @Override
             public void onHotspotHit(IMDHotspot hotspot, long hitTimestamp) {
-                String text = hotspot == null
-                        ? "nop"
-                        : String.format(Locale.CHINESE, "%s  %fs", hotspot.getTitle(),
-                        (System.currentTimeMillis() - hitTimestamp) / 1000.0f);
-                hotspotText.setText(text);
+//                String text = hotspot == null
+//                        ? "nop"
+//                        : String.format(Locale.CHINESE, "%s  %fs", hotspot.getTitle(),
+//                        (System.currentTimeMillis() - hitTimestamp) / 1000.0f);
 
                 if (System.currentTimeMillis() - hitTimestamp > 5000) {
                     getVRLibrary().resetEyePick();
@@ -188,7 +188,7 @@ public abstract class MD360PlayerActivity extends Activity {
 
 
     public void cancelBusy() {
-        findViewById(R.id.progress).setVisibility(View.GONE);
+//        findViewById(R.id.progress).setVisibility(View.GONE);
     }
 
 

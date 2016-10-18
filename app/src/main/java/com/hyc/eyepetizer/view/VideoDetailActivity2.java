@@ -3,6 +3,7 @@ package com.hyc.eyepetizer.view;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -388,7 +389,7 @@ public class VideoDetailActivity2 extends BaseActivity {
             case R.id.iv_play:
                 ItemListData itemListData = mViewDatas.get(vpVideo.getCurrentItem()).getData();
                 if ("PANORAMIC".equals(itemListData.getType())) {
-                    MD360PlayerActivity.startVideo(this, itemListData.getPlayUrl());
+                    VRVideoPlayerActivity.start(this, itemListData.getPlayUrl(),itemListData.getTitle());
                 } else {
                     VideoActivity.startList(mFromType, this, vpVideo.getCurrentItem(), mParentIndex,
                         true, mVideoID);

@@ -4,7 +4,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.model.beans.ItemListData;
@@ -13,13 +14,9 @@ import com.hyc.eyepetizer.utils.DataHelper;
 import com.hyc.eyepetizer.utils.FrescoHelper;
 import com.hyc.eyepetizer.utils.TypefaceHelper;
 import com.hyc.eyepetizer.view.PgcActivity;
-import com.hyc.eyepetizer.view.PgcActivity2;
 import com.hyc.eyepetizer.view.adapter.AdapterParameterWrapper;
 import com.hyc.eyepetizer.view.adapter.ItemViewProvider;
 import com.hyc.eyepetizer.widget.CustomTextView;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class BriefCardViewProvider extends ItemViewProvider<BriefCardViewProvider.BriefCardViewHolder> {
     @Override
@@ -40,7 +37,8 @@ public class BriefCardViewProvider extends ItemViewProvider<BriefCardViewProvide
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PgcActivity2.start(v.getContext(), itemListData.getTitle(), itemListData.getDescription(),
+                PgcActivity.start(v.getContext(), itemListData.getTitle(),
+                    itemListData.getDescription(),
                         itemListData.getIcon(),
                         DataHelper.getID(itemListData.getActionUrl()));
             }

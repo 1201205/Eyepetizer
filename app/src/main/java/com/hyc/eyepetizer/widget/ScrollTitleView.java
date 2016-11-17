@@ -1,8 +1,6 @@
 package com.hyc.eyepetizer.widget;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.os.Build;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,19 +28,22 @@ public class ScrollTitleView extends LinearLayout{
     private int mMaxY;
     private int mHeadHeight;
     private DIRECTION mDirection;
-    enum DIRECTION {
-        UP,
-        DOWN
-    }
-
+    private float mLastX;
+    private float mLastY;
+    private boolean notIntercept;
+    private boolean firstMove;
+    private VelocityTracker mVelocityTracker;
+    private int mLastScrollerY;
+    private int mMinY;
+    private int mCurrentY;
+    private ScrollableContainer mContainer;
+    private ScrollListener mListener;
     public ScrollTitleView(Context context) {
         this(context,null);
     }
-
     public ScrollTitleView(Context context, AttributeSet attrs) {
         this(context, attrs,0);
     }
-
     public ScrollTitleView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mScroller=new Scroller(context);
@@ -52,6 +53,7 @@ public class ScrollTitleView extends LinearLayout{
         mMinimumVelocity = configuration.getScaledMinimumFlingVelocity();
         mMaximumVelocity = configuration.getScaledMaximumFlingVelocity();
     }
+
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -65,6 +67,8 @@ public class ScrollTitleView extends LinearLayout{
 
 //        measureChildWithMargins(mHeadView,widthMeasureSpec,);
     }
+
+
     @Override
     protected void onFinishInflate() {
         int childCount = getChildCount();
@@ -76,12 +80,8 @@ public class ScrollTitleView extends LinearLayout{
         }
         super.onFinishInflate();
     }
-    private float mLastX;
-    private float mLastY;
-    private boolean notIntercept;
-    private boolean firstMove;
-    private VelocityTracker mVelocityTracker;
-    private int mLastScrollerY;
+
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         float currentX=ev.getX();
@@ -107,51 +107,77 @@ public class ScrollTitleView extends LinearLayout{
                         }
                         firstMove = false;
                     } else {
-                        Log.e("hyc-ui","not handle");
+                        //Log.e("hyc-ui","not handle");
                         return super.dispatchTouchEvent(ev);
                     }
 
                 }
                 //横向事件，不处理
                 if (notIntercept) {
-                    Log.e("hyc-ui","do notIntercept ");
+                    //Log.e("hyc-ui","do notIntercept ");
                     return super.dispatchTouchEvent(ev);
                 }
-                Log.e("hyc-ui","handle");
+                dy = (int) (mLastY - currentY);
+                //Log.e("hyc-ui","handle");
                 if (mVelocityTracker == null) {
                     mVelocityTracker = VelocityTracker.obtain();
                 }
                 mVelocityTracker.addMovement(ev);
                 //
-                if (getScrollY()<mHeadHeight&&isTop()) {
-                    Log.e("hyc-ui",getScrollY()+"+++++++"+mHeadHeight);
-                    mViewPager.requestDisallowInterceptTouchEvent(true);
-                    scrollBy(0, (int) (dy + 0.5));
-                }
                 mLastX=currentX;
                 mLastY=currentY;
-                break;
+                if (isTop()) {
+                    if (getScrollY() < mHeadHeight) {
+                        mViewPager.requestDisallowInterceptTouchEvent(true);
+                        scrollBy(0, (int) (dy + 0.5));
+                        return true;
+                    } else if (dy < 0) {
+                        mViewPager.requestDisallowInterceptTouchEvent(true);
+                        scrollBy(0, (int) (dy + 0.5));
+                        return true;
+                    }
+                }
+                //Log.e("hyc-ui",dy+"do-not-scroll-Y++++"+getScrollY());
+                return super.dispatchTouchEvent(ev);
+            //if (getScrollY() < mHeadHeight && isTop()) {
+            //    Log.e("hyc-ui","scroll-Y++++"+getScrollY());
+            //    Log.e("hyc-ui", getScrollY() + "+++++++" + mHeadHeight);
+            //    mViewPager.requestDisallowInterceptTouchEvent(true);
+            //    scrollBy(0, (int) (dy + 0.5));
+            //    return true;
+            //} else {
+            //    Log.e("hyc-ui",dy+"do-not-scroll-Y++++"+getScrollY());
+            //    return super.dispatchTouchEvent(ev);
+            //}
+
+            //break;
             case MotionEvent.ACTION_UP:
                 if (!notIntercept) {
                     mVelocityTracker.computeCurrentVelocity(1000,mMaximumVelocity);
                     float yVelocity = -mVelocityTracker.getYVelocity();
                     if (Math.abs(yVelocity)>mMinimumVelocity) {
                         mDirection = yVelocity > 0 ? DIRECTION.UP : DIRECTION.DOWN;
-                        if (getScrollY()==mHeadHeight) {
+                        //if (getScrollY()==mHeadHeight) {
+                        //Log.e("hyc-ui","start--fling"+yVelocity);
                             mScroller.fling(0, getScrollY(), 0, (int) yVelocity, 0, 0, -Integer.MAX_VALUE, Integer.MAX_VALUE);
                             mScroller.computeScrollOffset();
                             mLastScrollerY = getScrollY();
                             invalidate();
-                        }
+                        //}
                     }
+                    //MotionEvent event = MotionEvent.obtain(ev);
+                    //event.setAction(MotionEvent.ACTION_CANCEL);
+                    //super.dispatchTouchEvent(event);
                 }
                 mLastX=currentX;
                 mLastY=currentY;
                 break;
         }
-        return super.dispatchTouchEvent(ev);
+        super.dispatchTouchEvent(ev);
+        return true;
     }
-    private int mMinY ;
+
+
     private void initOrResetVelocityTracker() {
         if (mVelocityTracker == null) {
             mVelocityTracker = VelocityTracker.obtain();
@@ -159,15 +185,20 @@ public class ScrollTitleView extends LinearLayout{
             mVelocityTracker.clear();
         }
     }
+
+
     @Override
     public void computeScroll() {
         if (mScroller.computeScrollOffset()) {
+
             int currentY=mScroller.getCurrY();
             if (mDirection==DIRECTION.UP) {
                 if (getScrollY() >= mHeadHeight) {
+                    //Log.e("hyc-ui","recyclerstart--fling"+mScroller.getCurrVelocity());
 //                    int distance=mScroller.getFinalY()-currentY;
 //                    int duration=mScroller.getDuration()-mScroller.timePassed();
                     mContainer.getScrollableView().fling(0, (int) mScroller.getCurrVelocity());
+                    mScroller.forceFinished(true);
                 } else {
                     scrollTo(0, currentY);
                 }
@@ -175,21 +206,28 @@ public class ScrollTitleView extends LinearLayout{
                 if (isTop()) {
                     int deltaY = (currentY - mLastScrollerY);
                     int toY = getScrollY() + deltaY;
+                    Log.e("hyc-ui", deltaY + "+++++++" + toY);
                     scrollTo(0, toY);
-                    if (currentY <= mMinY) {
+                    if (mCurrentY <= mMinY) {
                         mScroller.forceFinished(true);
                         return;
                     }
                 }
-                invalidate();
             }
+            invalidate();
+            Log.e("hyc-ui",
+                currentY + "+++++++" + getScrollY() + "+++++++" + (currentY - mLastScrollerY));
+
             mLastScrollerY = currentY;
         }
     }
 
+
     public void setContainer(ScrollableContainer container) {
         mContainer = container;
     }
+
+
     private boolean isTop() {
         RecyclerView recyclerView=mContainer.getScrollableView();
         if (recyclerView != null) {
@@ -215,6 +253,7 @@ public class ScrollTitleView extends LinearLayout{
         return false;
     }
 
+
     @Override
     public void scrollBy(int x, int y) {
         int scrollY = getScrollY();
@@ -228,6 +267,7 @@ public class ScrollTitleView extends LinearLayout{
         super.scrollBy(x, y);
     }
 
+
     @Override
     public void scrollTo(int x, int y) {
         if (y >= mMaxY) {
@@ -235,10 +275,34 @@ public class ScrollTitleView extends LinearLayout{
         } else if (y <= mMinY) {
             y = mMinY;
         }
+        mCurrentY = y;
+        if (mListener != null) {
+            mListener.scroll(mCurrentY);
+        }
         super.scrollTo(x, y);
     }
-    private ScrollableContainer mContainer;
+
+
+    public void setListener(ScrollListener listener) {
+        mListener = listener;
+    }
+
+
+    public void closeHead() {
+        scrollTo(0, mHeadHeight);
+    }
+
+
+    enum DIRECTION {
+        UP,
+        DOWN
+    }
     public interface ScrollableContainer{
         RecyclerView getScrollableView();
+    }
+
+
+    public interface ScrollListener {
+        void scroll(int y);
     }
 }

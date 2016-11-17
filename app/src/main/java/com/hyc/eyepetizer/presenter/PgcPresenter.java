@@ -47,6 +47,7 @@ public class PgcPresenter extends VideoListPresenter {
                     @Override
                     public void call(Videos videos) {
                         showList(videos);
+                        mModel.addVideoList(mTypeID, videos.getItemList());
                     }
                 }, new ExceptionAction() {
                     @Override
@@ -67,13 +68,13 @@ public class PgcPresenter extends VideoListPresenter {
                             @Override
                             public void call(Videos videos) {
                                 showList(videos);
+                                mModel.addMore(mTypeID, videos.getItemList());
                             }
                         }, new ExceptionAction())
-        );
+        ); 
     }
 
     private void showList(Videos videos){
-        mModel.addMore(mTypeID, videos.getItemList());
         List<ViewData> list = new ArrayList<ViewData>();
         list.addAll(videos.getItemList());
         if (TextUtils.isEmpty(videos.getNextPageUrl())) {

@@ -4,22 +4,17 @@ import android.animation.Animator;
 import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.SpannableString;
-import android.text.style.TypefaceSpan;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.FrameLayout;
 import android.widget.Scroller;
-import android.widget.TextView;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.utils.AppUtil;
 import com.hyc.eyepetizer.utils.DateUtil;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by Administrator on 2016/8/29.
@@ -46,14 +41,8 @@ public class PullToRefreshView extends FrameLayout {
     private int mTouchSlop;
     private boolean mIsMoving;
     private boolean mHasDown;
-
-    public void setRefreshListener(RefreshListener refreshListener) {
-        mRefreshListener = refreshListener;
-    }
-
     private RefreshListener mRefreshListener;
     private long mNextPushTime;
-
     public PullToRefreshView(Context context) {
         this(context, null);
     }
@@ -67,6 +56,12 @@ public class PullToRefreshView extends FrameLayout {
         mScroller = new Scroller(getContext());
         mTouchSlop = ViewConfiguration.getTouchSlop();
     }
+
+
+    public void setRefreshListener(RefreshListener refreshListener) {
+        mRefreshListener = refreshListener;
+    }
+
 
     @Override
     protected void onFinishInflate() {
@@ -151,7 +146,7 @@ public class PullToRefreshView extends FrameLayout {
                 if (resume) {
                     if (mHasDown) {
                         MotionEvent event = MotionEvent.obtain(ev);
-                        ev.setAction(MotionEvent.ACTION_CANCEL);
+                        event.setAction(MotionEvent.ACTION_CANCEL);
                         super.dispatchTouchEvent(event);
                         mHasDown = false;
                     }
@@ -271,9 +266,6 @@ public class PullToRefreshView extends FrameLayout {
         }, 2000);
     }
 
-    public interface RefreshListener {
-        void handleRefresh();
-    }
 
     private String getRemainTime(){
         StringBuilder builder=new StringBuilder();
@@ -302,5 +294,10 @@ public class PullToRefreshView extends FrameLayout {
             }
         }
         return builder.toString();
+    }
+
+
+    public interface RefreshListener {
+        void handleRefresh();
     }
 }

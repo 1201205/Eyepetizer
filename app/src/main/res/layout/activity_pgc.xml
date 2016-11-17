@@ -13,24 +13,15 @@
 
         <include layout="@layout/title_bar"/>
 
-        <android.support.design.widget.CoordinatorLayout
+        <com.hyc.eyepetizer.widget.ScrollTitleView
             android:id="@+id/cl_main"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1">
-
-            <android.support.design.widget.AppBarLayout
-                android:id="@+id/appbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/colorWhite"
-                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
-
                 <LinearLayout
                     android:id="@+id/rl_head"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="40dp"
                     android:orientation="vertical"
                     android:gravity="center"
                     app:layout_scrollFlags="scroll">
@@ -42,11 +33,22 @@
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="10dp"
                         app:roundAsCircle="true"/>
+                    <com.hyc.eyepetizer.widget.CustomTextView
+                        android:id="@+id/tv_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="10dp"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/title_black"/>
 
                     <com.hyc.eyepetizer.widget.CustomTextView
                         android:id="@+id/tv_des"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="20dp"
                         android:gravity="center"
                         android:layout_below="@id/sdv_icon"
                         android:layout_centerHorizontal="true"
@@ -108,14 +110,13 @@
                         android:background="@drawable/shape_indicator"/>
                 </RelativeLayout>
 
-            </android.support.design.widget.AppBarLayout>
 
             <android.support.v4.view.ViewPager
                 android:id="@+id/vp_target"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
-        </android.support.design.widget.CoordinatorLayout>
+        </com.hyc.eyepetizer.widget.ScrollTitleView>
 
     </LinearLayout>
 

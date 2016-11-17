@@ -7,7 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.model.beans.CoverHeader;
@@ -16,15 +17,11 @@ import com.hyc.eyepetizer.utils.DataHelper;
 import com.hyc.eyepetizer.utils.FrescoHelper;
 import com.hyc.eyepetizer.utils.TypefaceHelper;
 import com.hyc.eyepetizer.view.PgcActivity;
-import com.hyc.eyepetizer.view.PgcActivity2;
 import com.hyc.eyepetizer.view.adapter.AdapterParameterWrapper;
 import com.hyc.eyepetizer.view.adapter.HorizontalAdapter;
 import com.hyc.eyepetizer.view.adapter.ItemViewProvider;
 import com.hyc.eyepetizer.widget.CustomTextView;
 import com.hyc.eyepetizer.widget.HorizontalDecoration;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class BriefVideoViewProvider extends ItemViewProvider<BriefVideoViewProvider.BriefVideoViewHolder> {
     @Override
@@ -39,7 +36,7 @@ public class BriefVideoViewProvider extends ItemViewProvider<BriefVideoViewProvi
         holder.rlHead.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PgcActivity2.start(context, header.getTitle(), header.getDescription(),
+                PgcActivity.start(context, header.getTitle(), header.getDescription(),
                         header.getIco(),
                         DataHelper.getID(header.getActionUrl()));
             }

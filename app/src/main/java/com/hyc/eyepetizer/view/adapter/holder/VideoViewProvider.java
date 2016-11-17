@@ -9,7 +9,8 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.hyc.eyepetizer.R;
 import com.hyc.eyepetizer.event.StartVideoDetailEvent;
@@ -21,11 +22,7 @@ import com.hyc.eyepetizer.utils.TypefaceHelper;
 import com.hyc.eyepetizer.view.adapter.AdapterParameterWrapper;
 import com.hyc.eyepetizer.view.adapter.ItemViewProvider;
 import com.hyc.eyepetizer.widget.CustomTextView;
-
 import org.greenrobot.eventbus.EventBus;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by Administrator on 2016/8/31.
@@ -104,7 +101,8 @@ public class VideoViewProvider extends ItemViewProvider<VideoViewProvider.VideoV
                             mLastY = motionEvent.getY();
                             return true;
                         case MotionEvent.ACTION_MOVE:
-                            if (Math.abs(motionEvent.getX() - mLastX) > mMask || Math.abs(motionEvent.getY() - mLastY) > mMask) {
+                            if (Math.abs(motionEvent.getX() - mLastX) > mMask ||
+                                Math.abs(motionEvent.getY() - mLastY) > mMask) {
                                 reset();
                             } else {
                                 mLastX = motionEvent.getX();
@@ -113,7 +111,9 @@ public class VideoViewProvider extends ItemViewProvider<VideoViewProvider.VideoV
                             return false;
                         case MotionEvent.ACTION_UP:
                             reset();
-                            if (mItemClickListener != null) {
+                            if ((Math.abs(motionEvent.getX() - mLastX) < mMask &&
+                                Math.abs(motionEvent.getY() - mLastY) < mMask) &&
+                                mItemClickListener != null) {
                                 int[] lo = new int[2];
                                 img.getLocationInWindow(lo);
                                 mItemClickListener.onItemClicked(lo[1], getAdapterPosition());

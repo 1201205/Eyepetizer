@@ -206,4 +206,8 @@ public class VideoListFragment extends BaseFragment<VideoListPresenter>
     public void noMore() {
         mHasMore=false;
     }
+
+    public RecyclerView getScrollView(){
+        return mRvVideo;
+    }
 }

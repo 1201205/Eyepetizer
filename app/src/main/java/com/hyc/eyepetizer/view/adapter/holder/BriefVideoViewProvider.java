@@ -16,6 +16,7 @@ import com.hyc.eyepetizer.utils.DataHelper;
 import com.hyc.eyepetizer.utils.FrescoHelper;
 import com.hyc.eyepetizer.utils.TypefaceHelper;
 import com.hyc.eyepetizer.view.PgcActivity;
+import com.hyc.eyepetizer.view.PgcActivity2;
 import com.hyc.eyepetizer.view.adapter.AdapterParameterWrapper;
 import com.hyc.eyepetizer.view.adapter.HorizontalAdapter;
 import com.hyc.eyepetizer.view.adapter.ItemViewProvider;
@@ -38,7 +39,7 @@ public class BriefVideoViewProvider extends ItemViewProvider<BriefVideoViewProvi
         holder.rlHead.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PgcActivity.start(context, header.getTitle(), header.getDescription(),
+                PgcActivity2.start(context, header.getTitle(), header.getDescription(),
                         header.getIco(),
                         DataHelper.getID(header.getActionUrl()));
             }

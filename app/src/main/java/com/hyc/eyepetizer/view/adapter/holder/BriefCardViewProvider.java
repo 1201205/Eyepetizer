@@ -13,6 +13,7 @@ import com.hyc.eyepetizer.utils.DataHelper;
 import com.hyc.eyepetizer.utils.FrescoHelper;
 import com.hyc.eyepetizer.utils.TypefaceHelper;
 import com.hyc.eyepetizer.view.PgcActivity;
+import com.hyc.eyepetizer.view.PgcActivity2;
 import com.hyc.eyepetizer.view.adapter.AdapterParameterWrapper;
 import com.hyc.eyepetizer.view.adapter.ItemViewProvider;
 import com.hyc.eyepetizer.widget.CustomTextView;
@@ -39,7 +40,7 @@ public class BriefCardViewProvider extends ItemViewProvider<BriefCardViewProvide
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PgcActivity.start(v.getContext(), itemListData.getTitle(), itemListData.getDescription(),
+                PgcActivity2.start(v.getContext(), itemListData.getTitle(), itemListData.getDescription(),
                         itemListData.getIcon(),
                         DataHelper.getID(itemListData.getActionUrl()));
             }

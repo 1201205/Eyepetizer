@@ -5,7 +5,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -18,7 +17,7 @@ import android.widget.Scroller;
  * Created by Administrator on 2016/11/17.
  */
 
-public class ScrollTitleView extends LinearLayout{
+public class ScrollTitleView extends LinearLayout {
     private Scroller mScroller;
     private int mTouchSlop;
     private int mMinimumVelocity;
@@ -38,15 +37,22 @@ public class ScrollTitleView extends LinearLayout{
     private int mCurrentY;
     private ScrollableContainer mContainer;
     private ScrollListener mListener;
+    private boolean isInTop;
+
+
     public ScrollTitleView(Context context) {
-        this(context,null);
+        this(context, null);
     }
+
+
     public ScrollTitleView(Context context, AttributeSet attrs) {
-        this(context, attrs,0);
+        this(context, attrs, 0);
     }
+
+
     public ScrollTitleView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        mScroller=new Scroller(context);
+        mScroller = new Scroller(context);
         setOrientation(VERTICAL);
         final ViewConfiguration configuration = ViewConfiguration.get(context);
         mTouchSlop = configuration.getScaledTouchSlop();
@@ -57,15 +63,17 @@ public class ScrollTitleView extends LinearLayout{
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        if (getChildCount()<1) {
+        if (getChildCount() < 1) {
             throw new RuntimeException("no child in ScrollTitleView");
         }
         //规定只能在第一个
-        mHeadView=getChildAt(0);
-        mMaxY=mHeadHeight=mHeadView.getMeasuredHeight();
-        super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(heightMeasureSpec) + mMaxY, MeasureSpec.EXACTLY));
+        mHeadView = getChildAt(0);
+        mMaxY = mHeadHeight = mHeadView.getMeasuredHeight();
+        super.onMeasure(widthMeasureSpec,
+            MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(heightMeasureSpec) + mMaxY,
+                MeasureSpec.EXACTLY));
 
-//        measureChildWithMargins(mHeadView,widthMeasureSpec,);
+        //        measureChildWithMargins(mHeadView,widthMeasureSpec,);
     }
 
 
@@ -84,16 +92,20 @@ public class ScrollTitleView extends LinearLayout{
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        float currentX=ev.getX();
-        float currentY=ev.getY();
-        int dx= (int) Math.abs(currentX-mLastX);
-        int dy= (int) Math.abs(currentY-mLastY);
-        switch (ev.getAction()){
+        float currentX = ev.getX();
+        float currentY = ev.getY();
+        int dx = (int) Math.abs(currentX - mLastX);
+        int dy = (int) Math.abs(currentY - mLastY);
+        switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                mLastX=currentX;
-                mLastY=currentY;
-                firstMove=true;
-                notIntercept=false;
+                mLastX = currentX;
+                mLastY = currentY;
+                firstMove = true;
+                notIntercept = false;
+                isInTop = false;
+                if (getScrollY() >= mHeadHeight) {
+                    isInTop = true;
+                }
                 initOrResetVelocityTracker();
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -107,25 +119,22 @@ public class ScrollTitleView extends LinearLayout{
                         }
                         firstMove = false;
                     } else {
-                        //Log.e("hyc-ui","not handle");
                         return super.dispatchTouchEvent(ev);
                     }
 
                 }
                 //横向事件，不处理
                 if (notIntercept) {
-                    //Log.e("hyc-ui","do notIntercept ");
                     return super.dispatchTouchEvent(ev);
                 }
                 dy = (int) (mLastY - currentY);
-                //Log.e("hyc-ui","handle");
                 if (mVelocityTracker == null) {
                     mVelocityTracker = VelocityTracker.obtain();
                 }
                 mVelocityTracker.addMovement(ev);
                 //
-                mLastX=currentX;
-                mLastY=currentY;
+                mLastX = currentX;
+                mLastY = currentY;
                 if (isTop()) {
                     if (getScrollY() < mHeadHeight) {
                         mViewPager.requestDisallowInterceptTouchEvent(true);
@@ -137,40 +146,27 @@ public class ScrollTitleView extends LinearLayout{
                         return true;
                     }
                 }
-                //Log.e("hyc-ui",dy+"do-not-scroll-Y++++"+getScrollY());
                 return super.dispatchTouchEvent(ev);
-            //if (getScrollY() < mHeadHeight && isTop()) {
-            //    Log.e("hyc-ui","scroll-Y++++"+getScrollY());
-            //    Log.e("hyc-ui", getScrollY() + "+++++++" + mHeadHeight);
-            //    mViewPager.requestDisallowInterceptTouchEvent(true);
-            //    scrollBy(0, (int) (dy + 0.5));
-            //    return true;
-            //} else {
-            //    Log.e("hyc-ui",dy+"do-not-scroll-Y++++"+getScrollY());
-            //    return super.dispatchTouchEvent(ev);
-            //}
-
-            //break;
             case MotionEvent.ACTION_UP:
                 if (!notIntercept) {
-                    mVelocityTracker.computeCurrentVelocity(1000,mMaximumVelocity);
+                    mVelocityTracker.computeCurrentVelocity(1000, mMaximumVelocity);
                     float yVelocity = -mVelocityTracker.getYVelocity();
-                    if (Math.abs(yVelocity)>mMinimumVelocity) {
+                    if (Math.abs(yVelocity) > mMinimumVelocity) {
                         mDirection = yVelocity > 0 ? DIRECTION.UP : DIRECTION.DOWN;
-                        //if (getScrollY()==mHeadHeight) {
-                        //Log.e("hyc-ui","start--fling"+yVelocity);
-                            mScroller.fling(0, getScrollY(), 0, (int) yVelocity, 0, 0, -Integer.MAX_VALUE, Integer.MAX_VALUE);
-                            mScroller.computeScrollOffset();
-                            mLastScrollerY = getScrollY();
-                            invalidate();
-                        //}
+                        if (isInTop && mDirection == DIRECTION.UP) {
+                            mLastX = currentX;
+                            mLastY = currentY;
+                            return super.dispatchTouchEvent(ev);
+                        }
+                        mScroller.fling(0, getScrollY(), 0, (int) yVelocity, 0, 0,
+                            -Integer.MAX_VALUE, Integer.MAX_VALUE);
+                        mScroller.computeScrollOffset();
+                        mLastScrollerY = getScrollY();
+                        invalidate();
                     }
-                    //MotionEvent event = MotionEvent.obtain(ev);
-                    //event.setAction(MotionEvent.ACTION_CANCEL);
-                    //super.dispatchTouchEvent(event);
                 }
-                mLastX=currentX;
-                mLastY=currentY;
+                mLastX = currentX;
+                mLastY = currentY;
                 break;
         }
         super.dispatchTouchEvent(ev);
@@ -191,22 +187,18 @@ public class ScrollTitleView extends LinearLayout{
     public void computeScroll() {
         if (mScroller.computeScrollOffset()) {
 
-            int currentY=mScroller.getCurrY();
-            if (mDirection==DIRECTION.UP) {
+            int currentY = mScroller.getCurrY();
+            if (mDirection == DIRECTION.UP) {
                 if (getScrollY() >= mHeadHeight) {
-                    //Log.e("hyc-ui","recyclerstart--fling"+mScroller.getCurrVelocity());
-//                    int distance=mScroller.getFinalY()-currentY;
-//                    int duration=mScroller.getDuration()-mScroller.timePassed();
                     mContainer.getScrollableView().fling(0, (int) mScroller.getCurrVelocity());
                     mScroller.forceFinished(true);
                 } else {
                     scrollTo(0, currentY);
                 }
-            }else {
+            } else {
                 if (isTop()) {
                     int deltaY = (currentY - mLastScrollerY);
                     int toY = getScrollY() + deltaY;
-                    Log.e("hyc-ui", deltaY + "+++++++" + toY);
                     scrollTo(0, toY);
                     if (mCurrentY <= mMinY) {
                         mScroller.forceFinished(true);
@@ -215,8 +207,6 @@ public class ScrollTitleView extends LinearLayout{
                 }
             }
             invalidate();
-            Log.e("hyc-ui",
-                currentY + "+++++++" + getScrollY() + "+++++++" + (currentY - mLastScrollerY));
 
             mLastScrollerY = currentY;
         }
@@ -229,24 +219,26 @@ public class ScrollTitleView extends LinearLayout{
 
 
     private boolean isTop() {
-        RecyclerView recyclerView=mContainer.getScrollableView();
+        RecyclerView recyclerView = mContainer.getScrollableView();
         if (recyclerView != null) {
             RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
             if (layoutManager instanceof LinearLayoutManager) {
-                int firstVisibleItemPosition = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
+                int firstVisibleItemPosition
+                    = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
                 View childAt = recyclerView.getChildAt(0);
                 if (childAt == null) {
                     return true;
                 }
                 if (firstVisibleItemPosition == 0) {
-                    ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) childAt.getLayoutParams();
+                    ViewGroup.MarginLayoutParams lp
+                        = (ViewGroup.MarginLayoutParams) childAt.getLayoutParams();
                     int topMargin = lp.topMargin;
                     int top = childAt.getTop();
                     if (top >= topMargin) {
                         return true;
                     }
                 }
-            }else {
+            } else {
                 throw new IllegalArgumentException("only support LinearLayoutManager");
             }
         }
@@ -297,7 +289,9 @@ public class ScrollTitleView extends LinearLayout{
         UP,
         DOWN
     }
-    public interface ScrollableContainer{
+
+
+    public interface ScrollableContainer {
         RecyclerView getScrollableView();
     }
 

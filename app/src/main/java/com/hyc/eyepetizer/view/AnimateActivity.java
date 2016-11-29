@@ -18,7 +18,6 @@ import com.hyc.eyepetizer.event.VideoDetailBackEvent;
 import com.hyc.eyepetizer.utils.AppUtil;
 import com.hyc.eyepetizer.utils.FrescoHelper;
 import com.hyc.eyepetizer.widget.MyAnimatorListener;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -26,7 +25,7 @@ import org.greenrobot.eventbus.Subscribe;
  * Created by hyc on 2016/10/11.
  */
 public abstract class AnimateActivity<E extends BasePresenter> extends BaseActivity<E>{
-    protected static final long ANIMATION_DURATION = 350;
+    protected static final long ANIMATION_DURATION = 300;
     @BindView(R.id.sdv_anim)
     protected SimpleDraweeView sdvAnim;
     protected boolean isAnimating;
@@ -43,22 +42,34 @@ public abstract class AnimateActivity<E extends BasePresenter> extends BaseActiv
             sdvAnim.setVisibility(View.GONE);
         }
     };
+    protected int mStatusBarHeight;
+
+
     protected abstract boolean canDeal(int type);
+
     protected abstract void onStartAnimEnd(StartVideoDetailEvent event);
+
     protected abstract void onStartResumeAnim(VideoDetailBackEvent event);
+
     protected abstract boolean hasIndicator();
+
     protected abstract int getStartY(int y);
+
     protected abstract void initEndY();
+
 
     protected boolean isLoading(){
         return false;
     }
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
         initParameter();
     }
+
 
     protected void initParameter(){
         Resources resources=getResources();
@@ -88,6 +99,8 @@ public abstract class AnimateActivity<E extends BasePresenter> extends BaseActiv
         }
         return super.dispatchTouchEvent(ev);
     }
+
+
     @Subscribe
     public void handleResumeAnim(final VideoDetailBackEvent event) {
         if (!canDeal(event.fromType)) {
@@ -128,6 +141,8 @@ public abstract class AnimateActivity<E extends BasePresenter> extends BaseActiv
         }
 
     }
+
+
     @Subscribe
     public void handleStartActivity(final StartVideoDetailEvent event) {
         if (isAnimating||isLoading()) {
@@ -157,7 +172,8 @@ public abstract class AnimateActivity<E extends BasePresenter> extends BaseActiv
                 .setInterpolator(mInterpolator)
                 .start();
     }
-    protected int mStatusBarHeight;
+
+
     protected int getStatusBarHeight() {
         if (mStatusBarHeight == 0) {
             mStatusBarHeight = AppUtil.getStatusBarHeight(this);
